@@ -1,0 +1,1 @@
+// src/commands/mods/channel/cocha3_chanel_delete.js

@@ -1,0 +1,1 @@
+// src/scripts/mods/channel/sccha4_chanel_lock.js
