@@ -10,7 +10,6 @@
     },
     "scripts": {
         "logs": {
-            "user": "user_info",
             "bot": "bot_info",
             "role": "role_info",
             "channel": "channel_info",
