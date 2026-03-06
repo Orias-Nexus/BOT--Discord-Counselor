@@ -1,4 +1,5 @@
 const { EmbedBuilder, ChannelType, PermissionFlagsBits } = require('discord.js');
+const config = require('../.config.js');
 
 const PREFIX_BTN = 'category_info_btn_';
 
@@ -33,7 +34,7 @@ function getCategoryChannelCounts(guild, categoryId) {
 }
 
 /**
- * Embed thông tin category. Layout: ID|Name, Channel (C-V-O)|Status.
+ * Embed thông tin category: Title = tên, fields: ID, Chanel, Status (tất cả inline=false).
  * @param { import('discord.js').GuildChannel } category - channel type GuildCategory
  * @param { import('discord.js').Guild } guild
  */
@@ -41,6 +42,7 @@ function buildCategoryEmbed(category, guild) {
     const counts = getCategoryChannelCounts(guild, category.id);
     const channelLine = `Chat: **${counts.chat}** · Voice: **${counts.voice}** · Other: **${counts.other}**`;
     const status = getCategoryStatus(category, guild);
+    const mainImageURL = config.resource?.mainImageURL ?? null;
 
     const embed = new EmbedBuilder()
         .setColor(0x5865f2)
@@ -49,12 +51,13 @@ function buildCategoryEmbed(category, guild) {
             { name: 'ID', value: category.id, inline: true },
             { name: 'Name', value: category.name, inline: true },
             { name: '\u200B', value: '\u200B', inline: true },
-            { name: 'Channel (C-V-O)', value: channelLine, inline: true },
+            { name: 'Chanel', value: channelLine, inline: true },
             { name: 'Status', value: status, inline: true },
             { name: '\u200B', value: '\u200B', inline: true }
         )
         .setTimestamp();
 
+    if (mainImageURL) embed.setImage(mainImageURL);
     return embed;
 }
 
@@ -67,13 +70,13 @@ function buildCategoryComponents(categoryId, guild, category) {
     const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
     const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-            .setCustomId(`${PREFIX_BTN}toggle_${categoryId}`)
-            .setLabel(toggleLabel)
-            .setStyle(ButtonStyle.Secondary),
-        new ButtonBuilder()
             .setCustomId(`${PREFIX_BTN}clone_${categoryId}`)
             .setLabel('Clone')
-            .setStyle(ButtonStyle.Primary)
+            .setStyle(ButtonStyle.Primary),
+        new ButtonBuilder()
+            .setCustomId(`${PREFIX_BTN}toggle_${categoryId}`)
+            .setLabel(toggleLabel)
+            .setStyle(ButtonStyle.Secondary)
     );
     return { row };
 }
