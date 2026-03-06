@@ -8,9 +8,8 @@ Hệ thống Discord Assistant: **Bot** (Discord.js) + **Backend API** (Express)
 /my-discord-system
 ├── .github/          # CI/CD: tự động test và deploy
 ├── backend/          # API Server cho Web Dashboard (Express)
-├── bot/              # Logic Discord: kết nối, lệnh, event
-├── database/         # Scripts, schema (Prisma/Drizzle), dữ liệu chung
-├── docs/             # Tài liệu kiến trúc, cài đặt
+├── directive/        # Giao diện Discord: scripts, slashs, actions (gọi Backend API)
+├── database/         # Scripts, schema Supabase, dữ liệu chung
 ├── frontend/         # Giao diện Web Dashboard (Vite + React)
 ├── infra/            # Terraform, Kubernetes, scripts server
 ├── shared/           # Types, utils dùng chung
@@ -20,27 +19,32 @@ Hệ thống Discord Assistant: **Bot** (Discord.js) + **Backend API** (Express)
 
 ## Chạy nhanh (local)
 
-### Bot
+### Backend (API + DB)
 
 ```bash
-cd bot
-cp .env.example .env   # điền DISCORD_TOKEN, APPLICATION_ID
+cd backend
+cp .env.example .env   # điền SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 npm install
-npm run deploy
+npm run dev            # http://localhost:4000
+```
+
+### Directive (Discord client — scripts, slashs, actions)
+
+```bash
+cd directive
+# .env: DISCORD_TOKEN, APPLICATION_ID, BACKEND_API_URL
+npm install
+npm run deploy         # đăng ký slash commands (một lần)
 npm run dev
 ```
 
-### Backend + Frontend
+Directive gọi Backend API; Backend nói chuyện Supabase (schema `DiscordCounselor`).
+
+### Frontend (tạm thời chưa cần)
 
 ```bash
-# Terminal 1
-cd backend && npm install && npm run dev    # http://localhost:4000
-
-# Terminal 2
 cd frontend && npm install && npm run dev   # http://localhost:3000
 ```
-
-Dashboard sẽ gọi API qua proxy (`/api`, `/health` → backend).
 
 ## Chạy bằng Docker
 
@@ -51,7 +55,7 @@ docker compose up -d
 
 - Frontend: [http://localhost:3000](http://localhost:3000)  
 - Backend: [http://localhost:4000](http://localhost:4000)  
-- Bot chạy trong container (cần token trong bot/.env).
+- Directive (Discord client) chạy trong container (cần token trong directive/.env).
 
 ## Tài liệu
 

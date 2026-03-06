@@ -1,0 +1,714 @@
+{
+  "Discord_Bot_Architecture": {
+    "Database": {
+      "description": "Cấu trúc cơ sở dữ liệu từ Table-Data.",
+      "Enum": {
+        "name": "Member Status",
+        "values": ["Good", "Warn", "Mute", "Lock", "Kick", "leaved"]
+      },
+      "Tables": [
+        {
+          "name": "Functions",
+          "description": "Định dạng embed_schema của các lệnh, tính năng, tin nhắn chung/mặc định.",
+          "columns": [
+            "script_id: Khoá - UUID",
+            "script: Notnull - Tên tính năng",
+            "slash: Nullable - lệnh /slash",
+            "action: Nullable - tên action",
+            "event: Nullable - tên event",
+            "embed_schema: Nullable - Nội dung định dạng embed_schema tin nhắn"
+          ]
+        },
+        {
+          "name": "Levels",
+          "description": "Định nghĩa các mốc điểm yêu cầu cho các level.",
+          "columns": [
+            "level_id: Khoá - UUID",
+            "level: Notnull - Level",
+            "exp: Notnull - Điểm yêu cầu"
+          ]
+        },
+        {
+          "name": "Servers",
+          "description": "Thông tin server.",
+          "columns": [
+            "server_id: Khoá - id của server",
+            "server_name: Notnull - Tên server",
+            "server_link: Nullable - link đến server, link vĩnh viễn cũ nhất",
+            "time_warn: Def 0 - thời gian tồn tại cho warning",
+            "time_mute: Def 0 - thời gian tồn tại cho mute",
+            "time_lock: Def 0 - thời gian tồn tại cho lock",
+            "role_warn: Nullable - role được gắn khi nhận warn",
+            "role_mute: Nullable - role được gắn khi nhận mute",
+            "role_lock: Nullable - role được gắn khi nhận lock",
+            "unrole_mute: Nullable - role bị gỡ khi nhận mute",
+            "unrole_lock: Nullable - role bị gỡ khi nhận lock",
+            "channel_greet: Nullable - kênh được thiết lập để bot gửi tin nhắn chào mừng",
+            "channel_leave: Nullable - kênh được thiết lập để bot gửi tin nhắn tạm biệt",
+            "channel_boost: Nullable - kênh được thiết lập để bot gửi thông báo nâng cấp",
+            "channel_logs: Nullable - kênh được thiết lập để bot gửi các log khác",
+            "message_great: Nullable - nội dung và định dạng embed_schema tin nhắn chào mừng",
+            "message_leave: Nullable - nội dung và định dạng embed_schema tin nhắn tạm biệt",
+            "message_boost: Nullable - nội dung và định dạng embed_schema thông báo nâng cấp"
+          ]
+        },
+        {
+          "name": "Users",
+          "description": "Thông tin user.",
+          "columns": [
+            "user_id: Khoá - id của user",
+            "user_name: Notnull - Tên của user",
+            "user_exp: Notnull - Điểm user. Tăng khi tương tác trong bất kì server nào có mặt bot",
+            "user_level: Notnull - Level global của user. Điểm global đối chiểu bảng Levels"
+          ]
+        },
+        {
+          "name": "Members",
+          "description": "Thông tin member của server.",
+          "columns": [
+            "server_id: Khoá (ngoại) - server_id",
+            "user_idu: Khoá (ngoại) - user_id",
+            "member_exp: Def 0 - điểm cục bộ, tăng khi tương tác trong server",
+            "member_level: Notnull - Level cục bộ. Độc lập với Level toàn cục",
+            "member_status: Def \"Good\" - trạng thái thành viên",
+            "member_expires: Nullable - thời gian kết thúc trạng thái"
+          ]
+        }
+      ]
+    },
+    "Script": {
+      "description": "Core logic (thực thi từ bot đến Discord). Được gọi bởi Event, Action hoặc Slash; không định nghĩa lệnh slash/tương tác/sự kiện trực tiếp. Mọi script nhận (interaction, client); các tham số khác (guild, channel, target, options) lấy từ interaction.",
+      "items": [
+        {
+          "name": "ServerInfo",
+          "description": "Hiển thị các thông tin của server",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /server_info"]
+        },
+        {
+          "name": "StatusTimeout",
+          "description": "Cập nhật 3 trường time_warn, time_mute, time_lock",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /status_timeout", "Action: Status Timeout"]
+        },
+        {
+          "name": "StatusRole",
+          "description": "Cập nhật 3 trường role_warn, role_mute, role_lock",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /status_role", "Action: Status Role"]
+        },
+        {
+          "name": "StatusUnrole",
+          "description": "Cập nhật 2 trường unrole_mute, unrole_lock",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /status_unrole", "Action: Status Unrole"]
+        },
+        {
+          "name": "CategoryInfo",
+          "description": "Hiển thị thông tin danh mục",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /category_info"]
+        },
+        {
+          "name": "CategoryClone",
+          "description": "Sao chép danh mục (kể cả toàn bộ kênh trong danh mục đó)",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /category_clone", "Action: Clone"]
+        },
+        {
+          "name": "CategoryPrivate",
+          "description": "Chuyển trạng thái danh mục sang Private",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /category_private", "Action: Private"]
+        },
+        {
+          "name": "CategoryPublic",
+          "description": "Chuyển trạng thái danh mục sang Public",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /category_public", "Action: Public"]
+        },
+        {
+          "name": "ChanelInfo",
+          "description": "Hiển thị thông tin kênh",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /channel_info"]
+        },
+        {
+          "name": "ChannelClone",
+          "description": "Sao chép kênh",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /channel_clone", "Action: Clone"]
+        },
+        {
+          "name": "ChannelSync",
+          "description": "Đồng bộ kênh với danh mục chứa nó",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /channel_sync", "Action: Sync"]
+        },
+        {
+          "name": "ChannelPrivate",
+          "description": "Chuyển trạng thái kênh sang Private",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /channel_private", "Action: Private"]
+        },
+        {
+          "name": "ChannelPublic",
+          "description": "Chuyển trạng thái kênh sang Public",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /channel_public", "Action: Public"]
+        },
+        {
+          "name": "ChannelSFW",
+          "description": "Chuyển trạng thái kênh sang SFW",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /channel_sfw", "Action: SFW"]
+        },
+        {
+          "name": "ChannelNSFW",
+          "description": "Chuyển trạng thái kênh sang NSFW",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /channel_nsfw", "Action: NSFW"]
+        },
+        {
+          "name": "MemberInfo",
+          "description": "Hiển thị thông tin thành viên",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /member_info"]
+        },
+        {
+          "name": "MemberRename",
+          "description": "Đổi tên thành viên",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /member_rename", "Action: Name"]
+        },
+        {
+          "name": "MemberSetlevel",
+          "description": "Đổi level thành viên, member_exp sẽ bằng với exp yêu cầu của level, user_level không đổi",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /member_level", "Action: Level"]
+        },
+        {
+          "name": "MemberMove",
+          "description": "Di chuyển thành viên",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /member_move", "Action: Move"]
+        },
+        {
+          "name": "MemberReset",
+          "description": "Đặt lại trạng thái thành viên về \"Good\"",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /member_reset", "Action: Good - Unwarn - Unmute - Unlock"]
+        },
+        {
+          "name": "MemberWarn",
+          "description": "Đổi trạng thái thành viên thành \"Warn\", gắn role tương ứng trong cột role_warn",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /member_warn", "Action: Warn"]
+        },
+        {
+          "name": "MemberMute",
+          "description": "Đổi trạng thái thành viên thành \"Mute\", gắn role tương ứng trong cột role_mute",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /member_mute", "Action: Mute"]
+        },
+        {
+          "name": "MemberLock",
+          "description": "Đổi trạng thái thành viên thành \"Lock\", gắn role tương ứng trong cột role_lock",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /member_lock", "Action: Lock"]
+        },
+        {
+          "name": "MemberKick",
+          "description": "Đổi trạng thái thành viên thành \"Kick\"",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /member_kick", "Action: Kick"]
+        }
+      ]
+    },
+    "Event": {
+      "description": "Các trigger tự động gọi đến Script.",
+      "items": [
+        {
+          "name": "None",
+          "script": "None",
+          "logic": "None",
+          "references": ["None"]
+        }
+      ]
+    },
+    "Action": {
+      "description": "Các nút giao diện gọi trực tiếp đến Script. Schema đã được cố định tất cả các trường.",
+      "items": [
+        {
+          "label": "Status Timeout",
+          "script": "StatusTimeout",
+          "parent_embed_schema": "/server_info",
+          "color": "Default",
+          "note": "None"
+        },
+        {
+          "label": "Status Role",
+          "script": "StatusRole",
+          "parent_embed_schema": "/server_info",
+          "color": "Default",
+          "note": "None"
+        },
+        {
+          "label": "Status Unrole",
+          "script": "StatusUnrole",
+          "parent_embed_schema": "/server_info",
+          "color": "Default",
+          "note": "None"
+        },
+        {
+          "label": "Clone",
+          "script": "CategoryClone",
+          "parent_embed_schema": "/category_info",
+          "color": "Default",
+          "note": "None"
+        },
+        {
+          "label": "Private",
+          "script": "CategoryPrivate",
+          "parent_embed_schema": "/category_info",
+          "color": "Default",
+          "note": "Private hay Public sẽ tuỳ vào trạng thái hiện tại của category"
+        },
+        {
+          "label": "Public",
+          "script": "CategoryPublic",
+          "parent_embed_schema": "/category_info",
+          "color": "Default",
+          "note": "Private hay Public sẽ tuỳ vào trạng thái hiện tại của category"
+        },
+        {
+          "label": "Clone",
+          "script": "ChannelClone",
+          "parent_embed_schema": "/channel_info",
+          "color": "Default",
+          "note": "None"
+        },
+        {
+          "label": "Sync",
+          "script": "ChannelSync",
+          "parent_embed_schema": "/channel_info",
+          "color": "Default",
+          "note": "None"
+        },
+        {
+          "label": "Private",
+          "script": "ChannelPrivate",
+          "parent_embed_schema": "/channel_info",
+          "color": "Default",
+          "note": "Tuỳ vào trạng thái hiện tại"
+        },
+        {
+          "label": "Public",
+          "script": "ChannelPublic",
+          "parent_embed_schema": "/channel_info",
+          "color": "Default",
+          "note": "Tuỳ vào trạng thái hiện tại"
+        },
+        {
+          "label": "SFW",
+          "script": "ChannelSFW",
+          "parent_embed_schema": "/channel_info",
+          "color": "Default",
+          "note": "Tuỳ vào trạng thái hiện tại"
+        },
+        {
+          "label": "NSFW",
+          "script": "ChannelNSFW",
+          "parent_embed_schema": "/channel_info",
+          "color": "Default",
+          "note": "Tuỳ vào trạng thái hiện tại"
+        },
+        {
+          "label": "Name",
+          "script": "MemberRename",
+          "parent_embed_schema": "/member_info",
+          "color": "Default",
+          "note": "None"
+        },
+        {
+          "label": "Level",
+          "script": "MemberSetlevel",
+          "parent_embed_schema": "/member_info",
+          "color": "Default",
+          "note": "None"
+        },
+        {
+          "label": "Move",
+          "script": "MemberMove",
+          "parent_embed_schema": "/member_info",
+          "color": "Default",
+          "note": "None"
+        },
+        {
+          "label": "Good - Unwarn - Unmute - Unlock",
+          "script": "MemberReset",
+          "parent_embed_schema": "/member_info",
+          "color": "Green",
+          "note": "None"
+        },
+        {
+          "label": "Warn",
+          "script": "MemberWarn",
+          "parent_embed_schema": "/member_info",
+          "color": "Default",
+          "note": "None"
+        },
+        {
+          "label": "Mute",
+          "script": "MemberMute",
+          "parent_embed_schema": "/member_info",
+          "color": "Default",
+          "note": "None"
+        },
+        {
+          "label": "Lock",
+          "script": "MemberLock",
+          "parent_embed_schema": "/member_info",
+          "color": "Default",
+          "note": "None"
+        },
+        {
+          "label": "Kick",
+          "script": "MemberKick",
+          "parent_embed_schema": "/member_info",
+          "color": "Red",
+          "note": "None"
+        }
+      ]
+    },
+    "Slash": {
+      "description": "Các lệnh slash gọi đến Script. reply_type: embed (embed_schema từ builder) hoặc ephemeral (embed_schema = nội dung tin nhắc). slashs: sub-option; dấu * = bắt buộc.",
+      "items": [
+        {
+          "command": "/server_info",
+          "script": "ServerInfo",
+          "slashs": [],
+          "reply_type": "embed",
+          "embed_schema": {
+            "builder": "serverInfoEmbed.buildEmbed(guild, inviteLink)",
+            "color": 5895182,
+            "title": "✦ {guild.name}",
+            "thumbnail": "guild.iconURL({ size: 256 })",
+            "image": "config.resource.mainImageURL",
+            "fields": [
+              { "name": "ID", "value": "guild.id", "inline": true },
+              { "name": "Name", "value": "guild.name", "inline": true },
+              { "name": "\\u200B", "value": "\\u200B", "inline": true },
+              { "name": "Created At", "value": "formatShortDate(guild.createdAt)", "inline": true },
+              { "name": "Type", "value": "getGuildTypeString(guild)", "inline": true },
+              { "name": "\\u200B", "value": "\\u200B", "inline": true },
+              { "name": "Biography", "value": "guild.description (max 1024)", "inline": false },
+              { "name": "Channel", "value": "Chat: count | Voice: count", "inline": true },
+              { "name": "Category", "value": "count", "inline": true },
+              { "name": "\\u200B", "value": "\\u200B", "inline": true },
+              { "name": "Member", "value": "memberCount", "inline": true },
+              { "name": "Role", "value": "rolesCount", "inline": true },
+              { "name": "Boost", "value": "boostCount", "inline": true },
+              { "name": "Sticker", "value": "stickerCount", "inline": true },
+              { "name": "Emoji", "value": "emojiCount", "inline": true },
+              { "name": "Sound", "value": "soundCount", "inline": true }
+            ],
+            "footer": "Welcome to the server",
+            "timestamp": true
+          },
+          "actions_included": ["Status Timeout", "Status Role", "Status Unrole"]
+        },
+        {
+          "command": "/status_timeout",
+          "script": "StatusTimeout",
+          "slashs": [
+            "warn: điền thời gian time_warn (hh:mm:ss)",
+            "mute: điền thời gian time_mute (hh:mm:ss)",
+            "lock: điền thời gian time_lock (hh:mm:ss)",
+            "all: điền 1 thời gian cho cả 3 trường; chỉ chọn khi không chọn subslash khác, sau khi chọn all không chọn subslash nữa"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "Updated Status Timeout: \\n Warn: {time_warn} \\n Mute: {time_mute} \\n Lock: {time_lock}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/status_role",
+          "script": "StatusRole",
+          "slashs": [
+            "warn: điền tên role_warn",
+            "mute: điền tên role_mute",
+            "lock: điền tên role_lock"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "Updated Status Role: \\n Warn: {role_warn} \\n Mute: {role_mute} \\n Lock: {role_lock}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/status_unrole",
+          "script": "StatusUnrole",
+          "slashs": [
+            "mute: điền tên unrole_mute",
+            "lock: điền tên unrole_lock"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "Updated Status Unrole: \\n Mute: {unrole_mute} \\n Lock: {unrole_lock}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/category_info",
+          "script": "CategoryInfo",
+          "slashs": [
+            "target: target một category - nếu không chọn sẽ tự target danh mục chứa kênh mà lệnh này được gõ"
+          ],
+          "reply_type": "embed",
+          "embed_schema": {
+            "builder": "categoryInfoEmbed.buildCategoryEmbed(category, guild)",
+            "color": 5788754,
+            "title": "✦ {category.name}",
+            "image": "config.resource.mainImageURL",
+            "fields": [
+              { "name": "ID", "value": "category.id", "inline": true },
+              { "name": "Name", "value": "category.name", "inline": true },
+              { "name": "\\u200B", "value": "\\u200B", "inline": true },
+              { "name": "Chanel", "value": "Chat: count · Voice: count · Other: count", "inline": true },
+              { "name": "Status", "value": "Public | Private", "inline": true },
+              { "name": "\\u200B", "value": "\\u200B", "inline": true }
+            ],
+            "timestamp": true
+          },
+          "actions_included": ["Clone", "Private", "Public"]
+        },
+        {
+          "command": "/category_clone",
+          "script": "CategoryClone",
+          "slashs": [
+            "target: target một category - nếu không chọn sẽ tự target danh mục chứa kênh mà lệnh này được gõ",
+            "number: số lượng coppy - không chọn thì mặc định là 1 bản sao"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "Completed Clone {Category Name}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/category_private",
+          "script": "CategoryPrivate",
+          "slashs": [
+            "target: target một category - nếu không chọn sẽ tự target danh mục chứa kênh mà lệnh này được gõ"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "Privated {Category Name}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/category_public",
+          "script": "CategoryPublic",
+          "slashs": [
+            "target: target một category - nếu không chọn sẽ tự target danh mục chứa kênh mà lệnh này được gõ"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "Published {Category Name}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/channel_info",
+          "script": "ChanelInfo",
+          "slashs": [
+            "target: target một channel - nếu không chọn sẽ tự target kênh mà lệnh này được gõ"
+          ],
+          "reply_type": "embed",
+          "embed_schema": {
+            "builder": "channelInfoEmbed.buildChannelEmbed(channel, guild)",
+            "color": 15158332,
+            "title": "✦ Channel: {channel.name}",
+            "description": "**Topic:** {channel.topic} (nếu có)",
+            "image": "config.resource.mainImageURL",
+            "fields": [
+              { "name": "Channel ID", "value": "channel.id", "inline": true },
+              { "name": "Type", "value": "Text Channel | Voice | ...", "inline": true },
+              { "name": "Category", "value": "channel.parent.name", "inline": true },
+              { "name": "Creation", "value": "formatShortDate(channel.createdAt)", "inline": true },
+              { "name": "NSFW", "value": "Yes | No", "inline": true },
+              { "name": "Slowmode", "value": "rateLimitPerUser s | Off", "inline": true },
+              { "name": "Status", "value": "Public | Private", "inline": true }
+            ],
+            "timestamp": true
+          },
+          "actions_included": ["Clone", "Sync", "Private", "Public", "SFW", "NSFW"]
+        },
+        {
+          "command": "/channel_clone",
+          "script": "ChannelClone",
+          "slashs": [
+            "target: target một channel - nếu không chọn sẽ tự target kênh mà lệnh này được gõ",
+            "number: số lượng coppy - không chọn thì mặc định là 1 bản sao"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "Completed Clone {Channel Name}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/channel_sync",
+          "script": "ChannelSync",
+          "slashs": [
+            "target: target một channel - nếu không chọn sẽ tự target kênh mà lệnh này được gõ"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "Completed Sync {Channel Name}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/channel_private",
+          "script": "ChannelPrivate",
+          "slashs": [
+            "target: target một channel - nếu không chọn sẽ tự target kênh mà lệnh này được gõ"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "Privated {Channel Name}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/channel_public",
+          "script": "ChannelPublic",
+          "slashs": [
+            "target: target một channel - nếu không chọn sẽ tự target kênh mà lệnh này được gõ"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "Published {Channel Name}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/channel_sfw",
+          "script": "ChannelSFW",
+          "slashs": [
+            "target: target một channel - nếu không chọn sẽ tự target kênh mà lệnh này được gõ"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "Changed channel {Channel Name} to SFW. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/channel_nsfw",
+          "script": "ChannelNSFW",
+          "slashs": [
+            "target: target một channel - nếu không chọn sẽ tự target kênh mà lệnh này được gõ"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "Changed channel {Channel Name} to NSFW. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/member_info",
+          "script": "MemberInfo",
+          "slashs": [
+            "target: target một thành viên - nếu không chọn sẽ tự target chính mình"
+          ],
+          "reply_type": "embed",
+          "embed_schema": {
+            "builder": "memberInfoEmbed.buildEmbed(member, profile)",
+            "color": "getStatusColor(status) - Good: 0x57f287, Warning: 0xfee75c, Muted: 0xed4245, Locked: 0x992d22",
+            "title": "✦ {user.username}",
+            "thumbnail": "user.displayAvatarURL({ dynamic: true })",
+            "image": "config.resource.mainImageURL",
+            "fields": [
+              { "name": "UID", "value": "user.id", "inline": true },
+              { "name": "Name", "value": "member.displayName", "inline": true },
+              { "name": "\\u200B", "value": "\\u200B", "inline": true },
+              { "name": "Join Discord", "value": "user.createdAt (vi-VN)", "inline": true },
+              { "name": "Join Server", "value": "member.joinedAt (vi-VN)", "inline": true },
+              { "name": "\\u200B", "value": "\\u200B", "inline": true },
+              { "name": "Level", "value": "profile.level", "inline": true },
+              { "name": "Status", "value": "status hoặc status: <t:expires:R>", "inline": true },
+              { "name": "\\u200B", "value": "\\u200B", "inline": true },
+              { "name": "Role", "value": "highestRole mention hoặc None", "inline": false }
+            ],
+            "timestamp": true
+          },
+          "actions_included": ["Name", "Level", "Move", "Good - Unwarn - Unmute - Unlock", "Warn", "Mute", "Lock", "Kick"]
+        },
+        {
+          "command": "/member_rename",
+          "script": "MemberRename",
+          "slashs": [
+            "target: target một thành viên - nếu không chọn sẽ tự target chính mình",
+            "setname*: tên mới"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "Completed Rename {Username} to {Server Profile Name}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/member_level",
+          "script": "MemberSetlevel",
+          "slashs": [
+            "target: target một thành viên - nếu không chọn sẽ tự target chính mình",
+            "setlevel*: level mới trong khoảng (min - max trong bảng Levels)"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "Completed Set Level {Server Profile Name}: {member_level}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/member_move",
+          "script": "MemberMove",
+          "slashs": [
+            "target: target 1 thành viên, hoặc 1 kênh, hoặc cả server - nếu không chọn sẽ tự target chính mình",
+            "channel*: target 1 kênh thoại để di chuyển tất cả thành viên được target đến đó"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "Moved {Number of Member} to {Channel Name}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/member_reset",
+          "script": "MemberReset",
+          "slashs": [
+            "target*: target một thành viên"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "{Server Profile Name}'s Status is Good now. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/member_warn",
+          "script": "MemberWarn",
+          "slashs": [
+            "target*: target một thành viên"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "{Server Profile Name}'s Status is Warning until {Member Expires}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/member_mute",
+          "script": "MemberMute",
+          "slashs": [
+            "target*: target một thành viên"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "{Server Profile Name}'s Status is Muted until {Member Expires}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/member_lock",
+          "script": "MemberLock",
+          "slashs": [
+            "target*: target một thành viên"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "{Server Profile Name}'s Status is Locked until {Member Expires}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/member_kick",
+          "script": "MemberKick",
+          "slashs": [
+            "target*: target một thành viên"
+          ],
+          "reply_type": "ephemeral",
+          "embed_schema": "{Server Profile Name} has been Kicked. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        }
+      ]
+    }
+  }
+}
