@@ -14,6 +14,8 @@ module.exports = async function showServerInfo(interaction, client) {
         return interaction.reply({ content: 'Chỉ dùng trong server.', flags: MessageFlags.Ephemeral });
     }
 
+    await interaction.deferReply();
+
     await guild.fetch().catch(() => {});
 
     const profile = await getServerProfile(guild.id);
@@ -23,7 +25,7 @@ module.exports = async function showServerInfo(interaction, client) {
     const embed = buildEmbed(guild, link);
     const { row } = buildComponents();
 
-    await interaction.reply({
+    await interaction.editReply({
         embeds: [embed],
         components: row ? [row] : [],
     });
