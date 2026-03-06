@@ -1,5 +1,5 @@
 // src/index.js
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, Events } = require('discord.js');
 const ENV = require('../env.js');
 const config = require('./.config.js');
 const { loadScripts, loadCommands, loadEvents } = require('./utils/handlers.js');
@@ -38,7 +38,7 @@ loadEvents(client);
 // interactionCreate: xử lý trong events/utilities/evuti11_interaction_create.js (slash, context menu, member_info components)
 
 // Sự kiện Ready cơ bản (Fallback nếu chưa có file events/ready.js)
-client.once('ready', c => {
+client.once(Events.ClientReady, c => {
     console.log(`Ready! Logged in as ${c.user.tag}`);
 });
 
