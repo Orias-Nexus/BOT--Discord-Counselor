@@ -1,9 +1,10 @@
 import { EmbedBuilder, ChannelType, PermissionFlagsBits } from 'discord.js';
 import { mainImageURL } from '../config.js';
 
-const SERVER_INFO_COLOR = 5895182;
-const CHANNEL_INFO_COLOR = 15158332;
-const CATEGORY_INFO_COLOR = 5788754;
+const SERVER_INFO_COLOR = 0xfcfcfc;
+const CATEGORY_INFO_COLOR = 0xfdfcfa;
+const CHANNEL_INFO_COLOR = 0xfbfcf8;
+const MEMBER_INFO_COLOR = 0xf5f5f5;
 
 const STATUS_COLORS = {
   Good: 0x57f287,
@@ -216,7 +217,7 @@ export function buildMemberInfoEmbed(member, profile) {
       : 'None';
 
   const embed = new EmbedBuilder()
-    .setColor(getStatusColor(status))
+    .setColor(MEMBER_INFO_COLOR)
     .setTitle(`✦ ${user.username}`)
     .setThumbnail(user.displayAvatarURL({ size: 256 }))
     .addFields(
