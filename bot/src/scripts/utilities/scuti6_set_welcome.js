@@ -1,1 +1,0 @@
-// src/scripts/utilities/scuti6_set_welcome.js

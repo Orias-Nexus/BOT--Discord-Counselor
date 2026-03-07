@@ -1,1 +1,0 @@
-// src/events/mods/channel/evcha4_chanel_lock.js

@@ -1,1 +1,0 @@
-// src/scripts/utilities/scuti5_set_autorole.js

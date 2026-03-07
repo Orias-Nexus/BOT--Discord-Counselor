@@ -1,1 +1,0 @@
-// src/events/mods/member/evmem10_user_kick.js

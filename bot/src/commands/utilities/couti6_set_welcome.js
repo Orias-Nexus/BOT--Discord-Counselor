@@ -1,1 +1,0 @@
-// src/commands/utilities/couti6_set_welcome.js
