@@ -11,7 +11,7 @@ const isLocalBackend =
   BACKEND_API_URL.startsWith('127.0.0.1');
 
 const GITHUB_RAW_WHITEPET =
-  'https://github.com/Orias-Nexus/JS--Discord-Counselor/blob/main/assets/images/Whitepet.png?raw=true';
+  'https://github.com/Orias-Nexus/JS-Discord-Counselor/blob/main/assets/images/Whitepet.png?raw=true';
 
 const DEFAULT_MAIN_IMAGE_URL = isLocalBackend
   ? GITHUB_RAW_WHITEPET
