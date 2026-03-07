@@ -9,6 +9,7 @@ const SCRIPT_NAMES = [
   'CategoryInfo', 'CategoryClone', 'CategoryPrivate', 'CategoryPublic',
   'ChanelInfo', 'ChannelClone', 'ChannelSync', 'ChannelPrivate', 'ChannelPublic', 'ChannelSFW', 'ChannelNSFW',
   'MemberInfo', 'MemberRename', 'MemberSetlevel', 'MemberMove', 'MemberReset', 'MemberWarn', 'MemberMute', 'MemberLock', 'MemberKick',
+  'MemberGreeting', 'MemberLeaving',
 ];
 
 const scriptCache = new Map();
@@ -43,7 +44,20 @@ export async function runScript(scriptName, interaction, client) {
   }
 
   const actionContext = arguments[3] ?? null;
-  await run(interaction, client, actionContext);
+  const result = await run(interaction, client, actionContext);
+  return result;
+}
+
+/**
+ * Chạy script từ event (không có interaction). eventContext: { guild, member } hoặc tương đương.
+ */
+export async function runEvent(scriptName, client, eventContext) {
+  if (!scriptName || typeof scriptName !== 'string') return;
+  const module = scriptCache.get(scriptName);
+  if (!module) return;
+  const run = module.run ?? module.default?.run ?? module.default;
+  if (typeof run !== 'function') return;
+  await run(null, client, eventContext);
 }
 
 async function replyError(interaction, message) {

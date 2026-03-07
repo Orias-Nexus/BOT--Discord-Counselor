@@ -10,17 +10,17 @@ export async function ensureServer(serverId) {
 
 export async function getTimes(serverId) {
     const s = await serverRepo.ensure(serverId);
-    return { time_warn: s.time_warn, time_mute: s.time_mute, time_lock: s.time_lock };
+    return { time_warn: s.time_warn, time_mute: s.time_mute, time_lock: s.time_lock, time_new: s.time_new };
 }
 
-export async function setTimes(serverId, { time_warn, time_mute, time_lock }) {
+export async function setTimes(serverId, { time_warn, time_mute, time_lock, time_new }) {
     await serverRepo.ensure(serverId);
-    return serverRepo.setTimes(serverId, { time_warn, time_mute, time_lock });
+    return serverRepo.setTimes(serverId, { time_warn, time_mute, time_lock, time_new });
 }
 
-export async function setRoles(serverId, { role_warn, role_mute, role_lock }) {
+export async function setRoles(serverId, { role_warn, role_mute, role_lock, role_new }) {
     await serverRepo.ensure(serverId);
-    return serverRepo.setRoles(serverId, { role_warn, role_mute, role_lock });
+    return serverRepo.setRoles(serverId, { role_warn, role_mute, role_lock, role_new });
 }
 
 export async function setUnroles(serverId, { unrole_mute, unrole_lock }) {

@@ -61,8 +61,8 @@ export async function handleAction(interaction, client, timing = {}) {
     }
   }
   try {
-    await runScript(scriptName, interaction, client, actionContext);
-    const payload = await getEmbedUpdatePayload(scriptName, interaction, actionContext);
+    const scriptResult = await runScript(scriptName, interaction, client, actionContext);
+    const payload = await getEmbedUpdatePayload(scriptName, interaction, actionContext, scriptResult);
     if (payload && interaction.message) {
       await interaction.message.edit(payload).catch(() => {});
     }

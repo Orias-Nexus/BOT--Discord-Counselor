@@ -20,9 +20,9 @@ ON CONFLICT (level) DO NOTHING;
 -- -----------------------------------------------------------------------------
 INSERT INTO "DiscordCounselor".functions (script_id, script, slash, action, event, embed) VALUES
 ("DiscordCounselor".uuidv7(), 'ServerInfo', '/server_info', NULL, NULL, '{"replyType":"embed","builder":"serverInfoEmbed.buildEmbed"}'::jsonb),
-("DiscordCounselor".uuidv7(), 'StatusTimeout', '/status_timeout', 'Status Timeout', NULL, '{"replyType":"ephemeral","content":"Updated Status Timeout: \\n Warn: {time_warn} \\n Mute: {time_mute} \\n Lock: {time_lock}."}'::jsonb),
-("DiscordCounselor".uuidv7(), 'StatusRole', '/status_role', 'Status Role', NULL, '{"replyType":"ephemeral","content":"Updated Status Role: \\n Warn: {role_warn} \\n Mute: {role_mute} \\n Lock: {role_lock}."}'::jsonb),
-("DiscordCounselor".uuidv7(), 'StatusUnrole', '/status_unrole', 'Status Unrole', NULL, '{"replyType":"ephemeral","content":"Updated Status Unrole: \\n Mute: {unrole_mute} \\n Lock: {unrole_lock}."}'::jsonb),
+("DiscordCounselor".uuidv7(), 'StatusTimeout', '/status_timeout', 'Status Timeout', NULL, '{"replyType":"ephemeral","content":"Updated Status Timeout: - Warn: {time_warn} - Mute: {time_mute} - Lock: {time_lock} - Newbie: {time_new}."}'::jsonb),
+("DiscordCounselor".uuidv7(), 'StatusRole', '/status_role', 'Status Role', NULL, '{"replyType":"ephemeral","content":"Updated Status Role: - Warn: {role_warn} - Mute: {role_mute} - Lock: {role_lock} - Newbie: {role_new}."}'::jsonb),
+("DiscordCounselor".uuidv7(), 'StatusUnrole', '/status_unrole', 'Status Unrole', NULL, '{"replyType":"ephemeral","content":"Updated Status Unrole: - Mute: {unrole_mute} - Lock: {unrole_lock}."}'::jsonb),
 ("DiscordCounselor".uuidv7(), 'CategoryInfo', '/category_info', NULL, NULL, '{"replyType":"embed","builder":"categoryInfoEmbed.buildCategoryEmbed"}'::jsonb),
 ("DiscordCounselor".uuidv7(), 'CategoryClone', '/category_clone', 'Clone', NULL, '{"replyType":"ephemeral","content":"Completed Clone {Category Name}."}'::jsonb),
 ("DiscordCounselor".uuidv7(), 'CategoryPrivate', '/category_private', 'Private', NULL, '{"replyType":"ephemeral","content":"Privated {Category Name}."}'::jsonb),

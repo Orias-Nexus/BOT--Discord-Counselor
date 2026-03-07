@@ -16,10 +16,11 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
       b
-        .addStringOption((o) => o.setName('warn').setDescription('Thời gian time_warn (hh:mm:ss)'))
-        .addStringOption((o) => o.setName('mute').setDescription('Thời gian time_mute (hh:mm:ss)'))
-        .addStringOption((o) => o.setName('lock').setDescription('Thời gian time_lock (hh:mm:ss)'))
-        .addStringOption((o) => o.setName('all').setDescription('Một thời gian cho cả 3 trường')),
+        .addStringOption((o) => o.setName('warn').setDescription('Thời gian time_warn (dd:hh:mm)'))
+        .addStringOption((o) => o.setName('mute').setDescription('Thời gian time_mute (dd:hh:mm)'))
+        .addStringOption((o) => o.setName('lock').setDescription('Thời gian time_lock (dd:hh:mm)'))
+        .addStringOption((o) => o.setName('new').setDescription('Thời gian time_new (dd:hh:mm)'))
+        .addStringOption((o) => o.setName('all').setDescription('Một thời gian cho cả 4 trường')),
   },
   {
     name: 'status_role',
@@ -29,7 +30,8 @@ const SLASH_LIST = [
       b
         .addStringOption((o) => o.setName('warn').setDescription('Tên role gắn khi Warn'))
         .addStringOption((o) => o.setName('mute').setDescription('Tên role gắn khi Mute'))
-        .addStringOption((o) => o.setName('lock').setDescription('Tên role gắn khi Lock')),
+        .addStringOption((o) => o.setName('lock').setDescription('Tên role gắn khi Lock'))
+        .addStringOption((o) => o.setName('new').setDescription('Tên role gắn khi Newbie')),
   },
   {
     name: 'status_unrole',

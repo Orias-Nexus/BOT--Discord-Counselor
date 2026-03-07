@@ -132,3 +132,8 @@ export function replacePlaceholders(content, vars) {
 export async function getLevelRange() {
   return request('/api/members/level-range');
 }
+
+/** Gọi backend xử lý member hết hạn (đặt Good). Trả về { count, updated: [{ server_id, user_id }] }. */
+export async function processExpires() {
+  return request('/api/members/process-expires', { method: 'POST' });
+}
