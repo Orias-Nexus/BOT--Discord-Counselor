@@ -1,4 +1,16 @@
-**/node_modules/*
-**/.github/*
+.vscode
+.cursor
 
+node_modules
+private
+
+# Environment files (giữ .env.example)
 .env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+
+# **/supabase/*
