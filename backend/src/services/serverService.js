@@ -4,6 +4,7 @@ export async function getServer(serverId) {
     return serverRepo.getById(serverId);
 }
 
+/** Tạo server nếu chưa có. Trigger DB tự tạo 3 messages (Greeting, Leaving, Boosting). */
 export async function ensureServer(serverId) {
     return serverRepo.ensure(serverId);
 }
