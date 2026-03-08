@@ -1,0 +1,1 @@
+// src/scripts/mods/channel/sccha3_chanel_delete.js

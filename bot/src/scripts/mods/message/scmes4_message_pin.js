@@ -1,0 +1,1 @@
+// src/scripts/mods/message/scmes4_message_pin.js

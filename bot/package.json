@@ -1,0 +1,33 @@
+{
+  "name": "orias-pet-bot",
+  "version": "1.0.0",
+  "description": "Discord bot - logic kết nối Discord, xử lý lệnh và event",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "deploy": "node src/commands.js"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "render",
+    "docker"
+  ],
+  "author": "Me",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1",
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "overrides": {
+    "undici": "^6.23.0"
+  }
+}
