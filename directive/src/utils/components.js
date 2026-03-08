@@ -17,15 +17,18 @@ export const SCRIPT_TO_LABEL = {
   MemberRename: 'Name',
   MemberSetlevel: 'Level',
   MemberMove: 'Move',
-  MemberReset: 'Good - Unwarn - Unmute - Unlock',
+  MemberReset: 'Good',
   MemberWarn: 'Warn',
   MemberMute: 'Mute',
   MemberLock: 'Lock',
   MemberKick: 'Kick',
+  SetVoiceCreator: 'Voice Creator',
+  SetServerStats: 'Server Stats',
 };
 
 /** Actions included per parent (Architecture Slash actions_included). */
 const SERVER_INFO_ACTIONS = ['StatusTimeout', 'StatusRole', 'StatusUnrole'];
+const SERVER_INFO_ACTIONS_ROW2 = ['SetVoiceCreator', 'SetServerStats'];
 const CATEGORY_INFO_ACTIONS_BASE = ['CategoryClone'];
 const CHANNEL_INFO_ACTIONS = ['ChannelClone', 'ChannelSync', 'ChannelPrivate', 'ChannelPublic', 'ChannelSFW', 'ChannelNSFW'];
 /** Tối đa 5 nút mỗi ActionRow (giới hạn Discord). Chia 8 action thành 2 hàng. */
@@ -52,7 +55,7 @@ function buildActionRow(scriptNames, contextId, styleOverrides = {}, labelOverri
   return row;
 }
 
-/** Nhãn nút Reset theo trạng thái member (Good / Unwarn / Unmute / Unlock). */
+/** Nhãn nút Good theo trạng thái member (Good / Warning / Muted / Locked). */
 function getMemberResetLabel(memberStatus) {
   switch (memberStatus) {
     case 'Warning': return 'Unwarn';
@@ -64,7 +67,8 @@ function getMemberResetLabel(memberStatus) {
 
 export function buildServerInfoComponents() {
   const row = buildActionRow(SERVER_INFO_ACTIONS, 'server');
-  return { row };
+  const row2 = buildActionRow(SERVER_INFO_ACTIONS_ROW2, 'server');
+  return { row, row2 };
 }
 
 export function buildCategoryInfoComponents(categoryId, category, guild) {
