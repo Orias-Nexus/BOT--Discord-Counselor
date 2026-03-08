@@ -9,9 +9,19 @@ import {
  * Each entry: command name (without /), script name, options builder.
  */
 const SLASH_LIST = [
-  { name: 'server_info', script: 'ServerInfo', defaultMemberPermissions: PermissionFlagsBits.ManageGuild },
+  { name: 'serverinfo', script: 'ServerInfo', defaultMemberPermissions: PermissionFlagsBits.ManageGuild },
   {
-    name: 'status_timeout',
+    name: 'setvoicecreator',
+    script: 'SetVoiceCreator',
+    defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
+  },
+  {
+    name: 'setserverstats',
+    script: 'SetServerStats',
+    defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
+  },
+  {
+    name: 'statustimeout',
     script: 'StatusTimeout',
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
@@ -23,7 +33,7 @@ const SLASH_LIST = [
         .addStringOption((o) => o.setName('all').setDescription('Một thời gian cho cả 4 trường')),
   },
   {
-    name: 'status_role',
+    name: 'statusrole',
     script: 'StatusRole',
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
@@ -34,7 +44,7 @@ const SLASH_LIST = [
         .addStringOption((o) => o.setName('new').setDescription('Tên role gắn khi Newbie')),
   },
   {
-    name: 'status_unrole',
+    name: 'statusunrole',
     script: 'StatusUnrole',
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
@@ -43,7 +53,7 @@ const SLASH_LIST = [
         .addStringOption((o) => o.setName('lock').setDescription('Role ID gỡ khi Lock (chỉ số, VD: 1234567890123456789)')),
   },
   {
-    name: 'category_info',
+    name: 'categoryinfo',
     script: 'CategoryInfo',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) =>
@@ -52,7 +62,7 @@ const SLASH_LIST = [
       ),
   },
   {
-    name: 'category_clone',
+    name: 'categoryclone',
     script: 'CategoryClone',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) =>
@@ -63,7 +73,7 @@ const SLASH_LIST = [
         .addIntegerOption((o) => o.setName('number').setDescription('Số bản sao (mặc định 1)').setMinValue(1).setMaxValue(10)),
   },
   {
-    name: 'category_private',
+    name: 'categoryprivate',
     script: 'CategoryPrivate',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) =>
@@ -72,7 +82,7 @@ const SLASH_LIST = [
       ),
   },
   {
-    name: 'category_public',
+    name: 'categorypublic',
     script: 'CategoryPublic',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) =>
@@ -81,7 +91,7 @@ const SLASH_LIST = [
       ),
   },
   {
-    name: 'channel_info',
+    name: 'channelinfo',
     script: 'ChanelInfo',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) =>
@@ -96,7 +106,7 @@ const SLASH_LIST = [
       ),
   },
   {
-    name: 'channel_clone',
+    name: 'channelclone',
     script: 'ChannelClone',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) =>
@@ -105,42 +115,42 @@ const SLASH_LIST = [
         .addIntegerOption((o) => o.setName('number').setDescription('Số bản sao (mặc định 1)').setMinValue(1).setMaxValue(10)),
   },
   {
-    name: 'channel_sync',
+    name: 'channelsync',
     script: 'ChannelSync',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Kênh')),
   },
   {
-    name: 'channel_private',
+    name: 'channelprivate',
     script: 'ChannelPrivate',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Kênh')),
   },
   {
-    name: 'channel_public',
+    name: 'channelpublic',
     script: 'ChannelPublic',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Kênh')),
   },
   {
-    name: 'channel_sfw',
+    name: 'channelsfw',
     script: 'ChannelSFW',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Kênh')),
   },
   {
-    name: 'channel_nsfw',
+    name: 'channelnsfw',
     script: 'ChannelNSFW',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Kênh')),
   },
   {
-    name: 'member_info',
+    name: 'memberinfo',
     script: 'MemberInfo',
     options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Thành viên (mặc định: bản thân)')),
   },
   {
-    name: 'member_rename',
+    name: 'memberrename',
     script: 'MemberRename',
     defaultMemberPermissions: PermissionFlagsBits.ManageNicknames,
     options: (b) =>
@@ -149,7 +159,7 @@ const SLASH_LIST = [
         .addUserOption((o) => o.setName('target').setDescription('Thành viên (mặc định: bản thân)')),
   },
   {
-    name: 'member_level',
+    name: 'memberlevel',
     script: 'MemberSetlevel',
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
@@ -158,7 +168,7 @@ const SLASH_LIST = [
         .addUserOption((o) => o.setName('target').setDescription('Thành viên (mặc định: bản thân)')),
   },
   {
-    name: 'member_move',
+    name: 'membermove',
     script: 'MemberMove',
     defaultMemberPermissions: PermissionFlagsBits.MoveMembers,
     options: (b) =>
@@ -169,31 +179,31 @@ const SLASH_LIST = [
         .addUserOption((o) => o.setName('target').setDescription('Thành viên (để trống = tất cả trong voice)')),
   },
   {
-    name: 'member_reset',
+    name: 'memberreset',
     script: 'MemberReset',
     defaultMemberPermissions: PermissionFlagsBits.ModerateMembers,
     options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Thành viên').setRequired(true)),
   },
   {
-    name: 'member_warn',
+    name: 'memberwarn',
     script: 'MemberWarn',
     defaultMemberPermissions: PermissionFlagsBits.ModerateMembers,
     options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Thành viên').setRequired(true)),
   },
   {
-    name: 'member_mute',
+    name: 'membermute',
     script: 'MemberMute',
     defaultMemberPermissions: PermissionFlagsBits.ModerateMembers,
     options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Thành viên').setRequired(true)),
   },
   {
-    name: 'member_lock',
+    name: 'memberlock',
     script: 'MemberLock',
     defaultMemberPermissions: PermissionFlagsBits.ModerateMembers,
     options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Thành viên').setRequired(true)),
   },
   {
-    name: 'member_kick',
+    name: 'memberkick',
     script: 'MemberKick',
     defaultMemberPermissions: PermissionFlagsBits.KickMembers,
     options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Thành viên').setRequired(true)),
