@@ -3,7 +3,7 @@
  * Thuật toán "nhận dạng hành động" (event nào gọi script nào) nằm ở đây, không hardcode trong index hay script.
  */
 
-/** Discord event name (Events.GuildMemberAdd) → { scriptName, buildContext(payload) } */
+/** Discord event name (Events.*) → { scriptName, buildContext(payload) } */
 export const EVENT_HANDLERS = [
   {
     discordEvent: 'GuildMemberAdd',
@@ -14,5 +14,10 @@ export const EVENT_HANDLERS = [
     discordEvent: 'GuildMemberRemove',
     scriptName: 'MemberLeaving',
     buildContext: (member) => ({ guild: member.guild, member }),
+  },
+  {
+    discordEvent: 'VoiceStateUpdate',
+    scriptName: 'ChannelCreate',
+    buildContext: (oldState, newState) => ({ oldState, newState }),
   },
 ];
