@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { getEmbedContent } from '../embedDefaults.js';
 
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
@@ -19,7 +20,7 @@ export async function run(interaction, client, actionContext) {
     await channel.clone().catch(() => {});
   }
   const content = api.formatEphemeralContent(
-    ((await api.getFunction('ChannelClone').catch(() => null))?.embed?.content ?? 'Completed Clone {Channel Name}.').replace(/\{Channel Name\}/g, channel.name)
+    (getEmbedContent('ChannelClone') ?? 'Completed Clone {Channel Name}.').replace(/\{Channel Name\}/g, channel.name)
   );
   await interaction.editReply({ content });
 }

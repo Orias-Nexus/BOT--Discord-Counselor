@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { getEmbedContent } from '../embedDefaults.js';
 
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
@@ -16,7 +17,7 @@ export async function run(interaction, client, actionContext) {
   }
   await channel.permissionOverwrites.edit(guild.id, { ViewChannel: true }).catch(() => {});
   const content = api.formatEphemeralContent(
-    ((await api.getFunction('ChannelPublic').catch(() => null))?.embed?.content ?? 'Published {Channel Name}.').replace(/\{Channel Name\}/g, channel.name)
+    (getEmbedContent('ChannelPublic') ?? 'Published {Channel Name}.').replace(/\{Channel Name\}/g, channel.name)
   );
   await interaction.editReply({ content });
 }

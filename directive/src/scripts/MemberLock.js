@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { getEmbedContent } from '../embedDefaults.js';
 
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
@@ -32,7 +33,7 @@ export async function run(interaction, client, actionContext) {
   const displayName = member.displayName ?? member.user?.username ?? 'User';
   const expiresStr = expiresAt ? expiresAt.toLocaleString('vi-VN') : 'vĩnh viễn';
   const content = api.formatEphemeralContent(api.replacePlaceholders(
-    (await api.getFunction('MemberLock').catch(() => null))?.embed?.content ?? "{Server Profile Name}'s Status is Locked until {Member Expires}.",
+    getEmbedContent('MemberLock') ?? "{Server Profile Name}'s Status is Locked until {Member Expires}.",
     { 'Server Profile Name': displayName, 'Member Expires': expiresStr }
   ));
   await api.replyOrEdit(interaction, content);
