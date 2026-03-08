@@ -2,21 +2,19 @@ import { replacePlaceholders, omitNull, EMBED_COLORS } from './schema.js';
 
 /** Template embed tạm biệt. Placeholder: server_name, user, user_id, member_count. */
 const LEAVING_TEMPLATE = {
-  title: '👋 Tạm biệt {user}',
-  description: '{user} đã rời khỏi **{server_name}**. Hiện tại server có **{member_count}** thành viên.',
-  url: null,
-  color: EMBED_COLORS.DEFAULT,
+  title: '**Impostor Left the Chat ... 🐧**',
+  description: '**{user} Đã bay màu khỏi đoạn chat!** ☕\n\n**Xinnn vĩnh biệt cụ!!! 💔✨**',
+  color: EMBED_COLORS.STATUS.Leaved,
   timestamp: new Date().toISOString(),
   author: {
-    name: 'Hệ thống Quản lý Server',
-    url: null,
+    name: null,
     icon_url: null,
   },
-  thumbnail: { url: null },
-  image: { url: null },
+  thumbnail: { url: '{user_avatar}' },
+  image: { url: 'https://github.com/Orias1701/Resources--Discord-Bots/blob/main/assets/img/Impostor.png?raw=true' },
   fields: [],
   footer: {
-    text: 'ID: {user_id}',
+    text: '✨ Goodbye...',
     icon_url: null,
   },
 };
