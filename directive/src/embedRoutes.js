@@ -1,5 +1,5 @@
 /**
- * Route embed: script -> replyType (embed/ephemeral) và builder (hàm build embed).
+ * Embed route: script → replyType (embed/ephemeral) and builder (embed build fn).
  */
 
 import { getServerInfoEmbed } from './embeds/serverInfo.js';
@@ -18,7 +18,7 @@ export const EMBED_BY_SCRIPT = {
   EmbedEdit: { replyType: 'embed', builder: 'embedTemplate.getResolvedEmbedForDisplay' },
 };
 
-/** builder key -> hàm build embed */
+/** builder key → embed build fn */
 const EMBED_BUILDER_FNS = {
   'serverInfoEmbed.buildEmbed': getServerInfoEmbed,
   'categoryInfoEmbed.buildCategoryEmbed': getCategoryInfoEmbed,
@@ -28,7 +28,7 @@ const EMBED_BUILDER_FNS = {
 };
 
 /**
- * Lấy hàm build embed theo script (để script gọi thay vì import trực tiếp).
+ * Get embed builder fn by script (for scripts to call instead of direct import).
  * @param {string} scriptName
  * @returns {((...args: unknown[]) => Promise<object>)|null}
  */

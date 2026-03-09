@@ -21,6 +21,6 @@ export async function run(interaction, client, actionContext) {
     }
   } catch (err) {
     console.error('[EmbedEditFooter]', err);
-    await interaction.followUp({ content: api.formatEphemeralContent('Không thể cập nhật.'), flags: MessageFlags.Ephemeral }).catch(() => {});
+    await interaction.followUp({ content: api.formatEphemeralContent('Update failed.'), flags: MessageFlags.Ephemeral }).catch(() => {});
   }
 }

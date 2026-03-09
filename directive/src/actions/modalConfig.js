@@ -2,7 +2,7 @@ import { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } from
 
 const MODAL_PREFIX = 'modal_';
 
-/** Tổng phút -> chuỗi dd:hh:mm (prefill StatusTimeout). */
+/** Total minutes → dd:hh:mm string (prefill StatusTimeout). */
 function formatMinutesToDDHHMM(totalMinutes) {
   if (totalMinutes == null || totalMinutes < 0) return '';
   const d = Math.floor(totalMinutes / (24 * 60));
@@ -13,83 +13,83 @@ function formatMinutesToDDHHMM(totalMinutes) {
   return `${pad(d)}:${pad(h)}:${pad(m)}`;
 }
 
-/** Script cần modal khi gọi từ nút: [scriptName, title, { inputCustomId: { label, placeholder, style, required } }] */
+/** Script modal config: [scriptName, title, { inputCustomId: { label, placeholder, style, required } }]. */
 const MODALS = {
   StatusTimeout: {
-    title: 'Thời gian Warn / Mute / Lock / Newbie',
+    title: 'Warn / Mute / Lock / Newbie duration',
     inputs: [
-      { id: 'warn', label: 'Time Warn (dd:hh:mm hoặc phút)', placeholder: 'VD: 90 hoặc 00:01:30', required: false },
-      { id: 'mute', label: 'Time Mute (dd:hh:mm hoặc phút)', placeholder: 'VD: 90 hoặc 00:01:30', required: false },
-      { id: 'lock', label: 'Time Lock (dd:hh:mm hoặc phút)', placeholder: 'VD: 90 hoặc 00:01:30', required: false },
-      { id: 'new', label: 'Time Newbie (dd:hh:mm hoặc phút)', placeholder: 'VD: 90 hoặc 00:01:30', required: false },
-      { id: 'all', label: 'Dùng chung cho cả 4', placeholder: 'VD: 90 hoặc 00:01:30', required: false },
+      { id: 'warn', label: 'Time Warn (dd:hh:mm or minutes)', placeholder: 'e.g. 90 or 00:01:30', required: false },
+      { id: 'mute', label: 'Time Mute (dd:hh:mm or minutes)', placeholder: 'e.g. 90 or 00:01:30', required: false },
+      { id: 'lock', label: 'Time Lock (dd:hh:mm or minutes)', placeholder: 'e.g. 90 or 00:01:30', required: false },
+      { id: 'new', label: 'Time Newbie (dd:hh:mm or minutes)', placeholder: 'e.g. 90 or 00:01:30', required: false },
+      { id: 'all', label: 'Same value for all four', placeholder: 'e.g. 90 or 00:01:30', required: false },
     ],
   },
   StatusRole: {
-    title: 'Role Warn / Mute / Lock / Newbie',
+    title: 'Warn / Mute / Lock / Newbie roles',
     inputs: [
-      { id: 'warn', label: 'Tên role Warn', placeholder: 'Warning Role', required: false },
-      { id: 'mute', label: 'Tên role Mute', placeholder: 'Muted Role', required: false },
-      { id: 'lock', label: 'Tên role Lock', placeholder: 'Locked Role', required: false },
-      { id: 'new', label: 'Tên role Newbie', placeholder: 'Newbie Role', required: false },
+      { id: 'warn', label: 'Warn role name', placeholder: 'Warning Role', required: false },
+      { id: 'mute', label: 'Mute role name', placeholder: 'Muted Role', required: false },
+      { id: 'lock', label: 'Lock role name', placeholder: 'Locked Role', required: false },
+      { id: 'new', label: 'Newbie role name', placeholder: 'Newbie Role', required: false },
     ],
   },
   StatusUnrole: {
-    title: 'Unrole Mute / Lock',
+    title: 'Unrole on Mute / Lock',
     inputs: [
-      { id: 'mute', label: 'Role ID gỡ khi Mute', placeholder: 'VD: 1234567890123456789', required: false },
-      { id: 'lock', label: 'Role ID gỡ khi Lock', placeholder: 'VD: 1234567890123456789', required: false },
+      { id: 'mute', label: 'Role ID to remove on Mute', placeholder: 'e.g. 1234567890123456789', required: false },
+      { id: 'lock', label: 'Role ID to remove on Lock', placeholder: 'e.g. 1234567890123456789', required: false },
     ],
   },
   MemberRename: {
-    title: 'Đổi tên thành viên',
-    inputs: [{ id: 'setname', label: 'Tên mới (server)', placeholder: 'Tối đa 32 ký tự', required: true }],
+    title: 'Rename member',
+    inputs: [{ id: 'setname', label: 'Display name (server)', placeholder: 'Max 32 chars', required: true }],
   },
   MemberSetlevel: {
-    title: 'Set level thành viên',
-    inputs: [{ id: 'setlevel', label: 'Level (số nguyên)', placeholder: 'VD: 5', required: true }],
+    title: 'Set member level',
+    inputs: [{ id: 'setlevel', label: 'Level (integer)', placeholder: 'e.g. 5', required: true }],
   },
   EmbedEditBasic: {
     title: 'Edit Embed: Title, Description, Color, Fields',
     inputs: [
       { id: 'title', label: 'Title', placeholder: 'Embed Title', required: false },
-      { id: 'description', label: 'Description', placeholder: 'Nội dung embed (có thể dùng {user_name}, {user_avatar}...)', required: false, style: 'Paragraph' },
-      { id: 'color', label: 'Color (số thập lục hoặc decimal)', placeholder: 'VD: 5763719 hoặc 0x57F287', required: false },
-      { id: 'fields', label: 'Fields (chỉ phần trong [ ])', placeholder: '{"name":"Tên","value":"Nội dung","inline":true}', required: false, style: 'Paragraph' },
+      { id: 'description', label: 'Description', placeholder: 'e.g. {user_name}, {user_avatar}', required: false, style: 'Paragraph' },
+      { id: 'color', label: 'Color (hex or decimal)', placeholder: 'e.g. 5763719 or 0x57F287', required: false },
+      { id: 'fields', label: 'Fields (content inside [ ] only)', placeholder: '{"name":"Name","value":"Value","inline":true}', required: false, style: 'Paragraph' },
     ],
   },
   EmbedEditAuthor: {
     title: 'Edit Embed: Author',
     inputs: [
-      { id: 'author_name', label: 'Author Name', placeholder: 'Tên tác giả', required: false },
+      { id: 'author_name', label: 'Author Name', placeholder: 'Author name', required: false },
       { id: 'author_icon_url', label: 'Author Icon URL', placeholder: 'https://...', required: false },
     ],
   },
   EmbedEditFooter: {
     title: 'Edit Embed: Footer',
     inputs: [
-      { id: 'footer_text', label: 'Footer Text', placeholder: 'Chữ ở footer', required: false },
+      { id: 'footer_text', label: 'Footer Text', placeholder: 'Footer text', required: false },
       { id: 'footer_icon_url', label: 'Footer Icon URL', placeholder: 'https://...', required: false },
     ],
   },
   EmbedEditImages: {
     title: 'Edit Embed: Thumbnail & Image',
     inputs: [
-      { id: 'thumbnail_url', label: 'Thumbnail URL', placeholder: 'https://... hoặc {user_avatar}', required: false },
+      { id: 'thumbnail_url', label: 'Thumbnail URL', placeholder: 'https://... or {user_avatar}', required: false },
       { id: 'image_url', label: 'Main Image URL', placeholder: 'https://...', required: false },
     ],
   },
   EmbedRename: {
-    title: 'Đổi tên embed',
-    inputs: [{ id: 'newname', label: 'Tên mới', placeholder: 'Tên embed', required: true }],
+    title: 'Rename embed',
+    inputs: [{ id: 'newname', label: 'New name', placeholder: 'Embed name', required: true }],
   },
   EmbedDelete: {
-    title: 'Xác nhận xóa embed',
+    title: 'Confirm delete embed',
     inputs: [
       {
         id: 'confirm_name',
-        label: 'Gõ chính xác tên embed để xác nhận xóa',
-        placeholder: '(tên embed cần xóa)',
+        label: 'Type embed name to confirm delete',
+        placeholder: '(embed name to delete)',
         required: true,
       },
     ],
@@ -99,9 +99,9 @@ const MODALS = {
 export const SCRIPTS_NEED_MODAL = new Set(Object.keys(MODALS));
 
 /**
- * @param scriptName - tên script
- * @param contextPart - từ buildModalContext(guildId, targetId)
- * @param extra - { guild, server } cho StatusRole: placeholder/value động theo DB
+ * @param scriptName - script name
+ * @param contextPart - from buildModalContext(guildId, targetId)
+ * @param extra - { guild, server } for StatusRole: dynamic placeholder/value from DB
  */
 export function getModalForScript(scriptName, contextPart, extra = {}) {
   const config = MODALS[scriptName];
@@ -110,6 +110,7 @@ export function getModalForScript(scriptName, contextPart, extra = {}) {
   const modal = new ModalBuilder().setCustomId(customId).setTitle(config.title.slice(0, 45));
   const { guild, server, embed: embedData, embed_name: embedName, times, member, profile } = extra;
   const rolePlaceholders = { warn: 'Warning Role', mute: 'Muted Role', lock: 'Locked Role', new: 'Newbie Role' };
+  const existingRolePlaceholder = 'Existing role name';
   const contextValue = (id) => {
     if (scriptName === 'StatusTimeout' && times) {
       const key = { warn: 'time_warn', mute: 'time_mute', lock: 'time_lock', new: 'time_new' }[id];
@@ -165,7 +166,7 @@ export function getModalForScript(scriptName, contextPart, extra = {}) {
       const roleId = server[`role_${input.id}`];
       if (roleId) {
         const existingName = guild.roles.cache.get(roleId)?.name;
-        placeholder = (existingName ?? 'Tên role cũ').slice(0, 100);
+        placeholder = (existingName ?? existingRolePlaceholder).slice(0, 100);
         value = existingName ?? '';
       } else {
         placeholder = rolePlaceholders[input.id];
@@ -188,7 +189,7 @@ export function getModalForScript(scriptName, contextPart, extra = {}) {
 const CONTEXT_SEP = '|';
 
 /**
- * Parse modal customId: modal_ScriptName_guildId|targetId (targetId có thể là 'server')
+ * Parse modal customId: modal_ScriptName_guildId|targetId (targetId may be 'server').
  * @returns {{ scriptName: string, guildId: string, targetId: string | null }}
  */
 export function parseModalCustomId(customId) {
@@ -206,12 +207,12 @@ export function parseModalCustomId(customId) {
   return { scriptName, guildId, targetId };
 }
 
-/** Build context part for modal customId: guildId|targetId hoặc guildId|server */
+/** Build context part for modal customId: guildId|targetId or guildId|server. */
 export function buildModalContext(guildId, targetId) {
   return `${guildId}${CONTEXT_SEP}${targetId ?? 'server'}`;
 }
 
-/** Lấy danh sách input id của script (để thu thập giá trị từ modal submit). */
+/** Returns input ids for script (to collect values from modal submit). */
 export function getModalInputIds(scriptName) {
   const config = MODALS[scriptName];
   return config ? config.inputs.map((i) => i.id) : [];

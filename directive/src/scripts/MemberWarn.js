@@ -5,7 +5,7 @@ const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Warning until {Member
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   const fromSlash = interaction.options != null;
@@ -14,7 +14,7 @@ export async function run(interaction, client, actionContext) {
     : (actionContext?.targetId ? await guild.members.fetch(actionContext.targetId).catch(() => null) : null);
   if (member?.id && !member.member) member = await guild.members.fetch(member.id).catch(() => null);
   if (!member) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Cần chọn thành viên (target).'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Select a member (target).'));
     return;
   }
   await api.ensureServer(guild.id);
@@ -36,7 +36,7 @@ export async function run(interaction, client, actionContext) {
   await api.ensureMember(guild.id, member.id, member.user?.username);
   await api.setMemberStatus(guild.id, member.id, 'Warning', expiresAt);
   const displayName = member.displayName ?? member.user?.username ?? 'User';
-  const expiresStr = expiresAt ? expiresAt.toLocaleString('vi-VN') : 'vĩnh viễn';
+  const expiresStr = expiresAt ? expiresAt.toLocaleString('en-US') : 'permanent';
   const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { 'Server Profile Name': displayName, 'Member Expires': expiresStr }));
   await api.replyOrEdit(interaction, content);
   const updatedProfile = await api.getMember(guild.id, member.id).catch(() => null);

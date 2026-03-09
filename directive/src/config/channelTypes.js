@@ -1,6 +1,5 @@
 /**
- * Danh sách truy cập nhanh: enum Channel Type (hiển thị / tham chiếu).
- * Không dùng làm khoá DB; DB dùng category_type_enum (Creator | Stats) và channels_idx.
+ * Channel type enum (display / reference). Not used as DB key; DB uses category_type_enum (Creator | Stats) and channels_idx.
  */
 export const CHANNEL_TYPE_LIST = [
   'Creator',
@@ -16,8 +15,8 @@ export const CHANNEL_TYPE_LIST = [
 export const CATEGORY_TYPES = ['Creator', 'Stats'];
 
 /**
- * Stat index (1–6) dùng trong channels_idx. 0 = Creator (chỉ dùng cho category Creator).
- * Thứ tự chữ số trong channels_idx = thứ tự kênh trong danh mục.
+ * Stat index (1–6) used in channels_idx. 0 = Creator (category Creator only).
+ * Digit order in channels_idx = channel order in category.
  */
 export const STAT_INDEX = {
   Member: 1,
@@ -37,14 +36,13 @@ export const STAT_INDEX_TO_LABEL = {
   6: 'Boosts',
 };
 
-/** Stat index -> tên stat (để format "Members: 0") */
+/** Stat index → label (e.g. "Members: 0") */
 export function getStatLabelByIndex(index) {
   return STAT_INDEX_TO_LABEL[Number(index)] ?? `Stat ${index}`;
 }
 
 /**
- * Chuyển channels_idx (số nguyên) thành mảng các stat index (trái → phải = kênh 1 → kênh n).
- * VD: 312 -> [3, 1, 2]
+ * Convert channels_idx (integer) to array of stat indices (left → right = channel 1 → n). E.g. 312 → [3, 1, 2].
  */
 export function digitsFromChannelsIdx(channelsIdx) {
   if (channelsIdx == null || channelsIdx === 0) return [];

@@ -7,7 +7,7 @@ const SUCCESS_MESSAGE = 'Changed channel {Channel Name} to SFW.';
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   if (!interaction.deferred) await interaction.deferReply();
@@ -15,12 +15,12 @@ export async function run(interaction, client, actionContext) {
   if (!channel && actionContext?.targetId) channel = guild.channels.cache.get(actionContext.targetId);
   if (typeof channel === 'string') channel = guild.channels.cache.get(channel);
   if (!channel) {
-    await interaction.editReply({ content: api.formatEphemeralContent('Không tìm thấy kênh.') });
+    await interaction.editReply({ content: api.formatEphemeralContent('Channel not found.') });
     return;
   }
   if (!NSFW_ALLOWED_TYPES.includes(channel.type)) {
     await interaction.editReply({
-      content: api.formatEphemeralContent('Chỉ kênh văn bản, thông báo hoặc forum mới đặt được SFW.'),
+      content: api.formatEphemeralContent('Only text, announcement or forum channels can be set SFW.'),
     });
     return;
   }
@@ -29,7 +29,7 @@ export async function run(interaction, client, actionContext) {
   } catch (err) {
     await interaction.editReply({
       content: api.formatEphemeralContent(
-        'Không đổi được SFW. Kiểm tra quyền "Manage Channels" của bot trên kênh này.'
+        'Could not set SFW. Check bot "Manage Channels" on this channel.'
       ),
     });
     return;

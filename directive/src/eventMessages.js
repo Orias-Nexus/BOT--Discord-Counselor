@@ -1,17 +1,16 @@
 /**
- * Gửi tin nhắn sự kiện (Greeting, Leaving, Boosting) vào kênh đã cấu hình.
- * Chỉ gửi khi đã cấu hình channel_id và embed_id (embed do người dùng tự đặt).
+ * Send event message (Greeting, Leaving, Boosting) to configured channel.
+ * Only when channel_id and embed_id are set (user-defined embed).
  */
 import * as api from './api.js';
 import { resolveEmbed } from './embeds/embedContext.js';
 
 /**
- * Gửi tin nhắn embed vào kênh theo cấu hình Messages (channel_id, embed_id).
- * Cần có embed_id trong config thì mới gửi (không fallback embed mặc định).
+ * Send embed to channel per Messages config (channel_id, embed_id). Requires embed_id in config (no default embed).
  * @param {import('discord.js').Guild} guild
  * @param {'Greeting'|'Leaving'|'Boosting'} messagesType
- * @param {{ member?: import('discord.js').GuildMember|null, guild?: import('discord.js').Guild|null, channel?: import('discord.js').Channel|null }} meta - member có thể partial (Leaving)
- * @returns {Promise<boolean>} true nếu đã gửi, false nếu bỏ qua (không cấu hình / lỗi)
+ * @param {{ member?, guild?, channel? }} meta - member may be partial (Leaving)
+ * @returns {Promise<boolean>} true if sent, false if skipped (no config / error)
  */
 export async function sendEventMessage(guild, messagesType, meta = {}) {
   if (!guild?.id) return false;
