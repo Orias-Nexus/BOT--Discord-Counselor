@@ -1,5 +1,6 @@
 import * as api from '../api.js';
-import { getEmbedContent } from '../embedDefaults.js';
+
+const SUCCESS_MESSAGE = 'Updated Status Unrole: \\n Mute: {unrole_mute} \\n Lock: {unrole_lock}.';
 
 /** Chỉ chấp nhận Role ID (số 17–19 chữ số). Từ slash option string hoặc modal. */
 function getRoleId(interaction, actionContext, key) {
@@ -26,12 +27,9 @@ export async function run(interaction, client, actionContext = {}) {
   await api.ensureServer(guild.id);
   await api.setUnroles(guild.id, { unrole_mute, unrole_lock });
   const server = await api.getServer(guild.id);
-  const content = api.formatEphemeralContent(api.replacePlaceholders(
-    getEmbedContent('StatusUnrole') ?? 'Updated Status Unrole: \\n Mute: {unrole_mute} \\n Lock: {unrole_lock}.',
-    {
-      unrole_mute: roleIdToDisplay(guild, server?.unrole_mute),
-      unrole_lock: roleIdToDisplay(guild, server?.unrole_lock),
-    }
-  ));
+  const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, {
+    unrole_mute: roleIdToDisplay(guild, server?.unrole_mute),
+    unrole_lock: roleIdToDisplay(guild, server?.unrole_lock),
+  }));
   await api.replyOrEdit(interaction, content);
 }
