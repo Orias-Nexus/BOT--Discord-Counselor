@@ -1,7 +1,7 @@
 {
   "name": "my-discord-system-shared",
   "version": "1.0.0",
-  "description": "Types, interfaces, utils dùng chung cho backend, bot, frontend",
+  "description": "Types, interfaces, utils dùng chung cho backend, directive, frontend",
   "type": "module",
   "main": "index.js",
   "exports": {
