@@ -1,5 +1,7 @@
 import 'dotenv/config';
 import { Client, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
+import { logger } from './utils/logger.js'; // Init logger overrides console.log
+import { initWorker } from './utils/worker.js'; // Init Redis Queue Worker
 import { formatEphemeralContent, isUnknownInteraction } from './api.js';
 import { getScriptNameByCommand } from './slashs/commands.js';
 import { handleSlash } from './slashs/handleSlash.js';
@@ -29,6 +31,10 @@ const pendingButtonIds = new Set();
 
 client.once(Events.ClientReady, (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
+  
+  // Khởi chạy Worker lắng nghe các Task từ Redis
+  initWorker(c);
+
   startExpiresCheck(c);
   startStatsCheck(c);
 });
