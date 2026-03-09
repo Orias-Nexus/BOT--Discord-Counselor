@@ -1,6 +1,6 @@
 import { MessageFlags } from 'discord.js';
 import * as api from '../api.js';
-import { buildEmbedEditRow } from '../embeds/embedEditUtils.js';
+import { buildEmbedEditComponents } from '../utils/components.js';
 import { getEmbedBuilder } from '../embedRoutes.js';
 
 export async function run(interaction, client) {
@@ -34,7 +34,7 @@ export async function run(interaction, client) {
       await interaction.editReply({ content: api.formatEphemeralContent('Could not load embed.') }).catch(() => {});
       return;
     }
-    const components = buildEmbedEditRow(embedRow.embed_id);
+    const components = buildEmbedEditComponents(embedRow.embed_id);
     await interaction.editReply({ content: '', embeds: [resolved], components }).catch(() => {});
   } catch (err) {
     console.error('[EmbedEdit]', err);
