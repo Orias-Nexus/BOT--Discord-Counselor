@@ -2,8 +2,11 @@ import * as api from '../api.js';
 
 const SUCCESS_MESSAGE = 'Updated Status Unrole: \\n Mute: {unrole_mute} \\n Lock: {unrole_lock}.';
 
-/** Accepts Role ID only (17–19 digits). From slash option string or modal. */
+/** Accepts Role from slash (Role option) or Role ID (17–19 digits) from modal. */
 function getRoleId(interaction, actionContext, key) {
+  const role = interaction.options?.getRole?.(key) ?? null;
+  if (role?.id) return String(role.id);
+
   const opt = interaction.options?.get?.(key);
   const raw = (opt?.value ?? actionContext?.modalValues?.[key])?.trim?.();
   if (!raw) return null;
