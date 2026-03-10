@@ -1,6 +1,6 @@
 import { EMBED_COLORS } from './schema.js';
 import { formatShortDate, getChannelTypeName, getChannelStatus } from './utils.js';
-import { resolveEmbed } from './embedContext.js';
+import { resolveEmbed } from './.embedContext.js';
 
 /**
  * Trả về embed data Channel Info (đã resolve placeholders qua parser).

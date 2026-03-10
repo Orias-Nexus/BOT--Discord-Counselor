@@ -49,6 +49,7 @@ export function omitNull(obj) {
   const out = {};
   for (const [k, v] of Object.entries(obj)) {
     if (v === null || v === undefined) continue;
+    if (typeof v === 'string' && v.trim() === '') continue; // Bỏ qua chuỗi rỗng để tránh lỗi API
     if (v && typeof v === 'object' && !Array.isArray(v) && (k === 'author' || k === 'thumbnail' || k === 'image' || k === 'footer')) {
       const sub = omitNull(v);
       if (Object.keys(sub).length > 0) out[k] = sub;
@@ -79,3 +80,27 @@ export const EMBED_COLORS = {
     Leaved: 0x747f8d,
   },
 };
+
+/** Default embed template for newly created embeds */
+export const DEFAULT_EMBED_TEMPLATE = {
+  title: 'Title',
+  description: 'Description',
+  color: EMBED_COLORS.DEFAULT,
+  timestamp: null,
+  author: {
+    name: 'Author',
+    icon_url: '{server_icon}',
+  },
+  thumbnail: { url: '{user_avatar}' },
+  image: { url: '{server_banner}' },
+  fields: [{ "name": "name", "value": "value", "inline": true }],
+  footer: {
+    text: 'Footer',
+    icon_url: '{server_icon}',
+  },
+};
+
+/** Ensure fresh object by deep-copying template */
+export function getDefaultEmbedTemplate() {
+  return JSON.parse(JSON.stringify(DEFAULT_EMBED_TEMPLATE));
+}

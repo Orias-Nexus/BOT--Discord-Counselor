@@ -1,7 +1,7 @@
 import { ChannelType } from 'discord.js';
 import { EMBED_COLORS } from './schema.js';
 import { formatShortDate, getGuildTypeString } from './utils.js';
-import { resolveEmbed } from './embedContext.js';
+import { resolveEmbed } from './.embedContext.js';
 
 /**
  * Trả về embed data Server Info (đã resolve placeholders qua parser).

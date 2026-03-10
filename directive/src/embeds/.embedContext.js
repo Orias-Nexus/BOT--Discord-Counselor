@@ -2,6 +2,7 @@
  * Helper dùng parser (customs) cho embeds: singleton parser + tạo context từ member/guild/channel.
  */
 import { createParser, resolveEmbedPlaceholders, createContextFromMeta } from '../customs/index.js';
+import { omitNull } from './schema.js';
 
 let parserInstance = null;
 
@@ -46,4 +47,15 @@ export async function resolveString(str, meta = {}) {
   const parser = getEmbedParser();
   const ctx = createEmbedContext(meta);
   return parser.compilePhase4Only(str, ctx);
+}
+
+/**
+ * Trả về embed đã resolve placeholders qua parser (để gửi lên Discord).
+ * @param {object} embedData - Embed object (có thể từ DB)
+ * @param {{ member?: import('discord.js').GuildMember|null, guild?: import('discord.js').Guild|null, channel?: import('discord.js').Channel|null, placeholderCache?: Record<string, string> }} meta
+ * @returns {Promise<object>}
+ */
+export async function getResolvedEmbedForDisplay(embedData, meta = {}) {
+  const resolved = await resolveEmbed(embedData ?? {}, meta);
+  return omitNull(resolved);
 }
