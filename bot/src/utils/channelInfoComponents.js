@@ -76,6 +76,50 @@ async function handleButton(interaction, client) {
         return true;
     }
 
+    if (action === 'sync') {
+        if (!channel.parent) {
+            await interaction.reply({
+                content: 'Kênh không thuộc danh mục nào.',
+                ephemeral: true,
+            }).catch(() => {});
+            return true;
+        }
+        await interaction.deferUpdate().catch(() => {});
+        try {
+            await channel.lockPermissions();
+            if (interaction.message) await refreshChannelInfoMessage(interaction.message, guild, channelId);
+            await interaction.followUp({
+                content: `Đã đồng bộ quyền của **${channel.name}** với danh mục **${channel.parent.name}**.`,
+                ephemeral: true,
+            }).catch(() => {});
+        } catch (err) {
+            await interaction.followUp({
+                content: `Không đồng bộ được: ${err.message}`,
+                ephemeral: true,
+            }).catch(() => {});
+        }
+        return true;
+    }
+
+    if (action === 'nsfw') {
+        await interaction.deferUpdate().catch(() => {});
+        try {
+            const newNsfw = !channel.nsfw;
+            await channel.setNSFW(newNsfw);
+            if (interaction.message) await refreshChannelInfoMessage(interaction.message, guild, channelId);
+            await interaction.followUp({
+                content: `Đã đổi **${channel.name}** sang ${newNsfw ? 'NSFW' : 'SFW'}.`,
+                ephemeral: true,
+            }).catch(() => {});
+        } catch (err) {
+            await interaction.followUp({
+                content: `Không đổi được (kênh có thể không hỗ trợ NSFW): ${err.message}`,
+                ephemeral: true,
+            }).catch(() => {});
+        }
+        return true;
+    }
+
     return false;
 }
 

@@ -1,6 +1,6 @@
 // src/commands/mods/channel/cocha6_channel_info.js
 
-const { SlashCommandBuilder, PermissionFlagsBits, ChannelType } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -9,15 +9,8 @@ module.exports = {
         .addChannelOption((o) =>
             o
                 .setName('target')
-                .setDescription('Chọn kênh')
+                .setDescription('Chọn kênh (hiển thị tất cả kênh)')
                 .setRequired(true)
-                .addChannelTypes(
-                    ChannelType.GuildText,
-                    ChannelType.GuildVoice,
-                    ChannelType.GuildAnnouncement,
-                    ChannelType.GuildStageVoice,
-                    ChannelType.GuildForum
-                )
         )
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
 

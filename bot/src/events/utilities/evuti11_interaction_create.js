@@ -1,3 +1,4 @@
+const { MessageFlags } = require('discord.js');
 const memberInfoComponents = require('../../utils/memberInfoComponents.js');
 const serverInfoComponents = require('../../utils/serverInfoComponents.js');
 const channelInfoComponents = require('../../utils/channelInfoComponents.js');
@@ -35,7 +36,7 @@ module.exports = {
                 await command.execute(interaction, client);
             } catch (error) {
                 console.error(error);
-                const payload = { content: 'There was an error while executing this command!', ephemeral: true };
+                const payload = { content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral };
                 if (interaction.replied || interaction.deferred) {
                     await interaction.followUp(payload).catch(() => {});
                 } else {
