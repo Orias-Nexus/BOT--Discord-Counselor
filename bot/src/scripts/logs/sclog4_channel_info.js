@@ -19,7 +19,7 @@ module.exports = async (interaction, client) => {
 
     const embed = new EmbedBuilder()
         .setColor('#e67e22')
-        .setTitle(`✦ Channel: ${channel.name}`)
+        .setTitle(`✦ ${channel.name}`)
         .addFields(
             { name: 'Channel ID', value: channel.id, inline: true },
             { name: 'Type', value: typeName, inline: true },
