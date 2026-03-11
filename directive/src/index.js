@@ -15,6 +15,7 @@ import { EVENT_HANDLERS } from './events/eventRegistry.js';
 import { isServerStatsSelectId, doSetServerStats } from './scripts/setServerStats.js';
 import { EMBED_APPLY_SELECT_PREFIX } from './embeds/embedEdit.js';
 import { EMBED_BY_SCRIPT } from './embedRoutes.js';
+import env from './config.js';
 import * as api from './api.js';
 
 const client = new Client({
@@ -31,6 +32,9 @@ const pendingButtonIds = new Set();
 
 client.once(Events.ClientReady, (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
+  console.log(`[startup] BACKEND_API_URL: ${env.backendApiUrl}`);
+  console.log(`[startup] REDIS_URL: ${env.redisUrl || '(not set)'}`);
+  console.log(`[startup] mainImageURL: ${env.mainImageURL}`);
   
   // Khởi chạy Worker lắng nghe các Task từ Redis
   initWorker(c);
