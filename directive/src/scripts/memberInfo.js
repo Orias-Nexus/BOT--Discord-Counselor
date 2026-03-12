@@ -1,6 +1,6 @@
 import * as api from '../api.js';
 import { buildMemberInfoComponents } from '../utils/components.js';
-import { mainImageUrl } from '../config.js';
+import { MAIN_IMAGE_URL as mainImageUrl } from '../config.js';
 import { getEmbedBuilder } from '../embedRoutes.js';
 
 const DEBUG = process.env.DEBUG_MEMBER_INFO === '1';
