@@ -1,5 +1,8 @@
 import { prisma } from '../config/prisma.js';
 
+/** In-memory cache: sorted array of { level, exp } loaded once from DB. */
+let levelsCache = null;
+
 export async function getAll() {
     const rows = await prisma.levels.findMany({
         select: { level: true, exp: true },
@@ -7,6 +10,16 @@ export async function getAll() {
     });
     
     return rows.map(r => ({ ...r, exp: Number(r.exp) }));
+}
+
+/**
+ * Returns the full sorted levels array, loading from DB on first call.
+ * Cached permanently in memory (levels table is static).
+ */
+export async function getAllCached() {
+    if (levelsCache) return levelsCache;
+    levelsCache = await getAll();
+    return levelsCache;
 }
 
 export async function getByLevel(level) {

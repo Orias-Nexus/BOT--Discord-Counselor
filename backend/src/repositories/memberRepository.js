@@ -108,3 +108,49 @@ export async function processExpiredMembers() {
 
     return { count: result.count, updated: expiredMembers };
 }
+
+/**
+ * Atomically increment member_exp by expAmount. Returns updated row.
+ */
+export async function addExp(serverId, userId, expAmount) {
+    const row = await prisma.members.update({
+        where: { server_id_user_id: { server_id: serverId, user_id: userId } },
+        data: {
+            member_exp: { increment: BigInt(expAmount) },
+            updated_at: new Date(),
+        },
+    });
+    return rowToMember(row);
+}
+
+/**
+ * Top members by EXP in a server. Returns [{ user_id, member_exp, member_level }].
+ */
+export async function getLeaderboard(serverId, limit = 20) {
+    const rows = await prisma.members.findMany({
+        where: { server_id: serverId },
+        orderBy: { member_exp: 'desc' },
+        take: limit,
+        select: { user_id: true, member_exp: true, member_level: true },
+    });
+    return rows.map((r) => ({
+        user_id: r.user_id,
+        member_exp: r.member_exp ? Number(r.member_exp) : 0,
+        member_level: r.member_level ?? 0,
+    }));
+}
+
+/**
+ * Get the rank (1-based) of a member in a server by EXP.
+ */
+export async function getRank(serverId, userId) {
+    const member = await prisma.members.findUnique({
+        where: { server_id_user_id: { server_id: serverId, user_id: userId } },
+        select: { member_exp: true },
+    });
+    if (!member) return null;
+    const count = await prisma.members.count({
+        where: { server_id: serverId, member_exp: { gt: member.member_exp } },
+    });
+    return count + 1;
+}
