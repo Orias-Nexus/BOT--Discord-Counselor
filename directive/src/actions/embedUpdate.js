@@ -7,7 +7,7 @@ import {
   buildCategoryInfoComponents,
   buildMemberInfoComponents,
 } from '../utils/components.js';
-import { mainImageURL } from '../config.js';
+import { mainImageUrl } from '../config.js';
 
 const CHANNEL_SCRIPTS = new Set([
   'ChannelPrivate', 'ChannelPublic', 'ChannelSync', 'ChannelSFW', 'ChannelNSFW', 'ChannelClone',
@@ -79,7 +79,7 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
   if (SERVER_SCRIPTS.has(scriptName)) {
     const guildFetched = await guild.fetch().catch(() => guild);
     const buildEmbed = getEmbedBuilder('ServerInfo');
-    const embed = buildEmbed ? await buildEmbed(guildFetched, { imageURL: mainImageURL }) : null;
+    const embed = buildEmbed ? await buildEmbed(guildFetched, { imageURL: mainImageUrl }) : null;
     if (!embed) return null;
     const components = buildServerInfoComponents();
     return {
@@ -93,7 +93,7 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
     const channel = await guild.channels.fetch(targetId).catch(() => null);
     if (!channel || channel.type === ChannelType.GuildCategory) return null;
     const buildEmbed = getEmbedBuilder('ChannelInfo');
-    const embed = buildEmbed ? await buildEmbed(channel, guild, { imageURL: mainImageURL }) : null;
+    const embed = buildEmbed ? await buildEmbed(channel, guild, { imageURL: mainImageUrl }) : null;
     if (!embed) return null;
     const components = buildChannelInfoComponents(channel.id, channel, guild);
     return {
@@ -107,7 +107,7 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
     const category = await guild.channels.fetch(targetId).catch(() => null);
     if (!category || category.type !== ChannelType.GuildCategory) return null;
     const buildEmbed = getEmbedBuilder('CategoryInfo');
-    const embed = buildEmbed ? await buildEmbed(category, guild, { imageURL: mainImageURL }) : null;
+    const embed = buildEmbed ? await buildEmbed(category, guild, { imageURL: mainImageUrl }) : null;
     if (!embed) return null;
     const components = buildCategoryInfoComponents(category.id, category, guild);
     return {
@@ -125,7 +125,7 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
         ? scriptResult.updatedProfile
         : await api.getMember(guild.id, member.id).catch(() => null);
     const buildEmbed = getEmbedBuilder('MemberInfo');
-    const embed = buildEmbed ? await buildEmbed(member, profile, { imageURL: mainImageURL }) : null;
+    const embed = buildEmbed ? await buildEmbed(member, profile, { imageURL: mainImageUrl }) : null;
     if (!embed) return null;
     const components = buildMemberInfoComponents(member.id, profile);
     return {
