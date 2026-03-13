@@ -16,18 +16,30 @@ function shouldIgnore(message) {
 }
 
 /**
- * Send level-up notification.
+ * Send level-up notification with member profile data for embed placeholders.
  * Priority: configured channel (from messages table) -> fallback to interaction channel.
  */
-async function notifyLevelUp(message, newLevel) {
+async function notifyLevelUp(message, result) {
   const guild = message.guild;
   const member = message.member ?? message.author;
   const displayName = member.displayName ?? member.user?.username ?? 'Unknown';
 
-  const sent = await sendEventMessage(guild, 'Leveling', { member, guild }).catch(() => false);
+  const [profile, rankData] = await Promise.all([
+    api.getMember(guild.id, member.id).catch(() => null),
+    api.getLocalRank(guild.id, member.id).catch(() => null),
+  ]);
+
+  const meta = {
+    member,
+    guild,
+    memberProfile: profile ?? { member_exp: result.member_exp, member_level: result.new_level },
+    memberRank: rankData?.rank ?? '?',
+  };
+
+  const sent = await sendEventMessage(guild, 'Leveling', meta).catch(() => false);
   if (sent) return;
 
-  const fallbackContent = `**${displayName}** reached **Level ${newLevel}**!`;
+  const fallbackContent = `**${displayName}** reached **Level ${result.new_level}**!`;
   await message.channel.send(fallbackContent).catch(() => {});
 }
 
@@ -36,7 +48,7 @@ async function processLocal(guildId, userId, exp, message) {
   if (!result) return;
 
   if (result.leveled_up) {
-    await notifyLevelUp(message, result.new_level);
+    await notifyLevelUp(message, result);
   }
 }
 
