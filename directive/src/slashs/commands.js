@@ -321,6 +321,52 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
   },
   {
+    name: 'levelingchannel',
+    script: 'LevelingChannel',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+    options: (b) =>
+      b.addChannelOption((o) =>
+        o.setName('channel').setDescription('Leveling message channel').addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement).setRequired(true)
+      ),
+  },
+  {
+    name: 'loggingchannel',
+    script: 'LoggingChannel',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+    options: (b) =>
+      b.addChannelOption((o) =>
+        o.setName('channel').setDescription('Logging message channel').addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement).setRequired(true)
+      ),
+  },
+  {
+    name: 'levelingmessage',
+    script: 'LevelingMessage',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+    options: (b) =>
+      b.addStringOption((o) =>
+        o.setName('embed').setDescription('Embed name (created in server)').setRequired(true).setAutocomplete(true)
+      ),
+  },
+  {
+    name: 'loggingmessage',
+    script: 'LoggingMessage',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+    options: (b) =>
+      b.addStringOption((o) =>
+        o.setName('embed').setDescription('Embed name (created in server)').setRequired(true).setAutocomplete(true)
+      ),
+  },
+  {
+    name: 'levelingtest',
+    script: 'LevelingTest',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+  },
+  {
+    name: 'loggingtest',
+    script: 'LoggingTest',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+  },
+  {
     name: 'embedcreate',
     script: 'EmbedCreate',
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
@@ -358,6 +404,26 @@ const SLASH_LIST = [
         .addStringOption((o) =>
           o.setName('confirm').setDescription('Type embed name to confirm delete').setRequired(true)
         ),
+  },
+  {
+    name: 'levellocal',
+    script: 'LevelLocal',
+    options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Member (default: self)')),
+  },
+  {
+    name: 'levelglobal',
+    script: 'LevelGlobal',
+    options: (b) => b.addUserOption((o) => o.setName('target').setDescription('User (default: self)')),
+  },
+  {
+    name: 'toplocal',
+    script: 'TopLocal',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+  },
+  {
+    name: 'topglobal',
+    script: 'TopGlobal',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
   },
   {
     name: 'messagesend',
