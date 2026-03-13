@@ -1,6 +1,6 @@
 import * as messageRepo from '../repositories/messageRepository.js';
 
-const VALID_TYPES = ['Greeting', 'Leaving', 'Boosting'];
+const VALID_TYPES = ['Greeting', 'Leaving', 'Boosting', 'Leveling', 'Logging'];
 
 function checkType(req, res, next) {
     const type = req.params.messagesType;

@@ -78,9 +78,9 @@ export async function setEmbed(serverId, messagesType, embedId) {
     return rowToMessage(row);
 }
 
-const MESSAGE_TYPES_FOR_NEW_SERVER = ['Greeting', 'Leaving', 'Boosting'];
+const MESSAGE_TYPES_FOR_NEW_SERVER = ['Greeting', 'Leaving', 'Boosting', 'Leveling', 'Logging'];
 
-/** Create 3 message records (Greeting, Leaving, Boosting) for new server if missing. */
+/** Create message records for new server if missing. */
 export async function ensureMessagesForServer(serverId) {
     for (const messagesType of MESSAGE_TYPES_FOR_NEW_SERVER) {
         const existing = await getByServerAndType(serverId, messagesType);
