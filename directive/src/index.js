@@ -8,7 +8,7 @@ import { handleSlash } from './slashs/handleSlash.js';
 import { handleAction, isButtonModalScript, isButtonDeferUpdate } from './actions/handleAction.js';
 import { parseModalCustomId, getModalInputIds, SCRIPTS_NEED_MODAL } from './actions/modalConfig.js';
 import { ACTION_SELECT_PREFIX } from './utils/components.js';
-import { getEmbedUpdatePayload } from './actions/embedUpdate.js';
+import { getEmbedUpdatePayload, resetComponentsOnly } from './actions/embedUpdate.js';
 import { runScript, runEvent, loadAllScripts } from './scripts/runScript.js';
 import { startExpiresCheck } from './jobs/expiresCheck.js';
 import { startStatsCheck } from './jobs/statsCheck.js';
@@ -211,8 +211,15 @@ client.on(Events.InteractionCreate, async (interaction) => {
           !isEmbedEditModal && !isEmbedDeleteModal
             ? await getEmbedUpdatePayload(scriptName, interaction, actionContext)
             : null;
-        if (payload && interaction.message) {
-          await interaction.message.edit(payload).catch(() => {});
+        if (interaction.message) {
+          if (payload) {
+            await interaction.message.edit(payload).catch(() => {});
+          } else if (!isEmbedEditModal && !isEmbedDeleteModal) {
+            const componentsOnly = resetComponentsOnly(scriptName, interaction, actionContext);
+            if (componentsOnly) {
+              await interaction.message.edit({ components: componentsOnly }).catch(() => {});
+            }
+          }
         }
       } catch (err) {
         console.error('[ModalSubmit]', err);
