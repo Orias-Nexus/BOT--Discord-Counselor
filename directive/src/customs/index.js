@@ -167,6 +167,10 @@ export async function resolveEmbedPlaceholders(embedData, parser, ctx) {
     for (const [key, value] of Object.entries(embedData)) {
       out[key] = await resolveEmbedPlaceholders(value, parser, ctx);
     }
+    if (typeof out.color === 'string') {
+      const hex = out.color.trim().replace(/^#/, '');
+      if (/^[0-9a-fA-F]{1,6}$/.test(hex)) out.color = parseInt(hex, 16);
+    }
     return out;
   }
   return embedData;
