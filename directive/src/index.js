@@ -16,7 +16,7 @@ import { EVENT_HANDLERS } from './events/eventRegistry.js';
 import { isServerStatsSelectId, doSetServerStats } from './scripts/setServerStats.js';
 import { EMBED_APPLY_SELECT_PREFIX } from './embeds/embedEdit.js';
 import { EMBED_BY_SCRIPT } from './embedRoutes.js';
-import { onMessageCreate } from './leveling/listener.js';
+import { onMessageCreate } from './events/levelingEvent.js';
 import env from './config.js';
 import * as api from './api.js';
 
