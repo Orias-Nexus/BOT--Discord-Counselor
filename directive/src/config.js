@@ -17,11 +17,11 @@ const isLocalBackend =
   BACKEND_API_URL.includes('127.0.0.1');
 
 const GITHUB_RAW_WHITEPET =
-  'https://github.com/Orias1701/Resources--Discord-Bots/blob/main/assets/img/Blank.png?raw=true';
+  'https://github.com/Orias1701/Resources--Discord-Bots/blob/main/assets/img/Banner-Blank.png?raw=true';
 
 const DEFAULT_MAIN_IMAGE_URL = isLocalBackend
   ? GITHUB_RAW_WHITEPET
-  : `${BACKEND_API_URL.replace(/\/api$/, '')}/assets/images/Blank.png`;
+  : `${BACKEND_API_URL.replace(/\/api$/, '')}/assets/images/Banner-Blank.png`;
 
 export const mainImageUrl =
   process.env.MAIN_IMAGE_URL ?? DEFAULT_MAIN_IMAGE_URL;
