@@ -1,5 +1,6 @@
 import { EMBED_COLORS } from './schema.js';
 import { resolveEmbed } from './.embedContext.js';
+import { blank_banner } from '../customs/handlers/placeholders/links.js';
 
 const PROGRESS_LENGTH = 16;
 const FILL_CHAR = '▓';
@@ -47,6 +48,7 @@ export async function getLocalLevelEmbed(member, profile, extra = {}) {
       { name: 'Total EXP', value: formatExp(exp), inline: true },
       { name: 'Progress', value: `\`${progress}\`\n${expDisplay}`, inline: false },
     ],
+    image: { url: blank_banner() },
     footer: { text: '{server_name}', icon_url: '{server_icon}' },
     timestamp: new Date().toISOString(),
   };
@@ -82,11 +84,26 @@ export async function getGlobalLevelEmbed(user, profile, extra = {}) {
       { name: 'Total EXP', value: formatExp(exp), inline: true },
       { name: 'Progress', value: `\`${progress}\`\n${expDisplay}`, inline: false },
     ],
+    image: { url: blank_banner() },
     footer: { text: 'Global Ranking' },
     timestamp: new Date().toISOString(),
   };
 
   return resolveEmbed(embed, { member, guild: member?.guild ?? null, user: user?.user ?? user });
+}
+
+const RANK_WIDTH = 5;
+const NAME_WIDTH = 20;
+const LVL_WIDTH = 4;
+
+function truncPad(str, len) {
+  const s = String(str);
+  return s.length > len ? s.slice(0, len - 1) + '…' : s.padEnd(len);
+}
+
+function resolveDisplayName(guild, userId) {
+  const member = guild?.members.cache.get(userId);
+  return member?.displayName ?? member?.user?.username ?? userId;
 }
 
 /**
@@ -102,28 +119,34 @@ export function getLeaderboardEmbed(entries, type, guild, extra = {}) {
     ? `✦ Leaderboard — ${guild?.name ?? 'Server'}`
     : '✦ Global Leaderboard';
 
+  const expKey = isLocal ? 'member_exp' : 'user_exp';
+  const lvlKey = isLocal ? 'member_level' : 'user_level';
+
   const lines = entries.map((e, i) => {
-    const rank = i + 1;
-    const expKey = isLocal ? 'member_exp' : 'user_exp';
-    const lvlKey = isLocal ? 'member_level' : 'user_level';
-    const exp = e[expKey] ?? 0;
-    const lvl = e[lvlKey] ?? 0;
-    const mention = `<@${e.user_id}>`;
-    const highlight = e.user_id === extra.callerUserId ? ' ◄' : '';
-    return `\`#${String(rank).padStart(2, ' ')}\` ${mention}  ·  Lv.**${lvl}**  ·  ${formatExp(exp)} EXP${highlight}`;
+    const rank = `#${String(i + 1).padStart(RANK_WIDTH - 1)}`;
+    const name = truncPad(resolveDisplayName(guild, e.user_id), NAME_WIDTH);
+    const lvl = String(e[lvlKey] ?? 0).padStart(LVL_WIDTH);
+    const exp = formatExp(e[expKey] ?? 0).padStart(10);
+    const mark = e.user_id === extra.callerUserId ? ' ◄' : '';
+    return `${rank} ${name} Lv.${lvl} ${exp} EXP${mark}`;
   });
 
   if (extra.callerRank && extra.callerUserId) {
     const inList = entries.some((e) => e.user_id === extra.callerUserId);
     if (!inList) {
-      lines.push(`\n\`#${String(extra.callerRank).padStart(2, ' ')}\` <@${extra.callerUserId}>  ◄ You`);
+      const rank = `#${String(extra.callerRank).padStart(RANK_WIDTH - 1)}`;
+      const name = truncPad(resolveDisplayName(guild, extra.callerUserId), NAME_WIDTH);
+      lines.push(`\n${rank} ${name}               ◄ You`);
     }
   }
+
+  const body = lines.length > 0 ? `\`\`\`\n${lines.join('\n')}\n\`\`\`` : 'No data yet.';
 
   return {
     title,
     color: isLocal ? EMBED_COLORS.MEMBER_INFO : EMBED_COLORS.DEFAULT,
-    description: lines.join('\n') || 'No data yet.',
+    description: body,
+    image: { url: blank_banner() },
     timestamp: new Date().toISOString(),
   };
 }
