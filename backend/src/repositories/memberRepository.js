@@ -3,8 +3,8 @@ import * as userRepo from './userRepository.js';
 
 const TABLE = 'members';
 const COLS = 'user_id, server_id, member_exp, member_level, member_status, member_expires';
-const STATUS_API_TO_DB = { Good: 'Good', Warning: 'Warn', Muted: 'Mute', Locked: 'Lock' };
-const STATUS_DB_TO_API = { Good: 'Good', Warn: 'Warning', Mute: 'Muted', Lock: 'Locked', Kick: 'Kick', leaved: 'leaved' };
+const STATUS_API_TO_DB = { Good: 'Good', Warning: 'Warn', Muted: 'Mute', Locked: 'Lock', Newbie: 'Newbie', Leaved: 'leaved' };
+const STATUS_DB_TO_API = { Good: 'Good', Warn: 'Warning', Mute: 'Muted', Lock: 'Locked', Kick: 'Kick', leaved: 'Leaved', Newbie: 'Newbie' };
 
 function rowToMember(row) {
     if (!row) return null;
@@ -59,4 +59,21 @@ export async function updateStatus(serverId, userId, status, expiresAt = null) {
     }).eq('server_id', serverId).eq('user_id', userId).select(COLS).single();
     if (error) throw error;
     return rowToMember(data);
+}
+
+/**
+ * Đặt Good cho mọi member có member_expires <= now và member_status != 'Good'.
+ * Trả về { count, updated: [{ server_id, user_id }, ...] } để directive áp dụng role.
+ */
+export async function processExpiredMembers() {
+    const sb = getSupabase();
+    const now = new Date().toISOString();
+    const { data, error } = await sb.schema(getSchema()).from(TABLE).update({
+        member_status: 'Good',
+        member_expires: null,
+        updated_at: now,
+    }).not('member_expires', 'is', null).lte('member_expires', now).neq('member_status', 'Good').select('user_id, server_id');
+    if (error) throw error;
+    const updated = (data ?? []).map((r) => ({ server_id: r.server_id, user_id: r.user_id }));
+    return { count: updated.length, updated };
 }

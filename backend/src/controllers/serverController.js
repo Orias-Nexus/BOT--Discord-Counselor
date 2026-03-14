@@ -37,18 +37,20 @@ export async function updateServer(req, res) {
     const { serverId } = req.params;
     const body = req.body || {};
     await serverService.ensureServer(serverId);
-    if (body.time_warn !== undefined || body.time_mute !== undefined || body.time_lock !== undefined) {
+    if (body.time_warn !== undefined || body.time_mute !== undefined || body.time_lock !== undefined || body.time_new !== undefined) {
       await serverService.setTimes(serverId, {
         time_warn: body.time_warn,
         time_mute: body.time_mute,
         time_lock: body.time_lock,
+        time_new: body.time_new,
       });
     }
-    if (body.role_warn !== undefined || body.role_mute !== undefined || body.role_lock !== undefined) {
+    if (body.role_warn !== undefined || body.role_mute !== undefined || body.role_lock !== undefined || body.role_new !== undefined) {
       await serverService.setRoles(serverId, {
         role_warn: body.role_warn,
         role_mute: body.role_mute,
         role_lock: body.role_lock,
+        role_new: body.role_new,
       });
     }
     if (body.unrole_mute !== undefined || body.unrole_lock !== undefined) {
@@ -74,8 +76,8 @@ export async function getTimes(req, res) {
 export async function setTimes(req, res) {
   try {
     const { serverId } = req.params;
-    const { time_warn, time_mute, time_lock } = req.body || {};
-    const server = await serverService.setTimes(serverId, { time_warn, time_mute, time_lock });
+    const { time_warn, time_mute, time_lock, time_new } = req.body || {};
+    const server = await serverService.setTimes(serverId, { time_warn, time_mute, time_lock, time_new });
     res.json(server);
   } catch (err) {
     handleError('setTimes', err, res);
@@ -85,8 +87,8 @@ export async function setTimes(req, res) {
 export async function setRoles(req, res) {
   try {
     const { serverId } = req.params;
-    const { role_warn, role_mute, role_lock } = req.body || {};
-    const server = await serverService.setRoles(serverId, { role_warn, role_mute, role_lock });
+    const { role_warn, role_mute, role_lock, role_new } = req.body || {};
+    const server = await serverService.setRoles(serverId, { role_warn, role_mute, role_lock, role_new });
     res.json(server);
   } catch (err) {
     handleError('setRoles', err, res);

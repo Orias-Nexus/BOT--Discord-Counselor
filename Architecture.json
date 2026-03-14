@@ -4,7 +4,7 @@
       "description": "Cấu trúc cơ sở dữ liệu từ Table-Data.",
       "Enum": {
         "name": "Member Status",
-        "values": ["Good", "Warn", "Mute", "Lock", "Kick", "leaved"]
+        "values": ["Newbie","Good", "Warn", "Mute", "Lock", "Kick", "Leaved"]
       },
       "Tables": [
         {
@@ -38,9 +38,11 @@
             "time_warn: Def 0 - thời gian tồn tại cho warning",
             "time_mute: Def 0 - thời gian tồn tại cho mute",
             "time_lock: Def 0 - thời gian tồn tại cho lock",
+            "time_new: Def 0 - thời gian tồn tại cho newbie",
             "role_warn: Nullable - role được gắn khi nhận warn",
             "role_mute: Nullable - role được gắn khi nhận mute",
             "role_lock: Nullable - role được gắn khi nhận lock",
+            "role_new: Nullable - role được gắn khi newbie",
             "unrole_mute: Nullable - role bị gỡ khi nhận mute",
             "unrole_lock: Nullable - role bị gỡ khi nhận lock",
             "channel_greet: Nullable - kênh được thiết lập để bot gửi tin nhắn chào mừng",
@@ -87,13 +89,13 @@
         },
         {
           "name": "StatusTimeout",
-          "description": "Cập nhật 3 trường time_warn, time_mute, time_lock",
+          "description": "Cập nhật 4 trường time_warn, time_mute, time_lock, time_new",
           "required_variable": ["interaction", "client"],
           "triggered_by": ["Slash: /status_timeout", "Action: Status Timeout"]
         },
         {
           "name": "StatusRole",
-          "description": "Cập nhật 3 trường role_warn, role_mute, role_lock",
+          "description": "Cập nhật 4 trường role_warn, role_mute, role_lock, role_new",
           "required_variable": ["interaction", "client"],
           "triggered_by": ["Slash: /status_role", "Action: Status Role"]
         },
@@ -195,25 +197,25 @@
         },
         {
           "name": "MemberReset",
-          "description": "Đặt lại trạng thái thành viên về \"Good\"",
+          "description": "Đặt lại trạng thái thành viên về \"Good\"; gỡ role newbie",
           "required_variable": ["interaction", "client"],
           "triggered_by": ["Slash: /member_reset", "Action: Good - Unwarn - Unmute - Unlock"]
         },
         {
           "name": "MemberWarn",
-          "description": "Đổi trạng thái thành viên thành \"Warn\", gắn role tương ứng trong cột role_warn",
+          "description": "Đổi trạng thái thành viên thành \"Warn\"; gắn role_warn",
           "required_variable": ["interaction", "client"],
           "triggered_by": ["Slash: /member_warn", "Action: Warn"]
         },
         {
           "name": "MemberMute",
-          "description": "Đổi trạng thái thành viên thành \"Mute\", gắn role tương ứng trong cột role_mute",
+          "description": "Đổi trạng thái thành viên thành \"Mute\"; gắn role_mute",
           "required_variable": ["interaction", "client"],
           "triggered_by": ["Slash: /member_mute", "Action: Mute"]
         },
         {
           "name": "MemberLock",
-          "description": "Đổi trạng thái thành viên thành \"Lock\", gắn role tương ứng trong cột role_lock",
+          "description": "Đổi trạng thái thành viên thành \"Lock\"; gắn role_lock",
           "required_variable": ["interaction", "client"],
           "triggered_by": ["Slash: /member_lock", "Action: Lock"]
         },
@@ -222,6 +224,18 @@
           "description": "Đổi trạng thái thành viên thành \"Kick\"",
           "required_variable": ["interaction", "client"],
           "triggered_by": ["Slash: /member_kick", "Action: Kick"]
+        },
+        {
+          "name": "MemberGreeting",
+          "description": "Khi member join: thêm bản ghi, gắn role_new, đặt status Newbie (hiện không gửi tin nhắn)",
+          "required_variable": ["client"],
+          "triggered_by": ["Event: MemberJoined"]
+        },
+        {
+          "name": "MemberLeaving",
+          "description": "Khi member leave: đặt status Leaved (hiện không gửi tin nhắn)",
+          "required_variable": ["client"],
+          "triggered_by": ["Event: MemberLeaved"]
         }
       ]
     },
@@ -229,10 +243,16 @@
       "description": "Các trigger tự động gọi đến Script.",
       "items": [
         {
-          "name": "None",
-          "script": "None",
-          "logic": "None",
-          "references": ["None"]
+          "name": "MemberJoined",
+          "script": "MemberGreeting",
+          "logic": "GuildMemberAdd",
+          "references": ["Discord.js GuildMemberAdd"]
+        },
+        {
+          "name": "MemberLeaved",
+          "script": "MemberLeaving",
+          "logic": "GuildMemberRemove",
+          "references": ["Discord.js GuildMemberRemove"]
         }
       ]
     },
@@ -428,7 +448,7 @@
             "all: điền 1 thời gian cho cả 3 trường; chỉ chọn khi không chọn subslash khác, sau khi chọn all không chọn subslash nữa"
           ],
           "reply_type": "ephemeral",
-          "embed_schema": "Updated Status Timeout: \\n Warn: {time_warn} \\n Mute: {time_mute} \\n Lock: {time_lock}. Chỉ người dùng lệnh thấy.",
+          "embed_schema": "Updated Status Timeout: \\n Warn: {time_warn} \\n Mute: {time_mute} \\n Lock: {time_lock} \\n Newbie: {time_new}. Chỉ người dùng lệnh thấy.",
           "actions_included": []
         },
         {
@@ -440,7 +460,7 @@
             "lock: điền tên role_lock"
           ],
           "reply_type": "ephemeral",
-          "embed_schema": "Updated Status Role: \\n Warn: {role_warn} \\n Mute: {role_mute} \\n Lock: {role_lock}. Chỉ người dùng lệnh thấy.",
+          "embed_schema": "Updated Status Role: \\n Warn: {role_warn} \\n Mute: {role_mute} \\n Lock: {role_lock} \\n Newbie: {role_new}. Chỉ người dùng lệnh thấy.",
           "actions_included": []
         },
         {
