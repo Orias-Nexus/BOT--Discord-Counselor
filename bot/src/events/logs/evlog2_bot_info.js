@@ -1,1 +1,0 @@
-// src/events/logs/evlog2_bot_info.js

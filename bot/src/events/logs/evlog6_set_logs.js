@@ -1,1 +1,0 @@
-// src/events/logs/evlog6_set_logs.js
