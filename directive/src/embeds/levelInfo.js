@@ -115,48 +115,58 @@ export function getLeaderboardEmbed(entries, type, guild, extra = {}) {
   const expKey = isLocal ? 'member_exp' : 'user_exp';
   const lvlKey = isLocal ? 'member_level' : 'user_level';
 
-  // Hàm helper nhỏ để tạo một dòng thống nhất
+  // --- CẤU HÌNH ĐỘ RỘNG CỐ ĐỊNH ---
+  const NAME_WIDTH = 20;
+  const LVL_WIDTH = 4;
+  const EXP_WIDTH = 9;
+
+  // --- HÀM TẠO DÒNG CHUẨN ---
   const createRow = (rankNum, userId, lvlNum, expNum, isCaller) => {
-    const rankStr = `#${String(rankNum).padStart(RANK_WIDTH - 1)}`;
-    const nameStr = truncPad(resolveDisplayName(guild, userId), NAME_WIDTH);
-    // Tính toán độ dài cố định để không bị vỡ cột
-    const lvlStr = `Lv.${String(lvlNum ?? 0).padStart(LVL_WIDTH)}`; 
-    const expStr = `${formatExp(expNum ?? 0).padStart(10)} EXP`;
+    // Ép Hạng thành 2 kí tự
+    const rankStr = String(rankNum).padStart(2, ' '); 
+    
+    // Tên đúng 20 kí tự
+    const nameStr = truncPad(resolveDisplayName(guild, userId), NAME_WIDTH).padEnd(NAME_WIDTH, ' '); 
+    
+    // Cấp độ 4 kí tự (chỉ lấy số)
+    const lvlStr = String(lvlNum ?? 0).padStart(LVL_WIDTH, ' '); 
+    
+    // EXP đúng 9 kí tự (chỉ lấy số)
+    const expStr = String(expNum ?? 0).padStart(EXP_WIDTH, ' '); 
+    
     const markStr = isCaller ? ' ◄' : '';
     
+    // RK(2) + Space(1) + NAME(20) + Space(1) + LVL(4) + Space(1) + EXP(9) = 38
     return `${rankStr} ${nameStr} ${lvlStr} ${expStr}${markStr}`;
   };
-  
+
+  // --- XỬ LÝ DỮ LIỆU ---
   const lines = entries.map((e, i) => {
     return createRow(i + 1, e.user_id, e[lvlKey], e[expKey], e.user_id === extra.callerUserId);
   });
 
+  // Xử lý người gọi lệnh (Caller)
   if (extra.callerRank && extra.callerUserId) {
     const inList = entries.some((e) => e.user_id === extra.callerUserId);
-    if (!inList) {
-      // ĐỂ FIX SAI LỆCH 2: Cần truyền thêm Caller Level và Exp vào object `extra` từ ngoài vào
-      // Ví dụ: extra.callerLevel, extra.callerExp
-      lines.push('...'); // Thay vì \n, dùng dấu ba chấm để phân cách hợp lý hơn
+    if (!inList && extra.callerRank <= 99) { 
+      lines.push('...'); 
       lines.push(
         createRow(
           extra.callerRank, 
           extra.callerUserId, 
-          extra.callerLevel, // Yêu cầu biến này được truyền vào từ tham số `extra`
-          extra.callerExp,   // Yêu cầu biến này được truyền vào từ tham số `extra`
+          extra.callerLevel, 
+          extra.callerExp,   
           true
         )
       );
     }
   }
 
-  // Chỉnh lại Header cho khớp với độ dài của các Row bên dưới
-  const rankHeader = 'RANK'.padEnd(RANK_WIDTH + 1); // +1 cho dấu cách
-  const nameHeader = 'NAME'.padEnd(NAME_WIDTH + 1);
-  const lvlHeader  = 'LVL'.padEnd(LVL_WIDTH + 4);   // "Lv." (3) + LVL_WIDTH + space
-  const expHeader  = 'EXP'.padStart(14);            // 10 chữ số + " EXP" (4)
-  
-  const header = `${rankHeader}${nameHeader}${lvlHeader}${expHeader}`;
-  const divider = '-'.repeat(header.length);  
+  // --- TẠO HEADER KHỚP KÍ TỰ ---
+  // Header sẽ có dạng: "RK NAME                 LVL       EXP"
+  const header = ` # ${'NAME'.padEnd(NAME_WIDTH, ' ')} ${'LVL'.padEnd(LVL_WIDTH, ' ')} ${'EXP'.padStart(EXP_WIDTH, ' ')}`;
+  const divider = '-'.repeat(38); // Cập nhật đường kẻ ngang vừa vặn 38 ký tự
+
   const tableRows = [header, divider, ...lines];
   const body = lines.length > 0 ? `\`\`\`\n${tableRows.join('\n')}\n\`\`\`` : 'No data yet.';
 
