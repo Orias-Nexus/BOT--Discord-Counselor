@@ -79,8 +79,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
     return;
   }
   if (interaction.isChatInputCommand()) {
+    const scriptName = getScriptNameByCommand(interaction.commandName);
+    const slashUsesEmbed =
+      scriptName &&
+      ['ServerInfo', 'MemberInfo', 'ChanelInfo', 'CategoryInfo'].includes(scriptName);
     try {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ ephemeral: !slashUsesEmbed });
     } catch (err) {
       if (isUnknownInteraction(err)) {
         console.warn('[InteractionCreate] Token hết hạn (10062) - thử lại lệnh sau vài giây.');
@@ -88,7 +92,6 @@ client.on(Events.InteractionCreate, async (interaction) => {
       }
       throw err;
     }
-    const scriptName = getScriptNameByCommand(interaction.commandName);
     if (!scriptName) {
       await interaction.editReply({ content: 'Lệnh không xác định.' }).catch(() => {});
       return;
