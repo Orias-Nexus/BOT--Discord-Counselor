@@ -11,7 +11,7 @@ const isLocalBackend =
   BACKEND_API_URL.startsWith('127.0.0.1');
 
 const GITHUB_RAW_WHITEPET =
-  'https://github.com/Orias-Nexus/JS-Discord-Counselor/blob/main/assets/images/Whitepet.png?raw=true';
+  'https://github.com/Orias-Nexus/JS--Discord-Counselor/blob/main/assets/images/Whitepet.png?raw=true';
 
 const DEFAULT_MAIN_IMAGE_URL = isLocalBackend
   ? GITHUB_RAW_WHITEPET
@@ -19,3 +19,14 @@ const DEFAULT_MAIN_IMAGE_URL = isLocalBackend
 
 export const mainImageURL =
   process.env.MAIN_IMAGE_URL ?? DEFAULT_MAIN_IMAGE_URL;
+
+if (process.env.MAIN_IMAGE_URL) {
+  console.log('[config] mainImageURL: từ env MAIN_IMAGE_URL =', mainImageURL);
+} else {
+  console.log(
+    '[config] mainImageURL: BACKEND_API_URL=%s, isLocalBackend=%s → %s',
+    BACKEND_API_URL,
+    isLocalBackend,
+    mainImageURL
+  );
+}
