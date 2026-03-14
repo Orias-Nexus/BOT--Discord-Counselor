@@ -5,20 +5,22 @@ const MODAL_PREFIX = 'modal_';
 /** Script cần modal khi gọi từ nút: [scriptName, title, { inputCustomId: { label, placeholder, style, required } }] */
 const MODALS = {
   StatusTimeout: {
-    title: 'Thời gian Warn / Mute / Lock',
+    title: 'Thời gian Warn / Mute / Lock / Newbie',
     inputs: [
-      { id: 'warn', label: 'Time Warn (hh:mm:ss hoặc phút)', placeholder: 'VD: 90 hoặc 1:30:00', required: false },
-      { id: 'mute', label: 'Time Mute (hh:mm:ss hoặc phút)', placeholder: 'VD: 90 hoặc 1:30:00', required: false },
-      { id: 'lock', label: 'Time Lock (hh:mm:ss hoặc phút)', placeholder: 'VD: 90 hoặc 1:30:00', required: false },
-      { id: 'all', label: 'Dùng chung cho cả 3', placeholder: 'VD: 90 hoặc 1:30:00', required: false },
+      { id: 'warn', label: 'Time Warn (dd:hh:mm hoặc phút)', placeholder: 'VD: 90 hoặc 00:01:30', required: false },
+      { id: 'mute', label: 'Time Mute (dd:hh:mm hoặc phút)', placeholder: 'VD: 90 hoặc 00:01:30', required: false },
+      { id: 'lock', label: 'Time Lock (dd:hh:mm hoặc phút)', placeholder: 'VD: 90 hoặc 00:01:30', required: false },
+      { id: 'new', label: 'Time Newbie (dd:hh:mm hoặc phút)', placeholder: 'VD: 90 hoặc 00:01:30', required: false },
+      { id: 'all', label: 'Dùng chung cho cả 4', placeholder: 'VD: 90 hoặc 00:01:30', required: false },
     ],
   },
   StatusRole: {
-    title: 'Role Warn / Mute / Lock',
+    title: 'Role Warn / Mute / Lock / Newbie',
     inputs: [
       { id: 'warn', label: 'Tên role Warn', placeholder: 'Warning Role', required: false },
       { id: 'mute', label: 'Tên role Mute', placeholder: 'Muted Role', required: false },
-      { id: 'lock', label: 'Tên role Lock', placeholder: 'Blocked Role', required: false },
+      { id: 'lock', label: 'Tên role Lock', placeholder: 'Locked Role', required: false },
+      { id: 'new', label: 'Tên role Newbie', placeholder: 'Newbie Role', required: false },
     ],
   },
   StatusUnrole: {
@@ -51,7 +53,7 @@ export function getModalForScript(scriptName, contextPart, extra = {}) {
   const customId = `${MODAL_PREFIX}${scriptName}_${contextPart}`;
   const modal = new ModalBuilder().setCustomId(customId).setTitle(config.title.slice(0, 45));
   const { guild, server } = extra;
-  const rolePlaceholders = { warn: 'Warning Role', mute: 'Muted Role', lock: 'Blocked Role' };
+  const rolePlaceholders = { warn: 'Warning Role', mute: 'Muted Role', lock: 'Locked Role', new: 'Newbie Role' };
   for (const input of config.inputs) {
     let placeholder = (input.placeholder || '').slice(0, 100);
     let value = undefined;

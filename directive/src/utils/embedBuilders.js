@@ -7,12 +7,14 @@ const CHANNEL_INFO_COLOR = 0xfbfcf8;
 const MEMBER_INFO_COLOR = 0xf5f5f5;
 
 const STATUS_COLORS = {
+  Newbie: 0x5865f2,
   Good: 0x57f287,
   Warn: 0xfee75c,
   Warning: 0xfee75c,
   Mute: 0xed4245,
   Lock: 0x992d22,
   Locked: 0x992d22,
+  Leaved: 0x747f8d,
 };
 
 const CHANNEL_TYPE_NAMES = {
@@ -192,7 +194,7 @@ export function buildCategoryInfoEmbed(category, guild) {
 function formatMemberStatus(profile) {
   const status = profile?.member_status ?? 'Good';
   const expires = profile?.member_expires;
-  if (!expires || status === 'Good') return status;
+  if (!expires || status === 'Good' || status === 'Newbie' || status === 'Leaved') return status;
   const ts = Math.floor(new Date(expires).getTime() / 1000);
   return `${status}: <t:${ts}:R>`;
 }

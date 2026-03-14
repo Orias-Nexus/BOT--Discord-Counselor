@@ -22,3 +22,11 @@ export async function setMemberStatus(serverId, userId, status, expiresAt = null
 export async function getLevelRange() {
     return levelRepo.getMinMax();
 }
+
+/**
+ * Đặt Good cho mọi member đã hết hạn (member_expires <= now).
+ * Gọi định kỳ từ backend.
+ */
+export async function processExpiredMembers() {
+    return memberRepo.processExpiredMembers();
+}
