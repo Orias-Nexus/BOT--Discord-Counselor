@@ -3,20 +3,14 @@
 # https://render.com/docs/blueprint-spec
 
 services:
-<<<<<<< HEAD
   # ── Backend API (Web Service) ─────────────────────────────────
   - type: web
     name: discord-counselor-backend
     plan: free
-=======
-  - type: web
-    name: discord-counselor-backend
->>>>>>> 19a2cfd (Add Render configuration for Discord bot deployment: create render.yaml to define services for backend and directive with environment variables for Supabase and Discord integration.)
     runtime: node
     rootDir: backend
     buildCommand: npm install
     startCommand: npm start
-<<<<<<< HEAD
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
@@ -53,18 +47,6 @@ services:
         sync: false
 
   # ── Directive / Discord Bot (Background Worker) ───────────────
-=======
-    envVars:
-      - key: NODE_VERSION
-        value: "20"
-      - key: SUPABASE_URL
-        sync: false
-      - key: SUPABASE_SERVICE_ROLE_KEY
-        sync: false
-      - key: FRONTEND_ORIGIN
-        generateValue: true
-
->>>>>>> 19a2cfd (Add Render configuration for Discord bot deployment: create render.yaml to define services for backend and directive with environment variables for Supabase and Discord integration.)
   - type: worker
     name: discord-counselor-directive
     runtime: node
@@ -72,22 +54,16 @@ services:
     buildCommand: npm install
     startCommand: npm start
     envVars:
-<<<<<<< HEAD
       - key: NODE_ENV
         value: "production"
       - key: NODE_VERSION
         value: "22"
 
       # Discord Bot
-=======
-      - key: NODE_VERSION
-        value: "20"
->>>>>>> 19a2cfd (Add Render configuration for Discord bot deployment: create render.yaml to define services for backend and directive with environment variables for Supabase and Discord integration.)
       - key: DISCORD_TOKEN
         sync: false
       - key: APPLICATION_ID
         sync: false
-<<<<<<< HEAD
 
       # Backend API — điền URL backend sau deploy
       - key: BACKEND_API_URL
@@ -97,8 +73,3 @@ services:
       # Redis (cùng instance với backend)
       - key: REDIS_URL
         sync: false
-=======
-      - key: BACKEND_API_URL
-        sync: false
-        # Điền URL Backend sau khi deploy (vd: https://discord-counselor-backend.onrender.com)
->>>>>>> 19a2cfd (Add Render configuration for Discord bot deployment: create render.yaml to define services for backend and directive with environment variables for Supabase and Discord integration.)

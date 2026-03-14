@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { getEmbedContent } from '../embedDefaults.js';
 
 const SUCCESS_MESSAGE = 'Completed Set Level {Server Profile Name}: {member_level}.';
 

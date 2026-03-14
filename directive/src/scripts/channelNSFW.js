@@ -1,5 +1,6 @@
 import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
+import { getEmbedContent } from '../embedDefaults.js';
 
 const NSFW_ALLOWED_TYPES = [ChannelType.GuildText, ChannelType.GuildAnnouncement, ChannelType.GuildForum];
 const SUCCESS_MESSAGE = 'Changed channel {Channel Name} to NSFW.';
