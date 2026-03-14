@@ -1,3 +1,4 @@
+import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
 
 const SUCCESS_MESSAGE = 'Privated {Channel Name}.';
@@ -17,7 +18,7 @@ export async function run(interaction, client, actionContext) {
     return;
   }
   await channel.permissionOverwrites.edit(guild.id, { ViewChannel: false }).catch(() => {});
-  const content = api.formatEphemeralContent(
+ const content = api.formatEphemeralContent(
     SUCCESS_MESSAGE.replace(/\{Channel Name\}/g, channel.name)
   );
   await interaction.editReply({ content });
