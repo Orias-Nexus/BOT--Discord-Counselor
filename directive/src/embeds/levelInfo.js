@@ -140,7 +140,10 @@ export function getLeaderboardEmbed(entries, type, guild, extra = {}) {
     }
   }
 
-  const body = lines.length > 0 ? `\`\`\`\n${lines.join('\n')}\n\`\`\`` : 'No data yet.';
+  const header = `RANK ${'NAME'.padEnd(NAME_WIDTH)} LVL  ${'EXP'.padStart(10)} `;
+  const divider = '-'.repeat(header.length);
+  const tableRows = [header, divider, ...lines];
+  const body = lines.length > 0 ? `\`\`\`\n${tableRows.join('\n')}\n\`\`\`` : 'No data yet.';
 
   return {
     title,
