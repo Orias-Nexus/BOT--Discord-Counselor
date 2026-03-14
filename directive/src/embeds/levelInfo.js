@@ -115,37 +115,23 @@ export function getLeaderboardEmbed(entries, type, guild, extra = {}) {
   const expKey = isLocal ? 'member_exp' : 'user_exp';
   const lvlKey = isLocal ? 'member_level' : 'user_level';
 
-  // --- CẤU HÌNH ĐỘ RỘNG CỐ ĐỊNH ---
   const NAME_WIDTH = 20;
   const LVL_WIDTH = 4;
   const EXP_WIDTH = 9;
 
-  // --- HÀM TẠO DÒNG CHUẨN ---
   const createRow = (rankNum, userId, lvlNum, expNum, isCaller) => {
-    // Ép Hạng thành 2 kí tự
     const rankStr = String(rankNum).padStart(2, ' '); 
-    
-    // Tên đúng 20 kí tự
     const nameStr = truncPad(resolveDisplayName(guild, userId), NAME_WIDTH).padEnd(NAME_WIDTH, ' '); 
-    
-    // Cấp độ 4 kí tự (chỉ lấy số)
     const lvlStr = String(lvlNum ?? 0).padStart(LVL_WIDTH, ' '); 
-    
-    // EXP đúng 9 kí tự (chỉ lấy số)
     const expStr = String(expNum ?? 0).padStart(EXP_WIDTH, ' '); 
-    
     const markStr = isCaller ? ' ◄' : '';
-    
-    // RK(2) + Space(1) + NAME(20) + Space(1) + LVL(4) + Space(1) + EXP(9) = 38
     return `${rankStr} ${nameStr} ${lvlStr} ${expStr}${markStr}`;
   };
 
-  // --- XỬ LÝ DỮ LIỆU ---
   const lines = entries.map((e, i) => {
     return createRow(i + 1, e.user_id, e[lvlKey], e[expKey], e.user_id === extra.callerUserId);
   });
 
-  // Xử lý người gọi lệnh (Caller)
   if (extra.callerRank && extra.callerUserId) {
     const inList = entries.some((e) => e.user_id === extra.callerUserId);
     if (!inList && extra.callerRank <= 99) { 
@@ -161,11 +147,9 @@ export function getLeaderboardEmbed(entries, type, guild, extra = {}) {
       );
     }
   }
-
-  // --- TẠO HEADER KHỚP KÍ TỰ ---
-  // Header sẽ có dạng: "RK NAME                 LVL       EXP"
-  const header = ` # ${'NAME'.padEnd(NAME_WIDTH, ' ')} ${'LVL'.padEnd(LVL_WIDTH, ' ')} ${'EXP'.padStart(EXP_WIDTH, ' ')}`;
-  const divider = '-'.repeat(38); // Cập nhật đường kẻ ngang vừa vặn 38 ký tự
+  
+  const header = ` # ${'NAME'.padEnd(NAME_WIDTH, ' ')} ${'LVL'.padStart(LVL_WIDTH, ' ')} ${'EXP'.padStart(EXP_WIDTH, ' ')}`;
+  const divider = '-'.repeat(38);
 
   const tableRows = [header, divider, ...lines];
   const body = lines.length > 0 ? `\`\`\`\n${tableRows.join('\n')}\n\`\`\`` : 'No data yet.';
