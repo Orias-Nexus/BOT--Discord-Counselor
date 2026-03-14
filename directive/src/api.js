@@ -295,3 +295,8 @@ export async function getLocalRank(serverId, userId) {
 export async function getGlobalRank(userId) {
   return request(`/users/${userId}/rank`);
 }
+
+/** Gọi backend xử lý member hết hạn (đặt Good). Trả về { count, updated: [{ server_id, user_id }] }. */
+export async function processExpires() {
+  return request('/api/members/process-expires', { method: 'POST' });
+}

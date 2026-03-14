@@ -154,3 +154,20 @@ export async function getRank(serverId, userId) {
     });
     return count + 1;
 }
+
+/**
+ * Đặt Good cho mọi member có member_expires <= now và member_status != 'Good'.
+ * Trả về { count, updated: [{ server_id, user_id }, ...] } để directive áp dụng role.
+ */
+export async function processExpiredMembers() {
+    const sb = getSupabase();
+    const now = new Date().toISOString();
+    const { data, error } = await sb.schema(getSchema()).from(TABLE).update({
+        member_status: 'Good',
+        member_expires: null,
+        updated_at: now,
+    }).not('member_expires', 'is', null).lte('member_expires', now).neq('member_status', 'Good').select('user_id, server_id');
+    if (error) throw error;
+    const updated = (data ?? []).map((r) => ({ server_id: r.server_id, user_id: r.user_id }));
+    return { count: updated.length, updated };
+}
