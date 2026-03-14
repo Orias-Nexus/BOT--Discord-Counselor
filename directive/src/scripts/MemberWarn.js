@@ -19,7 +19,7 @@ export async function run(interaction, client, actionContext) {
   const server = await api.getServer(guild.id);
   const timeWarn = server?.time_warn > 0 ? server.time_warn : null;
   const expiresAt = timeWarn ? new Date(Date.now() + timeWarn * 60 * 1000) : null;
-  for (const roleId of [server?.role_mute, server?.role_lock].filter(Boolean)) {
+  for (const roleId of [server?.role_mute, server?.role_lock, server?.role_new].filter(Boolean)) {
     const role = guild.roles.cache.get(roleId);
     if (role) await member.roles.remove(role).catch(() => {});
   }
@@ -40,4 +40,6 @@ export async function run(interaction, client, actionContext) {
     { 'Server Profile Name': displayName, 'Member Expires': expiresStr }
   ));
   await api.replyOrEdit(interaction, content);
+  const updatedProfile = await api.getMember(guild.id, member.id).catch(() => null);
+  return { updatedProfile, targetId: member.id };
 }

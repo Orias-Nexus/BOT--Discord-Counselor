@@ -1,17 +1,20 @@
 import { EmbedBuilder, ChannelType, PermissionFlagsBits } from 'discord.js';
 import { mainImageURL } from '../config.js';
 
-const SERVER_INFO_COLOR = 5895182;
-const CHANNEL_INFO_COLOR = 15158332;
-const CATEGORY_INFO_COLOR = 5788754;
+const SERVER_INFO_COLOR = 0xfcfcfc;
+const CATEGORY_INFO_COLOR = 0xfdfcfa;
+const CHANNEL_INFO_COLOR = 0xfbfcf8;
+const MEMBER_INFO_COLOR = 0xf5f5f5;
 
 const STATUS_COLORS = {
+  Newbie: 0x5865f2,
   Good: 0x57f287,
   Warn: 0xfee75c,
   Warning: 0xfee75c,
   Mute: 0xed4245,
   Lock: 0x992d22,
   Locked: 0x992d22,
+  Leaved: 0x747f8d,
 };
 
 const CHANNEL_TYPE_NAMES = {
@@ -72,10 +75,7 @@ export function buildServerInfoEmbed(guild) {
   const stickerCount = guild.stickers.cache.size;
   const emojiCount = guild.emojis.cache.size;
   const soundCount = guild.soundboardSounds?.cache?.size ?? 0;
-
-  const description = guild.description
-    ? guild.description.slice(0, 1024)
-    : '\u200B';
+  const description = guild.description ? guild.description.slice(0, 2048) : null;
 
   const embed = new EmbedBuilder()
     .setColor(SERVER_INFO_COLOR)
@@ -92,7 +92,6 @@ export function buildServerInfoEmbed(guild) {
       },
       { name: 'Type', value: getGuildTypeString(guild), inline: true },
       { name: '\u200B', value: '\u200B', inline: true },
-      { name: 'Biography', value: description, inline: false },
       {
         name: 'Channel',
         value: `Chat: ${chatCount} | Voice: ${voiceCount}`,
@@ -107,8 +106,9 @@ export function buildServerInfoEmbed(guild) {
       { name: 'Emoji', value: String(emojiCount), inline: true },
       { name: 'Sound', value: String(soundCount), inline: true }
     )
-    .setTimestamp();
+    // .setTimestamp();
 
+  if (description) embed.setFooter({ text: description });
   if (mainImageURL) embed.setImage(mainImageURL);
   return embed;
 }
@@ -194,7 +194,7 @@ export function buildCategoryInfoEmbed(category, guild) {
 function formatMemberStatus(profile) {
   const status = profile?.member_status ?? 'Good';
   const expires = profile?.member_expires;
-  if (!expires || status === 'Good') return status;
+  if (!expires || status === 'Good' || status === 'Newbie' || status === 'Leaved') return status;
   const ts = Math.floor(new Date(expires).getTime() / 1000);
   return `${status}: <t:${ts}:R>`;
 }
@@ -216,7 +216,7 @@ export function buildMemberInfoEmbed(member, profile) {
       : 'None';
 
   const embed = new EmbedBuilder()
-    .setColor(getStatusColor(status))
+    .setColor(MEMBER_INFO_COLOR)
     .setTitle(`✦ ${user.username}`)
     .setThumbnail(user.displayAvatarURL({ size: 256 }))
     .addFields(

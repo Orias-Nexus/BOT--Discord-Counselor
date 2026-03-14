@@ -41,6 +41,7 @@ COMMENT ON FUNCTION "DiscordCounselor".uuidv7() IS 'UUID v7 time-ordered (RFC 95
 -- -----------------------------------------------------------------------------
 DO $$ BEGIN
     CREATE TYPE "DiscordCounselor".member_status_enum AS ENUM (
+        'Newbie',
         'Good',
         'Warn',
         'Mute',
@@ -96,9 +97,11 @@ CREATE TABLE IF NOT EXISTS "DiscordCounselor".servers (
     time_warn      INTEGER NOT NULL DEFAULT 0,
     time_mute      INTEGER NOT NULL DEFAULT 0,
     time_lock      INTEGER NOT NULL DEFAULT 0,
+    time_new       INTEGER NOT NULL DEFAULT 0,
     role_warn      TEXT,
     role_mute      TEXT,
     role_lock      TEXT,
+    role_new       TEXT,
     unrole_mute    TEXT,
     unrole_lock    TEXT,
     channel_greet  TEXT,
@@ -119,6 +122,8 @@ COMMENT ON COLUMN "DiscordCounselor".servers.time_lock IS 'Thời gian tồn t�
 COMMENT ON COLUMN "DiscordCounselor".servers.role_warn IS 'Role được gắn khi nhận Warn';
 COMMENT ON COLUMN "DiscordCounselor".servers.role_mute IS 'Role được gắn khi nhận Mute';
 COMMENT ON COLUMN "DiscordCounselor".servers.role_lock IS 'Role được gắn khi nhận Lock';
+COMMENT ON COLUMN "DiscordCounselor".servers.time_new IS 'Thời gian tồn tại Newbie (phút); 0 = vô hạn';
+COMMENT ON COLUMN "DiscordCounselor".servers.role_new IS 'Role được gắn khi Newbie';
 COMMENT ON COLUMN "DiscordCounselor".servers.unrole_mute IS 'Role bị gỡ khi nhận Mute';
 COMMENT ON COLUMN "DiscordCounselor".servers.unrole_lock IS 'Role bị gỡ khi nhận Lock';
 COMMENT ON COLUMN "DiscordCounselor".servers.channel_greet IS 'Kênh tin nhắn chào mừng';

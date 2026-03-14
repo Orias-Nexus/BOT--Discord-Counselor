@@ -85,7 +85,7 @@ export function buildChannelInfoComponents(channelId, channel, guild) {
   const isPublic = !overwrite || !overwrite.deny?.has(PermissionFlagsBits.ViewChannel);
   const status = isPublic ? 'Public' : 'Private';
   const toggleScript = status === 'Public' ? 'ChannelPrivate' : 'ChannelPublic';
-  const scripts = ['ChannelClone', toggleScript, 'ChannelSync', channel.nsfw ? 'ChannelNSFW' : 'ChannelSFW'];
+  const scripts = ['ChannelClone', toggleScript, 'ChannelSync', channel.nsfw ? 'ChannelSFW' : 'ChannelNSFW'];
   const row = buildActionRow(scripts, channelId);
   return { row };
 }
