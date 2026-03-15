@@ -2,21 +2,29 @@
   "Discord_Bot_Architecture": {
     "Database": {
       "description": "Cấu trúc cơ sở dữ liệu từ Table-Data.",
-      "Enum": {
+      "StatusEnum": {
         "name": "Member Status",
         "values": ["Newbie","Good", "Warn", "Mute", "Lock", "Kick", "Leaved"]
+      },
+      "ChannelTypeEnum": {
+        "name": "Channel Type",
+        "values": ["Creator", "Member", "Bot", "Role", "Category", "Channel", "Boost"],
+        "description": "Loại kênh quản trị. Creator: kênh thoại trigger tạo kênh riêng (không giới hạn số kênh tạo). Member, Bot, Role, Category, Channel, Boost: kênh hiển thị stat (1 kênh/loại/server), cùng 1 danh mục."
+      },
+      "MessageTypeEnum": {
+        "name": "Message Type",
+        "values": ["Messages", "Greeting", "Leaving", "Boosting", "Logging"]
       },
       "Tables": [
         {
           "name": "Functions",
-          "description": "Định dạng embed_schema của các lệnh, tính năng, tin nhắn chung/mặc định.",
+          "description": "Slash, action, event của từng tính năng. Nội dung embed hardcode trong code (directive), không lưu DB.",
           "columns": [
             "script_id: Khoá - UUID",
             "script: Notnull - Tên tính năng",
             "slash: Nullable - lệnh /slash",
             "action: Nullable - tên action",
-            "event: Nullable - tên event",
-            "embed_schema: Nullable - Nội dung định dạng embed_schema tin nhắn"
+            "event: Nullable - tên event"
           ]
         },
         {
@@ -44,14 +52,28 @@
             "role_lock: Nullable - role được gắn khi nhận lock",
             "role_new: Nullable - role được gắn khi newbie",
             "unrole_mute: Nullable - role bị gỡ khi nhận mute",
-            "unrole_lock: Nullable - role bị gỡ khi nhận lock",
-            "channel_greet: Nullable - kênh được thiết lập để bot gửi tin nhắn chào mừng",
-            "channel_leave: Nullable - kênh được thiết lập để bot gửi tin nhắn tạm biệt",
-            "channel_boost: Nullable - kênh được thiết lập để bot gửi thông báo nâng cấp",
-            "channel_logs: Nullable - kênh được thiết lập để bot gửi các log khác",
-            "message_great: Nullable - nội dung và định dạng embed_schema tin nhắn chào mừng",
-            "message_leave: Nullable - nội dung và định dạng embed_schema tin nhắn tạm biệt",
-            "message_boost: Nullable - nội dung và định dạng embed_schema thông báo nâng cấp"
+            "unrole_lock: Nullable - role bị gỡ khi nhận lock"
+          ]
+        },
+        {
+          "name": "Embeds",
+          "description": "Chỉ embed do người dùng tạo (messages, v.v.). Embed của functions hardcode trong code.",
+          "columns": [
+            "embed_id: Khoá - UUID v7",
+            "embed_name: Notnull - tên embed do người dùng đặt",
+            "server_id: Notnull - tham chiếu servers",
+            "embed: Nullable - định dạng embed (JSONB)"
+          ]
+        },
+        {
+          "name": "Messages",
+          "description": "Cấu hình tin nhắn theo loại (chào mừng, tạm biệt, boost, log...); tách khỏi servers để dễ mở rộng.",
+          "columns": [
+            "messages_id: Khoá - UUID v7",
+            "messages_type: Notnull - enum (Messages, Greeting, Leaving, Boosting, Logging)",
+            "server_id: Notnull - tham chiếu servers",
+            "channel_id: Notnull - kênh gửi tin; \"0\" = do code quyết định",
+            "embed_id: Nullable - tham chiếu bảng Embeds"
           ]
         },
         {
@@ -74,6 +96,16 @@
             "member_level: Notnull - Level cục bộ. Độc lập với Level toàn cục",
             "member_status: Def \"Good\" - trạng thái thành viên",
             "member_expires: Nullable - thời gian kết thúc trạng thái"
+          ]
+        },
+        {
+          "name": "Channels",
+          "description": "Kênh quản trị theo ChannelTypeEnum. Creator: 1 kênh 'Create' ghi trong bảng; khi user vào sẽ trigger Script ChannelCreate (clone kênh, đặt tên theo người tạo, MemberMove vào đó); kênh Create + các clone dùng chung 1 danh mục; khi clone hết người thì xoá. Các loại Stat (Member, Bot, Role, Category, Channel, Boost): mỗi server tối đa 1 kênh/loại, nằm chung 1 danh mục; tên kênh hiển thị số tương ứng; Job statsCheck mỗi 1 phút tự động cập nhật tên kênh.",
+          "columns": [
+            "channel_id: Khoá - id của channel (Discord)",
+            "category_id: Nullable - id của category chứa kênh",
+            "server_id: Notnull - id của server (ngoại)",
+            "channel_type: Notnull - ChannelTypeEnum"
           ]
         }
       ]
@@ -172,6 +204,24 @@
           "triggered_by": ["Slash: /channel_nsfw", "Action: NSFW"]
         },
         {
+          "name": "ChannelCreate",
+          "description": "Khi user vào kênh thoại loại Creator: clone kênh đó, đặt tên theo người tạo, MemberMove họ vào kênh clone. Khi mọi người rời hết một kênh clone thì xoá kênh đó. Chỉ kênh ghi trong bảng (channel_type Creator) là trigger; kênh clone không ghi trong bảng.",
+          "required_variable": ["client"],
+          "triggered_by": ["Event: VoiceStateUpdate"]
+        },
+        {
+          "name": "SetVoiceCreator",
+          "description": "Đặt một kênh thoại làm kênh Creator (ghi vào bảng Channels). Gọi từ Slash /set_voice_creator hoặc nút Voice Creator trong server_info.",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /set_voice_creator", "Action: Voice Creator"]
+        },
+        {
+          "name": "SetServerStats",
+          "description": "Xoá các kênh stat cũ của server, tạo 6 kênh thoại stat (Member, Bot, Role, Category, Channel, Boost) trong danh mục đã chọn và ghi vào bảng Channels.",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /set_server_stats", "Action: Server Stats"]
+        },
+        {
           "name": "MemberInfo",
           "description": "Hiển thị thông tin thành viên",
           "required_variable": ["interaction", "client"],
@@ -199,7 +249,7 @@
           "name": "MemberReset",
           "description": "Đặt lại trạng thái thành viên về \"Good\"; gỡ role newbie",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /member_reset", "Action: Good - Unwarn - Unmute - Unlock"]
+          "triggered_by": ["Slash: /member_reset", "Action: Good"]
         },
         {
           "name": "MemberWarn",
@@ -253,6 +303,27 @@
           "script": "MemberLeaving",
           "logic": "GuildMemberRemove",
           "references": ["Discord.js GuildMemberRemove"]
+        },
+        {
+          "name": "VoiceStateUpdate",
+          "script": "ChannelCreate",
+          "logic": "VoiceStateUpdate",
+          "references": ["Discord.js VoiceStateUpdate - join Creator trigger clone+move; leave clone empty trigger delete"]
+        }
+      ]
+    },
+    "Job": {
+      "description": "Các tác vụ chạy định kỳ theo interval, không dùng trigger Discord.",
+      "items": [
+        {
+          "name": "expiresCheck",
+          "interval_seconds": 60,
+          "description": "Gọi backend process-expires; áp dụng role Good và cập nhật embed Member Info nếu có."
+        },
+        {
+          "name": "statsCheck",
+          "interval_seconds": 60,
+          "description": "Mỗi 1 phút: lấy danh sách kênh stat (Member, Bot, Role, Category, Channel, Boost) từ API, cập nhật tên kênh Discord theo số liệu hiện tại của server."
         }
       ]
     },
@@ -279,6 +350,20 @@
           "parent_embed_schema": "/server_info",
           "color": "Default",
           "note": "None"
+        },
+        {
+          "label": "Voice Creator",
+          "script": "SetVoiceCreator",
+          "parent_embed_schema": "/server_info",
+          "color": "Default",
+          "note": "Gợi ý dùng lệnh /set_voice_creator để chọn kênh"
+        },
+        {
+          "label": "Server Stats",
+          "script": "SetServerStats",
+          "parent_embed_schema": "/server_info",
+          "color": "Default",
+          "note": "Gợi ý dùng lệnh /set_server_stats để chọn danh mục"
         },
         {
           "label": "Clone",
@@ -365,7 +450,7 @@
           "note": "None"
         },
         {
-          "label": "Good - Unwarn - Unmute - Unlock",
+          "label": "Good",
           "script": "MemberReset",
           "parent_embed_schema": "/member_info",
           "color": "Green",
@@ -436,7 +521,23 @@
             "footer": "Welcome to the server",
             "timestamp": true
           },
-          "actions_included": ["Status Timeout", "Status Role", "Status Unrole"]
+          "actions_included": ["Status Timeout", "Status Role", "Status Unrole", "Voice Creator", "Server Stats"]
+        },
+        {
+          "command": "/set_voice_creator",
+          "script": "SetVoiceCreator",
+          "slashs": ["target*: chọn kênh thoại làm kênh Creator"],
+          "reply_type": "ephemeral",
+          "embed_schema": "Đã đặt kênh Creator: {Channel Name}. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
+        },
+        {
+          "command": "/set_server_stats",
+          "script": "SetServerStats",
+          "slashs": ["target*: chọn danh mục (category) để tạo 6 kênh stat"],
+          "reply_type": "ephemeral",
+          "embed_schema": "Đã tạo 6 kênh stat trong danh mục. Chỉ người dùng lệnh thấy.",
+          "actions_included": []
         },
         {
           "command": "/status_timeout",
@@ -643,7 +744,7 @@
             ],
             "timestamp": true
           },
-          "actions_included": ["Name", "Level", "Move", "Good - Unwarn - Unmute - Unlock", "Warn", "Mute", "Lock", "Kick"]
+          "actions_included": ["Name", "Level", "Move", "Good", "Warn", "Mute", "Lock", "Kick"]
         },
         {
           "command": "/member_rename",

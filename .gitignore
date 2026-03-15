@@ -2,3 +2,5 @@
 **/.github/*
 
 .env
+
+# **/supabase/*
