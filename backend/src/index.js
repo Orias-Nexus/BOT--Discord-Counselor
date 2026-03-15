@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
 import serverRoutes from './routes/serverRoutes.js';
+import channelRoutes from './routes/channelRoutes.js';
 import memberRoutes from './routes/memberRoutes.js';
 import functionRoutes from './routes/functionRoutes.js';
 import levelRoutes from './routes/levelRoutes.js';
@@ -24,11 +25,12 @@ app.get('/api/info', (_req, res) => {
   res.json({
     name: 'Discord Counselor API',
     version: '1.0.0',
-    endpoints: ['/health', '/api/info', '/api/servers', '/api/members', '/api/functions', '/api/levels'],
+    endpoints: ['/health', '/api/info', '/api/servers', '/api/servers/:serverId/channels', '/api/members', '/api/functions', '/api/levels'],
   });
 });
 
 app.use('/api/servers', serverRoutes);
+app.use('/api/servers/:serverId/channels', channelRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/functions', functionRoutes);
 app.use('/api/levels', levelRoutes);

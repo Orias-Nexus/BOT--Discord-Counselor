@@ -3,8 +3,8 @@ import * as userRepo from './userRepository.js';
 
 const TABLE = 'members';
 const COLS = 'user_id, server_id, member_exp, member_level, member_status, member_expires';
-const STATUS_API_TO_DB = { Good: 'Good', Warning: 'Warn', Muted: 'Mute', Locked: 'Lock', Newbie: 'Newbie', Leaved: 'leaved' };
-const STATUS_DB_TO_API = { Good: 'Good', Warn: 'Warning', Mute: 'Muted', Lock: 'Locked', Kick: 'Kick', leaved: 'Leaved', Newbie: 'Newbie' };
+const STATUS_API_TO_DB = { Good: 'Good', Warning: 'Warn', Muted: 'Mute', Locked: 'Lock', Newbie: 'Newbie', Leaved: 'Leaved' };
+const STATUS_DB_TO_API = { Good: 'Good', Warn: 'Warning', Mute: 'Muted', Lock: 'Locked', Kick: 'Kick', Leaved: 'Leaved', Newbie: 'Newbie' };
 
 function rowToMember(row) {
     if (!row) return null;
