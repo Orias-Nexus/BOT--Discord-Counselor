@@ -1,6 +1,11 @@
 import { prisma } from '../config/prisma.js';
 import * as userRepo from './userRepository.js';
 
+<<<<<<< HEAD
+=======
+const TABLE = 'members';
+const COLS = 'user_id, server_id, member_exp, member_level, member_status, member_expires';
+>>>>>>> 648061a (Add channel management routes and services: implement channelRoutes, channelController, and channelService for enhanced channel operations, including listing, upserting, and deleting channels by server ID.)
 const STATUS_API_TO_DB = { Good: 'Good', Warning: 'Warn', Muted: 'Mute', Locked: 'Lock', Newbie: 'Newbie', Leaved: 'Leaved' };
 const STATUS_DB_TO_API = { Good: 'Good', Warn: 'Warning', Mute: 'Muted', Lock: 'Locked', Kick: 'Kick', Leaved: 'Leaved', Newbie: 'Newbie' };
 

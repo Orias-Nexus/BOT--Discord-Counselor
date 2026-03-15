@@ -1,5 +1,6 @@
 import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
+import { getEmbedContent } from '../embedDefaults.js';
 
 const SUCCESS_MESSAGE = 'Privated {Category Name}.';
 

@@ -222,6 +222,24 @@
           "triggered_by": ["Slash: /setserverstats", "Action: Server Stats"]
         },
         {
+          "name": "ChannelCreate",
+          "description": "Khi user vào kênh thoại loại Creator: clone kênh đó, đặt tên theo người tạo, MemberMove họ vào kênh clone. Khi mọi người rời hết một kênh clone thì xoá kênh đó. Chỉ kênh ghi trong bảng (channel_type Creator) là trigger; kênh clone không ghi trong bảng.",
+          "required_variable": ["client"],
+          "triggered_by": ["Event: VoiceStateUpdate"]
+        },
+        {
+          "name": "SetVoiceCreator",
+          "description": "Đặt một kênh thoại làm kênh Creator (ghi vào bảng Channels). Gọi từ Slash /set_voice_creator hoặc nút Voice Creator trong server_info.",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /set_voice_creator", "Action: Voice Creator"]
+        },
+        {
+          "name": "SetServerStats",
+          "description": "Xoá các kênh stat cũ của server, tạo 6 kênh thoại stat (Member, Bot, Role, Category, Channel, Boost) trong danh mục đã chọn và ghi vào bảng Channels.",
+          "required_variable": ["interaction", "client"],
+          "triggered_by": ["Slash: /set_server_stats", "Action: Server Stats"]
+        },
+        {
           "name": "MemberInfo",
           "description": "Hiển thị thông tin thành viên",
           "required_variable": ["interaction", "client"],

@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { getEmbedContent } from '../embedDefaults.js';
 
 const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Muted until {Member Expires} - UTC.";
 
