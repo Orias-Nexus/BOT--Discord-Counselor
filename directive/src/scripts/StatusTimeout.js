@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { getEmbedContent } from '../embedDefaults.js';
 
 /** Parse dd:hh:mm hoặc hh:mm hoặc số phút -> tổng phút (backend time_warn/time_mute/time_lock). */
 function parseToMinutes(str) {
@@ -54,7 +55,6 @@ export async function run(interaction, client, actionContext = {}) {
   await api.ensureServer(guild.id);
   if (Object.keys(body).length > 0) await api.setTimes(guild.id, body);
   const times = await api.getTimes(guild.id);
-  const fn = await api.getFunction('StatusTimeout').catch(() => null);
   const placeholders = {
     time_warn: formatMinutesToDDHHMM(times.time_warn),
     time_mute: formatMinutesToDDHHMM(times.time_mute),
@@ -62,7 +62,7 @@ export async function run(interaction, client, actionContext = {}) {
     time_new: formatMinutesToDDHHMM(times.time_new),
   };
   const content = api.formatEphemeralContent(api.replacePlaceholders(
-    fn?.embed?.content ?? 'Updated Status Timeout: \\n Warn: {time_warn} \\n Mute: {time_mute} \\n Lock: {time_lock} \\n Newbie: {time_new}.',
+    getEmbedContent('StatusTimeout') ?? 'Updated Status Timeout: \\n Warn: {time_warn} \\n Mute: {time_mute} \\n Lock: {time_lock} \\n Newbie: {time_new}.',
     placeholders
   ));
   await api.replyOrEdit(interaction, content);

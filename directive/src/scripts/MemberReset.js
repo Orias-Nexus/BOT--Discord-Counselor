@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { getEmbedContent } from '../embedDefaults.js';
 
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
@@ -29,7 +30,7 @@ export async function run(interaction, client, actionContext) {
   await api.setMemberStatus(guild.id, member.id, 'Good', null);
   const displayName = member.displayName ?? member.user?.username ?? 'User';
   const content = api.formatEphemeralContent(api.replacePlaceholders(
-    (await api.getFunction('MemberReset').catch(() => null))?.embed?.content ?? "{Server Profile Name}'s Status is Good now.",
+    getEmbedContent('MemberReset') ?? "{Server Profile Name}'s Status is Good now.",
     { 'Server Profile Name': displayName }
   ));
   await api.replyOrEdit(interaction, content);
