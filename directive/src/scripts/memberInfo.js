@@ -1,6 +1,10 @@
 import * as api from '../api.js';
 import { buildMemberInfoComponents } from '../utils/components.js';
+<<<<<<< HEAD:directive/src/scripts/memberInfo.js
 import { mainImageUrl } from '../config.js';
+=======
+import { mainImageURL } from '../config.js';
+>>>>>>> 0e48cdd (Add new scripts for managing greeting and leaving channels and messages: Implement GreetingChannel, GreetingMessage, LeavingChannel, and LeavingMessage to enhance server interaction capabilities. Introduce embed handling for these messages, allowing for dynamic content resolution and improved user engagement.):directive/src/scripts/MemberInfo.js
 import { getEmbedBuilder } from '../embedRoutes.js';
 
 const DEBUG = process.env.DEBUG_MEMBER_INFO === '1';
@@ -33,12 +37,22 @@ export async function run(interaction, client, actionContext = null) {
     return;
   }
   const buildEmbed = getEmbedBuilder('MemberInfo');
+<<<<<<< HEAD:directive/src/scripts/memberInfo.js
   const embed = buildEmbed ? await buildEmbed(member, profile, { imageURL: mainImageUrl }) : null;
   if (!embed) {
     await interaction.editReply({ content: api.formatEphemeralContent('Could not create embed.') }).catch(() => {});
     return;
   }
   const components = buildMemberInfoComponents(member.id, profile);
+=======
+  const embed = buildEmbed ? await buildEmbed(member, profile, { imageURL: mainImageURL }) : null;
+  if (!embed) {
+    await interaction.editReply({ content: api.formatEphemeralContent('Không tạo được embed.') }).catch(() => {});
+    return;
+  }
+  const { row, row2 } = buildMemberInfoComponents(member.id, profile);
+  const components = [row, row2].filter(Boolean);
+>>>>>>> 0e48cdd (Add new scripts for managing greeting and leaving channels and messages: Implement GreetingChannel, GreetingMessage, LeavingChannel, and LeavingMessage to enhance server interaction capabilities. Introduce embed handling for these messages, allowing for dynamic content resolution and improved user engagement.):directive/src/scripts/MemberInfo.js
   try {
     await interaction.editReply({ embeds: [embed], components });
   } catch (err) {

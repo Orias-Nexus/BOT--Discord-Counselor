@@ -10,6 +10,7 @@ const SCRIPT_NAMES = [
   'ChannelInfo', 'ChannelClone', 'ChannelCreate', 'ChannelSync', 'ChannelPrivate', 'ChannelPublic', 'ChannelSFW', 'ChannelNSFW',
   'ChannelSlow', 'ChannelUnslow', 'ChannelBitrate', 'ChannelLimit',
   'MemberInfo', 'MemberRename', 'MemberSetlevel', 'MemberMove', 'MemberReset', 'MemberWarn', 'MemberMute', 'MemberLock', 'MemberKick',
+<<<<<<< HEAD
   'MemberGreeting', 'MemberLeaving', 'MemberBoosting', 'MemberLeveling', 'MemberLogging',
   'GreetingChannel', 'LeavingChannel', 'BoostingChannel', 'LevelingChannel', 'LoggingChannel',
   'GreetingMessage', 'LeavingMessage', 'BoostingMessage', 'LevelingMessage', 'LoggingMessage',
@@ -19,11 +20,21 @@ const SCRIPT_NAMES = [
   'MessageSend', 'MessageDele',
   'LevelLocal', 'LevelGlobal', 'LevelCheck', 'TopLocal', 'TopGlobal',
   'Dashboard', 'Variables',
+=======
+  'MemberGreeting', 'MemberLeaving', 'MemberBoosting',
+  'GreetingChannel', 'LeavingChannel', 'BoostingChannel', 'GreetingMessage', 'LeavingMessage', 'BoostingMessage',
+  'EmbedCreate', 'EmbedEdit', 'EmbedRename', 'EmbedDelete', 'EmbedApply',
+  'EmbedEditBasic', 'EmbedEditAuthor', 'EmbedEditFooter', 'EmbedEditImages',
+>>>>>>> 0e48cdd (Add new scripts for managing greeting and leaving channels and messages: Implement GreetingChannel, GreetingMessage, LeavingChannel, and LeavingMessage to enhance server interaction capabilities. Introduce embed handling for these messages, allowing for dynamic content resolution and improved user engagement.)
 ];
 
 const scriptCache = new Map();
 
+<<<<<<< HEAD
 /** Script name (PascalCase) → file name (camelCase). */
+=======
+/** Tên script (PascalCase) -> tên file (camelCase). */
+>>>>>>> 0e48cdd (Add new scripts for managing greeting and leaving channels and messages: Implement GreetingChannel, GreetingMessage, LeavingChannel, and LeavingMessage to enhance server interaction capabilities. Introduce embed handling for these messages, allowing for dynamic content resolution and improved user engagement.)
 function scriptNameToFileName(name) {
   return name.charAt(0).toLowerCase() + name.slice(1);
 }
