@@ -1,6 +1,7 @@
 import * as api from '../api.js';
-import { buildServerInfoEmbed } from '../utils/embedBuilders.js';
+import { getServerInfoEmbed } from '../embeds/ServerInfo.js';
 import { buildServerInfoComponents } from '../utils/components.js';
+import { mainImageURL } from '../config.js';
 
 export async function run(interaction, client, _actionContext) {
   const guild = interaction.guild;
@@ -20,7 +21,8 @@ export async function run(interaction, client, _actionContext) {
     });
     return;
   }
-  const embed = buildServerInfoEmbed(guild);
-  const { row } = buildServerInfoComponents();
-  await interaction.editReply({ embeds: [embed], components: row ? [row] : [] });
+  const embed = getServerInfoEmbed(guild, { imageURL: mainImageURL });
+  const { row, row2 } = buildServerInfoComponents();
+  const components = [row, row2].filter(Boolean);
+  await interaction.editReply({ embeds: [embed], components });
 }
