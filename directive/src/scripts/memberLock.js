@@ -35,10 +35,14 @@ export async function run(interaction, client, actionContext) {
   await api.setMemberStatus(guild.id, member.id, 'Locked', expiresAt);
   const displayName = member.displayName ?? member.user?.username ?? 'User';
 <<<<<<< HEAD:directive/src/scripts/memberLock.js
+<<<<<<< HEAD:directive/src/scripts/memberLock.js
   const expiresStr = expiresAt ? expiresAt.toLocaleString('en-US') : 'permanent';
 =======
   const expiresStr = expiresAt ? expiresAt.toLocaleString('vi-VN') : 'vĩnh viễn';
 >>>>>>> 0e48cdd (Add new scripts for managing greeting and leaving channels and messages: Implement GreetingChannel, GreetingMessage, LeavingChannel, and LeavingMessage to enhance server interaction capabilities. Introduce embed handling for these messages, allowing for dynamic content resolution and improved user engagement.):directive/src/scripts/MemberLock.js
+=======
+  const expiresStr = expiresAt ? expiresAt.toLocaleString('en-US') : 'permanent';
+>>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.):directive/src/scripts/MemberLock.js
   const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { 'Server Profile Name': displayName, 'Member Expires': expiresStr }));
   await api.replyOrEdit(interaction, content);
   const updatedProfile = await api.getMember(guild.id, member.id).catch(() => null);

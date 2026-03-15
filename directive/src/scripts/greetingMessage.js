@@ -14,12 +14,12 @@ export async function run(interaction, client) {
 =======
   const guild = interaction?.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   const embedName = interaction.options?.getString('embed')?.trim();
   if (!embedName) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Hãy nhập tên embed.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Enter an embed name.'));
     return;
   }
   if (!interaction.deferred) await interaction.deferReply({ flags: MessageFlags.Ephemeral });
@@ -29,7 +29,7 @@ export async function run(interaction, client) {
     const embedRow = Array.isArray(list) ? list.find((e) => e.embed_name === embedName) : null;
     if (!embedRow) {
       await interaction.editReply({
-        content: api.formatEphemeralContent(`Không tìm thấy embed "${embedName}". Tạo trước bằng /embedcreate.`),
+        content: api.formatEphemeralContent(`Embed "${embedName}" not found. Create with /embedcreate first.`),
         flags: MessageFlags.Ephemeral,
       }).catch(() => {});
       return;
@@ -41,7 +41,7 @@ export async function run(interaction, client) {
     await interaction.editReply({ content: text, flags: MessageFlags.Ephemeral }).catch(() => {});
   } catch (err) {
     console.error('[GreetingMessage]', err);
-    await interaction.editReply({ content: api.formatEphemeralContent('Không thể cập nhật.'), flags: MessageFlags.Ephemeral }).catch(() => {});
+    await interaction.editReply({ content: api.formatEphemeralContent('Update failed.'), flags: MessageFlags.Ephemeral }).catch(() => {});
   }
 >>>>>>> 0e48cdd (Add new scripts for managing greeting and leaving channels and messages: Implement GreetingChannel, GreetingMessage, LeavingChannel, and LeavingMessage to enhance server interaction capabilities. Introduce embed handling for these messages, allowing for dynamic content resolution and improved user engagement.)
 }

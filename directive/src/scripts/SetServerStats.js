@@ -20,7 +20,7 @@ export function buildServerStatsSelectMenu(guildId) {
   const row = new ActionRowBuilder().addComponents(
     new StringSelectMenuBuilder()
       .setCustomId(`${SERVER_STATS_SELECT_PREFIX}${guildId}`)
-      .setPlaceholder('Chọn các stat hiển thị (theo thứ tự)')
+      .setPlaceholder('Select stats to display (order = channel order)')
       .setMinValues(1)
       .setMaxValues(6)
       .addOptions(STAT_OPTIONS)
@@ -31,14 +31,14 @@ export function buildServerStatsSelectMenu(guildId) {
 export async function run(interaction, client, _actionContext) {
   const guild = interaction.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
 
   if (!interaction.deferred) await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
   await interaction.editReply({
-    content: api.formatEphemeralContent('Chọn các stat muốn hiển thị (thứ tự chọn = thứ tự kênh trong danh mục):'),
+    content: api.formatEphemeralContent('Select stats to display (selection order = channel order in category):'),
     components: [buildServerStatsSelectMenu(guild.id)],
   }).catch(() => {});
 }
@@ -58,7 +58,7 @@ export async function doSetServerStats(interaction, channelsIdx) {
   const digits = channelsIdx === 0 ? [] : String(channelsIdx).replace(/\D/g, '').split('').map((d) => parseInt(d, 10)).filter((n) => n >= 1 && n <= 6);
   const count = digits.length;
   if (count === 0) {
-    await interaction.editReply({ content: api.formatEphemeralContent('Chọn ít nhất một stat.'), components: [] }).catch(() => {});
+    await interaction.editReply({ content: api.formatEphemeralContent('Select at least one stat.'), components: [] }).catch(() => {});
     return;
   }
 
@@ -85,7 +85,7 @@ export async function doSetServerStats(interaction, channelsIdx) {
     const category = await guild.channels.create({
       name: 'server stats',
       type: ChannelType.GuildCategory,
-      reason: 'SetServerStats: danh mục Stats',
+      reason: 'SetServerStats: Stats category',
       position: 0,
       permissionOverwrites: [
         {
@@ -116,7 +116,7 @@ export async function doSetServerStats(interaction, channelsIdx) {
         name,
         type: ChannelType.GuildVoice,
         parent: category.id,
-        reason: 'SetServerStats: kênh stat',
+        reason: 'SetServerStats: stat channel',
         permissionOverwrites: [
           {
             id: guild.id,
@@ -180,7 +180,7 @@ export async function doSetServerStats(interaction, channelsIdx) {
   } else if (currentCount > count) {
     const toDelete = sorted.slice(count);
     for (const ch of toDelete) {
-      await ch.delete('SetServerStats: giảm số kênh stat').catch((err) => console.warn('[SetServerStats] delete:', err?.message));
+      await ch.delete('SetServerStats: reduce stat channels').catch((err) => console.warn('[SetServerStats] delete:', err?.message));
     }
   }
 

@@ -15,11 +15,14 @@ function parseButtonCustomId(customId) {
   return { scriptName: rest.slice(0, idx), contextId: rest.slice(idx + 1) || null };
 }
 
+<<<<<<< HEAD
 function parseSelectCustomId(customId) {
   if (!customId || !customId.startsWith(ACTION_SELECT_PREFIX)) return null;
   return { contextId: customId.slice(ACTION_SELECT_PREFIX.length) || null };
 }
 
+=======
+>>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
 /** True if button opens a modal (no immediate defer). Used in index for early defer on non-modal buttons. */
 export function isButtonModalScript(customId) {
   const parsed = parseButtonCustomId(customId);

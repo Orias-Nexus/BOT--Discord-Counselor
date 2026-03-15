@@ -2,9 +2,13 @@ import * as api from '../api.js';
 
 const SUCCESS_MESSAGE = 'Updated Status Unrole: \\n Mute: {unrole_mute} \\n Lock: {unrole_lock}.';
 
+<<<<<<< HEAD:directive/src/scripts/statusUnrole.js
 const SUCCESS_MESSAGE = 'Updated Status Unrole: \\n Mute: {unrole_mute} \\n Lock: {unrole_lock}.';
 
 /** Accepts Role from slash (Role option) or Role ID (17–19 digits) from modal. */
+=======
+/** Accepts Role ID only (17–19 digits). From slash option string or modal. */
+>>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.):directive/src/scripts/StatusUnrole.js
 function getRoleId(interaction, actionContext, key) {
   const role = interaction.options?.getRole?.(key) ?? null;
   if (role?.id) return String(role.id);

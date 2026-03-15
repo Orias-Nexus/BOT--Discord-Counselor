@@ -75,6 +75,7 @@ export async function getLevelRange(req, res) {
     }
 }
 
+<<<<<<< HEAD
 /** PATCH /api/members/:serverId/:userId/exp: add EXP, check level-up. */
 export async function addExp(req, res) {
     try {
@@ -123,6 +124,8 @@ export async function getRank(req, res) {
     }
 }
 
+=======
+>>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
 /** POST /api/members/process-expires: set Good for expired members, return list for directive to apply roles. */
 export async function processExpires(req, res) {
     try {

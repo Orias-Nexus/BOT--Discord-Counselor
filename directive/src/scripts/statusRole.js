@@ -2,8 +2,11 @@ import * as api from '../api.js';
 
 const SUCCESS_MESSAGE = 'Updated Status Role: \\n Warn: {role_warn} \\n Mute: {role_mute} \\n Lock: {role_lock} \\n Newbie: {role_new}.';
 
+<<<<<<< HEAD:directive/src/scripts/statusRole.js
 const SUCCESS_MESSAGE = 'Updated Status Role: \\n Warn: {role_warn} \\n Mute: {role_mute} \\n Lock: {role_lock} \\n Newbie: {role_new}.';
 
+=======
+>>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.):directive/src/scripts/StatusRole.js
 /** Get role name from slash option or modal (name only, no ID resolve). */
 function getRoleName(interaction, actionContext, key) {
   const opt = interaction.options?.get?.(key);
