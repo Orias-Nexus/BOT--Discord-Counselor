@@ -1,4 +1,5 @@
 import { EMBED_COLORS } from './schema.js';
+import { resolveEmbed } from './embedContext.js';
 
 function formatMemberStatus(profile) {
   const status = profile?.member_status ?? 'Good';
@@ -9,35 +10,31 @@ function formatMemberStatus(profile) {
 }
 
 /**
- * Trả về embed data Member Info. channel.send({ embeds: [data] }) hoặc editReply({ embeds: [data] }).
+ * Trả về embed data Member Info (đã resolve placeholders qua parser).
  * @param {import('discord.js').GuildMember} member
  * @param {{ member_status?: string, member_expires?: string, member_level?: number, level?: number }} profile
  * @param {{ imageURL?: string }} options
- * @returns {object}
+ * @returns {Promise<object>}
  */
-export function getMemberInfoEmbed(member, profile, options = {}) {
-  const user = member.user;
-  const status = profile?.member_status ?? 'Good';
+export async function getMemberInfoEmbed(member, profile, options = {}) {
   const level = profile?.member_level ?? profile?.level ?? 0;
   const statusText = formatMemberStatus(profile);
-  const joinDiscord = user.createdAt ? user.createdAt.toLocaleString('vi-VN') : 'N/A';
-  const joinServer = member.joinedAt ? member.joinedAt.toLocaleString('vi-VN') : 'N/A';
   const highestRole =
     member.roles?.highest && member.roles.highest.id !== member.guild.id
       ? member.roles.highest.toString()
       : 'None';
 
   const embed = {
-    title: `✦ ${user.username}`,
+    title: '✦ {user_name}',
     color: EMBED_COLORS.MEMBER_INFO,
-    thumbnail: user.displayAvatarURL({ size: 256 }) ? { url: user.displayAvatarURL({ size: 256 }) } : undefined,
+    thumbnail: { url: '{user_avatar}' },
     timestamp: new Date().toISOString(),
     fields: [
-      { name: 'UID', value: user.id, inline: true },
-      { name: 'Name', value: member.displayName, inline: true },
+      { name: 'UID', value: '{user_id}', inline: true },
+      { name: 'Name', value: '{user_nick}', inline: true },
       { name: '\u200B', value: '\u200B', inline: true },
-      { name: 'Join Discord', value: joinDiscord, inline: true },
-      { name: 'Join Server', value: joinServer, inline: true },
+      { name: 'Join Discord', value: '{user_createdate}', inline: true },
+      { name: 'Join Server', value: '{user_joindate}', inline: true },
       { name: '\u200B', value: '\u200B', inline: true },
       { name: 'Level', value: String(level), inline: true },
       { name: 'Status', value: statusText, inline: true },
@@ -46,5 +43,6 @@ export function getMemberInfoEmbed(member, profile, options = {}) {
     ],
   };
   if (options.imageURL) embed.image = { url: options.imageURL };
-  return embed;
+
+  return resolveEmbed(embed, { member, guild: member?.guild ?? null });
 }

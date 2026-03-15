@@ -41,9 +41,7 @@ INSERT INTO "DiscordCounselor".functions (script_id, script, slash, action, even
 ("DiscordCounselor".uuidv7(), 'MemberWarn', '/memberwarn', 'Warn', NULL),
 ("DiscordCounselor".uuidv7(), 'MemberMute', '/membermute', 'Mute', NULL),
 ("DiscordCounselor".uuidv7(), 'MemberLock', '/memberlock', 'Lock', NULL),
-("DiscordCounselor".uuidv7(), 'MemberKick', '/memberkick', 'Kick', NULL),
-("DiscordCounselor".uuidv7(), 'MemberGreeting', NULL, NULL, 'GuildMemberAdd'),
-("DiscordCounselor".uuidv7(), 'MemberLeaving', NULL, NULL, 'GuildMemberRemove')
+("DiscordCounselor".uuidv7(), 'MemberKick', '/memberkick', 'Kick', NULL)
 ON CONFLICT (script) DO UPDATE SET
   slash = EXCLUDED.slash,
   action = EXCLUDED.action,
