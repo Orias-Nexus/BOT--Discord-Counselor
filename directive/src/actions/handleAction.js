@@ -51,7 +51,7 @@ export async function handleAction(interaction, client, timing = {}) {
   const actionContext = contextId ? { targetId: contextId } : null;
   if (!interaction.replied && !interaction.deferred) {
     try {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     } catch (err) {
       if (isUnknownInteraction(err)) {
         console.warn('[handleAction] deferReply 10062 - bấm lại nút.');
