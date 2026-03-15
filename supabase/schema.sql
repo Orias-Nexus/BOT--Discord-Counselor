@@ -47,7 +47,7 @@ DO $$ BEGIN
         'Mute',
         'Lock',
         'Kick',
-        'leaved'
+        'Leaved'
     );
 EXCEPTION
     WHEN duplicate_object THEN NULL;
@@ -56,25 +56,32 @@ END $$;
 COMMENT ON TYPE "DiscordCounselor".member_status_enum IS 'Trạng thái thành viên trong server';
 
 -- -----------------------------------------------------------------------------
--- Functions — Định dạng embed của lệnh, tính năng, tin nhắn chung/mặc định
+-- ENUM: Category Type (Creator = danh mục Voice Creator; Stats = danh mục Server Stats)
 -- -----------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS "DiscordCounselor".functions (
-    script_id   UUID PRIMARY KEY DEFAULT "DiscordCounselor".uuidv7(),
-    script      TEXT NOT NULL UNIQUE,
-    slash       TEXT,
-    action      TEXT,
-    event       TEXT,
-    embed       JSONB,
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+DO $$ BEGIN
+    CREATE TYPE "DiscordCounselor".category_type_enum AS ENUM ('Creator', 'Stats');
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
-COMMENT ON TABLE "DiscordCounselor".functions IS 'Định dạng embed của các lệnh, tính năng, tin nhắn chung/mặc định';
-COMMENT ON COLUMN "DiscordCounselor".functions.script IS 'Tên tính năng (script)';
-COMMENT ON COLUMN "DiscordCounselor".functions.slash IS 'Lệnh slash (ví dụ /server_info)';
-COMMENT ON COLUMN "DiscordCounselor".functions.action IS 'Tên action (nút giao diện)';
-COMMENT ON COLUMN "DiscordCounselor".functions.event IS 'Tên event';
-COMMENT ON COLUMN "DiscordCounselor".functions.embed IS 'JSON: { "replyType": "embed"|"ephemeral", "builder"?: string, "content"?: string }.';
-COMMENT ON COLUMN "DiscordCounselor".functions.created_at IS 'Thời gian tạo; UUID v7 đã sắp xếp theo thời gian (ORDER BY script_id)';
+COMMENT ON TYPE "DiscordCounselor".category_type_enum IS 'Creator: danh mục chứa kênh trigger Voice Creator. Stats: danh mục chứa các kênh stat.';
+
+-- -----------------------------------------------------------------------------
+-- ENUM: Message Type (Messages, Greeting, Leaving, Boosting, Logging)
+-- -----------------------------------------------------------------------------
+DO $$ BEGIN
+    CREATE TYPE "DiscordCounselor".message_type_enum AS ENUM (
+        'Messages',
+        'Greeting',
+        'Leaving',
+        'Boosting',
+        'Logging'
+    );
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
+
+COMMENT ON TYPE "DiscordCounselor".message_type_enum IS 'Loại tin nhắn cấu hình: Messages, Greeting, Leaving, Boosting, Logging';
 
 -- -----------------------------------------------------------------------------
 -- Levels — Định nghĩa các mốc điểm yêu cầu cho các level
@@ -83,7 +90,8 @@ CREATE TABLE IF NOT EXISTS "DiscordCounselor".levels (
     level_id   UUID PRIMARY KEY DEFAULT "DiscordCounselor".uuidv7(),
     level      INTEGER NOT NULL UNIQUE,
     exp        BIGINT NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 COMMENT ON TABLE "DiscordCounselor".levels IS 'Định nghĩa các mốc điểm yêu cầu cho các level';
@@ -104,13 +112,6 @@ CREATE TABLE IF NOT EXISTS "DiscordCounselor".servers (
     role_new       TEXT,
     unrole_mute    TEXT,
     unrole_lock    TEXT,
-    channel_greet  TEXT,
-    channel_leave  TEXT,
-    channel_boost  TEXT,
-    channel_logs   TEXT,
-    message_great  TEXT,
-    message_leave  TEXT,
-    message_boost  TEXT,
     created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -126,13 +127,61 @@ COMMENT ON COLUMN "DiscordCounselor".servers.time_new IS 'Thời gian tồn tạ
 COMMENT ON COLUMN "DiscordCounselor".servers.role_new IS 'Role được gắn khi Newbie';
 COMMENT ON COLUMN "DiscordCounselor".servers.unrole_mute IS 'Role bị gỡ khi nhận Mute';
 COMMENT ON COLUMN "DiscordCounselor".servers.unrole_lock IS 'Role bị gỡ khi nhận Lock';
-COMMENT ON COLUMN "DiscordCounselor".servers.channel_greet IS 'Kênh tin nhắn chào mừng';
-COMMENT ON COLUMN "DiscordCounselor".servers.channel_leave IS 'Kênh tin nhắn tạm biệt';
-COMMENT ON COLUMN "DiscordCounselor".servers.channel_boost IS 'Kênh thông báo nâng cấp';
-COMMENT ON COLUMN "DiscordCounselor".servers.channel_logs IS 'Kênh log khác';
-COMMENT ON COLUMN "DiscordCounselor".servers.message_great IS 'Nội dung/embed tin nhắn chào mừng';
-COMMENT ON COLUMN "DiscordCounselor".servers.message_leave IS 'Nội dung/embed tin nhắn tạm biệt';
-COMMENT ON COLUMN "DiscordCounselor".servers.message_boost IS 'Nội dung/embed thông báo nâng cấp';
+
+-- -----------------------------------------------------------------------------
+-- Embeds — Chỉ embed do người dùng tạo (messages, v.v.). Embed của functions hardcode trong code.
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS "DiscordCounselor".embeds (
+    embed_id    UUID PRIMARY KEY DEFAULT "DiscordCounselor".uuidv7(),
+    embed_name  TEXT NOT NULL,
+    server_id   TEXT NOT NULL REFERENCES "DiscordCounselor".servers(server_id) ON DELETE CASCADE,
+    embed       JSONB,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (embed_name, server_id)
+);
+
+COMMENT ON TABLE "DiscordCounselor".embeds IS 'Chỉ embed do người dùng tạo; embed của lệnh/tính năng (functions) hardcode trong code';
+COMMENT ON COLUMN "DiscordCounselor".embeds.embed_name IS 'Tên embed do người dùng đặt';
+COMMENT ON COLUMN "DiscordCounselor".embeds.server_id IS 'Server sở hữu embed';
+
+-- -----------------------------------------------------------------------------
+-- Functions — Slash, action, event (embed nội dung hardcode trong directive)
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS "DiscordCounselor".functions (
+    script_id   UUID PRIMARY KEY DEFAULT "DiscordCounselor".uuidv7(),
+    script      TEXT NOT NULL UNIQUE,
+    slash       TEXT,
+    action      TEXT,
+    event       TEXT,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+COMMENT ON TABLE "DiscordCounselor".functions IS 'Slash/action/event của từng tính năng; nội dung embed hardcode trong code, không lưu DB';
+COMMENT ON COLUMN "DiscordCounselor".functions.script IS 'Tên tính năng (script)';
+COMMENT ON COLUMN "DiscordCounselor".functions.slash IS 'Lệnh slash (ví dụ /serverinfo)';
+COMMENT ON COLUMN "DiscordCounselor".functions.action IS 'Tên action (nút giao diện)';
+COMMENT ON COLUMN "DiscordCounselor".functions.event IS 'Tên event';
+COMMENT ON COLUMN "DiscordCounselor".functions.created_at IS 'Thời gian tạo; UUID v7 đã sắp xếp theo thời gian (ORDER BY script_id)';
+
+-- -----------------------------------------------------------------------------
+-- Messages — Cấu hình tin nhắn theo loại (Greeting, Leaving, Boosting, Logging...)
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS "DiscordCounselor".messages (
+    messages_id   UUID PRIMARY KEY DEFAULT "DiscordCounselor".uuidv7(),
+    messages_type "DiscordCounselor".message_type_enum NOT NULL,
+    server_id     TEXT NOT NULL REFERENCES "DiscordCounselor".servers(server_id) ON DELETE CASCADE,
+    channel_id    TEXT NOT NULL DEFAULT '0',
+    embed_id      UUID REFERENCES "DiscordCounselor".embeds(embed_id) ON DELETE SET NULL,
+    created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+COMMENT ON TABLE "DiscordCounselor".messages IS 'Cấu hình tin nhắn theo loại; channel_id = "0" nghĩa là do code quyết định';
+COMMENT ON COLUMN "DiscordCounselor".messages.messages_type IS 'Loại: Messages, Greeting, Leaving, Boosting, Logging';
+COMMENT ON COLUMN "DiscordCounselor".messages.channel_id IS 'Kênh gửi tin; "0" = do code quyết định';
+COMMENT ON COLUMN "DiscordCounselor".messages.embed_id IS 'Tham chiếu embeds (nullable)';
 
 -- -----------------------------------------------------------------------------
 -- Users — Thông tin user (global)
@@ -165,15 +214,37 @@ CREATE TABLE IF NOT EXISTS "DiscordCounselor".members (
 COMMENT ON TABLE "DiscordCounselor".members IS 'Thông tin member trong server; user_id tương ứng user_idu (FK users.user_id)';
 COMMENT ON COLUMN "DiscordCounselor".members.member_exp IS 'Điểm cục bộ, tăng khi tương tác trong server';
 COMMENT ON COLUMN "DiscordCounselor".members.member_level IS 'Level cục bộ (độc lập với user_level)';
-COMMENT ON COLUMN "DiscordCounselor".members.member_status IS 'Trạng thái: Good, Warn, Mute, Lock, Kick, leaved';
+COMMENT ON COLUMN "DiscordCounselor".members.member_status IS 'Trạng thái: Good, Warn, Mute, Lock, Kick, Leaved';
 COMMENT ON COLUMN "DiscordCounselor".members.member_expires IS 'Thời gian kết thúc trạng thái (Warn/Mute/Lock)';
+
+-- -----------------------------------------------------------------------------
+-- Channels — Danh mục quản trị (Creator / Stats). Chỉ lưu category_id và channels_idx.
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS "DiscordCounselor".channels (
+    category_id   TEXT PRIMARY KEY,
+    category_type "DiscordCounselor".category_type_enum NOT NULL,
+    server_id     TEXT NOT NULL REFERENCES "DiscordCounselor".servers(server_id) ON DELETE CASCADE,
+    channels_idx  INTEGER NOT NULL DEFAULT 0,
+    created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+COMMENT ON TABLE "DiscordCounselor".channels IS 'Danh mục quản trị: Creator (1 kênh trigger) hoặc Stats (n kênh theo channels_idx).';
+COMMENT ON COLUMN "DiscordCounselor".channels.category_id IS 'ID danh mục Discord';
+COMMENT ON COLUMN "DiscordCounselor".channels.category_type IS 'Creator | Stats';
+COMMENT ON COLUMN "DiscordCounselor".channels.server_id IS 'ID server (guild)';
+COMMENT ON COLUMN "DiscordCounselor".channels.channels_idx IS '0 = Creator. Stats: chữ số trái→phải = index stat (1–6) theo thứ tự kênh. VD: 312 = Role, Member, Bot.';
 
 -- -----------------------------------------------------------------------------
 -- Indexes
 -- -----------------------------------------------------------------------------
 CREATE INDEX IF NOT EXISTS idx_members_server ON "DiscordCounselor".members(server_id);
+CREATE INDEX IF NOT EXISTS idx_channels_server ON "DiscordCounselor".channels(server_id);
+CREATE INDEX IF NOT EXISTS idx_channels_category_type ON "DiscordCounselor".channels(category_type);
 CREATE INDEX IF NOT EXISTS idx_members_user ON "DiscordCounselor".members(user_id);
 CREATE INDEX IF NOT EXISTS idx_levels_level ON "DiscordCounselor".levels(level);
+CREATE INDEX IF NOT EXISTS idx_embeds_server ON "DiscordCounselor".embeds(server_id);
+CREATE INDEX IF NOT EXISTS idx_embeds_name_server ON "DiscordCounselor".embeds(embed_name, server_id);
 CREATE INDEX IF NOT EXISTS idx_functions_script ON "DiscordCounselor".functions(script);
 CREATE INDEX IF NOT EXISTS idx_functions_slash ON "DiscordCounselor".functions(slash) WHERE slash IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_functions_action ON "DiscordCounselor".functions(action) WHERE action IS NOT NULL;

@@ -1,5 +1,6 @@
-import { ChannelType, PermissionFlagsBits } from 'discord.js';
+import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
+import { getEmbedContent } from '../embedDefaults.js';
 
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
@@ -21,7 +22,7 @@ export async function run(interaction, client, actionContext) {
   }
   await category.permissionOverwrites.edit(guild.id, { ViewChannel: false }).catch(() => {});
   const content = api.formatEphemeralContent(
-    ((await api.getFunction('CategoryPrivate').catch(() => null))?.embed?.content ?? 'Privated {Category Name}.').replace(/\{Category Name\}/g, category.name)
+    (getEmbedContent('CategoryPrivate') ?? 'Privated {Category Name}.').replace(/\{Category Name\}/g, category.name)
   );
   await interaction.editReply({ content });
 }

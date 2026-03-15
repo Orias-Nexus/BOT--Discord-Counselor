@@ -1,7 +1,8 @@
 import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
-import { buildCategoryInfoEmbed } from '../utils/embedBuilders.js';
+import { getCategoryInfoEmbed } from '../embeds/CategoryInfo.js';
 import { buildCategoryInfoComponents } from '../utils/components.js';
+import { mainImageURL } from '../config.js';
 
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction.guild;
@@ -20,7 +21,7 @@ export async function run(interaction, client, actionContext = null) {
     await interaction.editReply({ content: api.formatEphemeralContent('Không tìm thấy danh mục.') });
     return;
   }
-  const embed = buildCategoryInfoEmbed(category, guild);
+  const embed = getCategoryInfoEmbed(category, guild, { imageURL: mainImageURL });
   const { row } = buildCategoryInfoComponents(category.id, category, guild);
   await interaction.editReply({ embeds: [embed], components: row ? [row] : [] });
 }

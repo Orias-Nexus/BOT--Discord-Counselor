@@ -5,9 +5,9 @@ import { MessageFlags } from 'discord.js';
 import { formatEphemeralContent } from '../api.js';
 
 const SCRIPT_NAMES = [
-  'ServerInfo', 'StatusTimeout', 'StatusRole', 'StatusUnrole',
+  'ServerInfo', 'StatusTimeout', 'StatusRole', 'StatusUnrole', 'SetVoiceCreator', 'SetServerStats',
   'CategoryInfo', 'CategoryClone', 'CategoryPrivate', 'CategoryPublic',
-  'ChanelInfo', 'ChannelClone', 'ChannelSync', 'ChannelPrivate', 'ChannelPublic', 'ChannelSFW', 'ChannelNSFW',
+  'ChanelInfo', 'ChannelClone', 'ChannelCreate', 'ChannelSync', 'ChannelPrivate', 'ChannelPublic', 'ChannelSFW', 'ChannelNSFW',
   'MemberInfo', 'MemberRename', 'MemberSetlevel', 'MemberMove', 'MemberReset', 'MemberWarn', 'MemberMute', 'MemberLock', 'MemberKick',
   'MemberGreeting', 'MemberLeaving',
 ];
