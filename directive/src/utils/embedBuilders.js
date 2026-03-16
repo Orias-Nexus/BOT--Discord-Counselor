@@ -73,10 +73,7 @@ export function buildServerInfoEmbed(guild) {
   const stickerCount = guild.stickers.cache.size;
   const emojiCount = guild.emojis.cache.size;
   const soundCount = guild.soundboardSounds?.cache?.size ?? 0;
-
-  const description = guild.description
-    ? guild.description.slice(0, 1024)
-    : '\u200B';
+  const description = guild.description ? guild.description.slice(0, 2048) : null;
 
   const embed = new EmbedBuilder()
     .setColor(SERVER_INFO_COLOR)
@@ -93,7 +90,6 @@ export function buildServerInfoEmbed(guild) {
       },
       { name: 'Type', value: getGuildTypeString(guild), inline: true },
       { name: '\u200B', value: '\u200B', inline: true },
-      { name: 'Biography', value: description, inline: false },
       {
         name: 'Channel',
         value: `Chat: ${chatCount} | Voice: ${voiceCount}`,
@@ -108,8 +104,9 @@ export function buildServerInfoEmbed(guild) {
       { name: 'Emoji', value: String(emojiCount), inline: true },
       { name: 'Sound', value: String(soundCount), inline: true }
     )
-    .setTimestamp();
+    // .setTimestamp();
 
+  if (description) embed.setFooter({ text: description });
   if (mainImageURL) embed.setImage(mainImageURL);
   return embed;
 }
