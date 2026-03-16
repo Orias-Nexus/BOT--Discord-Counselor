@@ -74,3 +74,16 @@ export async function getLevelRange(req, res) {
         res.status(status).json({ error: message });
     }
 }
+
+/** POST /api/members/process-expires: đặt Good cho member hết hạn, trả về list để directive áp dụng role. */
+export async function processExpires(req, res) {
+    try {
+        const result = await memberService.processExpiredMembers();
+        res.json(result);
+    } catch (err) {
+        const { status, message } = normalizeError(err);
+        if (status === 503) console.warn('[memberController] processExpires: database 502/503');
+        else console.error('[memberController] processExpires:', err);
+        res.status(status).json({ error: message });
+    }
+}

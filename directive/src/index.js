@@ -6,7 +6,9 @@ import { handleSlash } from './slashs/handleSlash.js';
 import { handleAction, isButtonModalScript } from './actions/handleAction.js';
 import { parseModalCustomId, getModalInputIds } from './actions/modalConfig.js';
 import { getEmbedUpdatePayload } from './actions/embedUpdate.js';
-import { runScript, loadAllScripts } from './scripts/runScript.js';
+import { runScript, runEvent, loadAllScripts } from './scripts/runScript.js';
+import { startExpiresCheck } from './jobs/expiresCheck.js';
+import { EVENT_HANDLERS } from './events/eventRegistry.js';
 
 const client = new Client({
   intents: [
@@ -22,7 +24,21 @@ const pendingButtonIds = new Set();
 
 client.once(Events.ClientReady, (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
+  startExpiresCheck(c);
 });
+
+for (const { discordEvent, scriptName, buildContext } of EVENT_HANDLERS) {
+  const eventName = Events[discordEvent];
+  if (!eventName) continue;
+  client.on(eventName, async (...payload) => {
+    try {
+      const context = buildContext(...payload);
+      await runEvent(scriptName, client, context);
+    } catch (err) {
+      console.warn(`[${discordEvent}] ${scriptName}:`, err?.message ?? err);
+    }
+  });
+}
 
 client.on(Events.InteractionCreate, async (interaction) => {
   if (interaction.isButton()) {
@@ -79,8 +95,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
     return;
   }
   if (interaction.isChatInputCommand()) {
+    const scriptName = getScriptNameByCommand(interaction.commandName);
+    const slashUsesEmbed =
+      scriptName &&
+      ['ServerInfo', 'MemberInfo', 'ChanelInfo', 'CategoryInfo'].includes(scriptName);
     try {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ ephemeral: !slashUsesEmbed });
     } catch (err) {
       if (isUnknownInteraction(err)) {
         console.warn('[InteractionCreate] Token hết hạn (10062) - thử lại lệnh sau vài giây.');
@@ -88,7 +108,6 @@ client.on(Events.InteractionCreate, async (interaction) => {
       }
       throw err;
     }
-    const scriptName = getScriptNameByCommand(interaction.commandName);
     if (!scriptName) {
       await interaction.editReply({ content: 'Lệnh không xác định.' }).catch(() => {});
       return;

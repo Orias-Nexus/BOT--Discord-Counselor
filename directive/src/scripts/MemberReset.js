@@ -17,7 +17,7 @@ export async function run(interaction, client, actionContext) {
   }
   await api.ensureServer(guild.id);
   const server = await api.getServer(guild.id);
-  for (const roleId of [server?.role_warn, server?.role_mute, server?.role_lock].filter(Boolean)) {
+  for (const roleId of [server?.role_warn, server?.role_mute, server?.role_lock, server?.role_new].filter(Boolean)) {
     const role = guild.roles.cache.get(roleId);
     if (role) await member.roles.remove(role).catch(() => {});
   }
@@ -33,4 +33,6 @@ export async function run(interaction, client, actionContext) {
     { 'Server Profile Name': displayName }
   ));
   await api.replyOrEdit(interaction, content);
+  const updatedProfile = await api.getMember(guild.id, member.id).catch(() => null);
+  return { updatedProfile, targetId: member.id };
 }

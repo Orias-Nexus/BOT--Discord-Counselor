@@ -21,9 +21,9 @@ export async function run(interaction, client, actionContext = {}) {
   }
   await api.ensureServer(guild.id);
   const server = await api.getServer(guild.id) ?? {};
-  const updates = { role_warn: server.role_warn ?? null, role_mute: server.role_mute ?? null, role_lock: server.role_lock ?? null };
+  const updates = { role_warn: server.role_warn ?? null, role_mute: server.role_mute ?? null, role_lock: server.role_lock ?? null, role_new: server.role_new ?? null };
 
-  for (const key of ['warn', 'mute', 'lock']) {
+  for (const key of ['warn', 'mute', 'lock', 'new']) {
     const roleName = getRoleName(interaction, actionContext, key);
     if (!roleName) continue;
 
@@ -53,11 +53,12 @@ export async function run(interaction, client, actionContext = {}) {
   const updated = await api.getServer(guild.id);
   const fn = await api.getFunction('StatusRole').catch(() => null);
   const content = api.formatEphemeralContent(api.replacePlaceholders(
-    fn?.embed?.content ?? 'Updated Status Role: \\n Warn: {role_warn} \\n Mute: {role_mute} \\n Lock: {role_lock}.',
+    fn?.embed?.content ?? 'Updated Status Role: \\n Warn: {role_warn} \\n Mute: {role_mute} \\n Lock: {role_lock} \\n Newbie: {role_new}.',
     {
       role_warn: roleIdToDisplay(guild, updated?.role_warn),
       role_mute: roleIdToDisplay(guild, updated?.role_mute),
       role_lock: roleIdToDisplay(guild, updated?.role_lock),
+      role_new: roleIdToDisplay(guild, updated?.role_new),
     }
   ));
   await api.replyOrEdit(interaction, content);
