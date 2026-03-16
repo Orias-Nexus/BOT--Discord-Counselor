@@ -47,7 +47,13 @@ export function startExpiresCheck(client) {
         await updateMemberInfoEmbedIfExists(client, server_id, user_id);
       }
     } catch (err) {
-      console.warn('[expiresCheck]', err?.message ?? err);
+      const code = err?.cause?.code ?? err?.code;
+      const msg = err?.message ?? String(err);
+      if (code === 'ECONNREFUSED' || msg === 'fetch failed') {
+        console.warn('[expiresCheck] Backend không phản hồi (fetch failed). Kiểm tra backend đã chạy chưa và BACKEND_API_URL trong .env.');
+      } else {
+        console.warn('[expiresCheck]', msg, code ? `(${code})` : '');
+      }
     }
   }
   run();
