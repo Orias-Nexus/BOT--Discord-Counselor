@@ -24,6 +24,12 @@ export const SCRIPT_TO_LABEL = {
   MemberKick: 'Kick',
   SetVoiceCreator: 'Voice Creator',
   SetServerStats: 'Server Stats',
+  GreetingChannel: 'Greeting Channel',
+  LeavingChannel: 'Leaving Channel',
+  BoostingChannel: 'Boosting Channel',
+  GreetingMessage: 'Greeting Message',
+  LeavingMessage: 'Leaving Message',
+  BoostingMessage: 'Boosting Message',
 };
 
 /** Actions included per parent (Architecture Slash actions_included). */
