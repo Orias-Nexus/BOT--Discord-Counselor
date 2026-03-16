@@ -1,9 +1,6 @@
 import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
-import { getServerInfoEmbed } from '../embeds/ServerInfo.js';
-import { getChannelInfoEmbed } from '../embeds/ChannelInfo.js';
-import { getCategoryInfoEmbed } from '../embeds/CategoryInfo.js';
-import { getMemberInfoEmbed } from '../embeds/MemberInfo.js';
+import { getEmbedBuilder } from '../embedRoutes.js';
 import {
   buildServerInfoComponents,
   buildChannelInfoComponents,
@@ -81,7 +78,9 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
 
   if (SERVER_SCRIPTS.has(scriptName)) {
     const guildFetched = await guild.fetch().catch(() => guild);
-    const embed = getServerInfoEmbed(guildFetched, { imageURL: mainImageURL });
+    const buildEmbed = getEmbedBuilder('ServerInfo');
+    const embed = buildEmbed ? await buildEmbed(guildFetched, { imageURL: mainImageURL }) : null;
+    if (!embed) return null;
     const { row, row2 } = buildServerInfoComponents();
     const components = [row, row2].filter(Boolean);
     return {
@@ -94,7 +93,9 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
   if (CHANNEL_SCRIPTS.has(scriptName) && targetId) {
     const channel = await guild.channels.fetch(targetId).catch(() => null);
     if (!channel || channel.type === ChannelType.GuildCategory) return null;
-    const embed = getChannelInfoEmbed(channel, guild, { imageURL: mainImageURL });
+    const buildEmbed = getEmbedBuilder('ChanelInfo');
+    const embed = buildEmbed ? await buildEmbed(channel, guild, { imageURL: mainImageURL }) : null;
+    if (!embed) return null;
     const { row } = buildChannelInfoComponents(channel.id, channel, guild);
     return {
       content: '',
@@ -106,7 +107,9 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
   if (CATEGORY_SCRIPTS.has(scriptName) && targetId) {
     const category = await guild.channels.fetch(targetId).catch(() => null);
     if (!category || category.type !== ChannelType.GuildCategory) return null;
-    const embed = getCategoryInfoEmbed(category, guild, { imageURL: mainImageURL });
+    const buildEmbed = getEmbedBuilder('CategoryInfo');
+    const embed = buildEmbed ? await buildEmbed(category, guild, { imageURL: mainImageURL }) : null;
+    if (!embed) return null;
     const { row } = buildCategoryInfoComponents(category.id, category, guild);
     return {
       content: '',
@@ -122,7 +125,9 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
       scriptResult?.updatedProfile && String(scriptResult.targetId || scriptResult.updatedProfile?.user_id) === String(member.id)
         ? scriptResult.updatedProfile
         : await api.getMember(guild.id, member.id).catch(() => null);
-    const embed = getMemberInfoEmbed(member, profile, { imageURL: mainImageURL });
+    const buildEmbed = getEmbedBuilder('MemberInfo');
+    const embed = buildEmbed ? await buildEmbed(member, profile, { imageURL: mainImageURL }) : null;
+    if (!embed) return null;
     const { row, row2 } = buildMemberInfoComponents(member.id, profile);
     const components = [row, row2].filter(Boolean);
     return {
@@ -136,8 +141,10 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
 }
 
 /** Payload (embeds + components) cho message Member Info, dùng khi cập nhật từ expiresCheck. */
-export function buildMemberInfoPayload(member, profile) {
-  const embed = buildMemberInfoEmbed(member, profile);
+export async function buildMemberInfoPayload(member, profile) {
+  const buildEmbed = getEmbedBuilder('MemberInfo');
+  const embed = buildEmbed ? await buildEmbed(member, profile) : null;
+  if (!embed) return null;
   const { row, row2 } = buildMemberInfoComponents(member.id, profile);
   const components = [row, row2].filter(Boolean);
   return {
