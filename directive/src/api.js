@@ -159,3 +159,82 @@ export async function getLevelRange() {
 export async function processExpires() {
   return request('/api/members/process-expires', { method: 'POST' });
 }
+
+/** Danh sách messages của server (Greeting, Leaving, Boosting, ...). */
+export async function listMessages(serverId) {
+  try {
+    const data = await request(`/api/servers/${serverId}/messages`);
+    return Array.isArray(data) ? data : [];
+  } catch (err) {
+    if (err?.message?.includes('404') || err?.message?.includes('not found')) return [];
+    throw err;
+  }
+}
+
+/** Cấu hình tin nhắn theo loại (Greeting, Leaving, Boosting). Backend cần mount message routes. */
+export async function getMessageByType(serverId, messagesType) {
+  try {
+    return await request(`/api/servers/${serverId}/messages/${messagesType}`);
+  } catch (err) {
+    if (err?.message?.includes('404') || err?.message?.includes('not found')) return null;
+    throw err;
+  }
+}
+
+export async function setMessageChannel(serverId, messagesType, channelId) {
+  return request(`/api/servers/${serverId}/messages/${messagesType}/channel`, {
+    method: 'PATCH',
+    body: JSON.stringify({ channel_id: channelId ?? null }),
+  });
+}
+
+export async function setMessageEmbed(serverId, messagesType, embedId) {
+  return request(`/api/servers/${serverId}/messages/${messagesType}/embed`, {
+    method: 'PATCH',
+    body: JSON.stringify({ embed_id: embedId ?? null }),
+  });
+}
+
+/** Danh sách embed của server. */
+export async function listEmbeds(serverId) {
+  try {
+    const data = await request(`/api/servers/${serverId}/embeds`);
+    return Array.isArray(data) ? data : [];
+  } catch (err) {
+    if (err?.message?.includes('404') || err?.message?.includes('not found')) return [];
+    throw err;
+  }
+}
+
+/** Lấy embed theo id (server_id + embed_id). */
+export async function getEmbed(serverId, embedId) {
+  try {
+    return await request(`/api/servers/${serverId}/embeds/${embedId}`);
+  } catch (err) {
+    if (err?.message?.includes('404') || err?.message?.includes('not found')) return null;
+    throw err;
+  }
+}
+
+/** Tạo embed mới. */
+export async function createEmbed(serverId, embedName, embedData) {
+  return request(`/api/servers/${serverId}/embeds`, {
+    method: 'POST',
+    body: JSON.stringify({ embed_name: embedName.trim(), embed: embedData ?? null }),
+  });
+}
+
+/** Cập nhật embed. */
+export async function updateEmbed(serverId, embedId, payload) {
+  return request(`/api/servers/${serverId}/embeds/${embedId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  });
+}
+
+/** Xóa embed. */
+export async function deleteEmbed(serverId, embedId) {
+  return request(`/api/servers/${serverId}/embeds/${embedId}`, {
+    method: 'DELETE',
+  });
+}
