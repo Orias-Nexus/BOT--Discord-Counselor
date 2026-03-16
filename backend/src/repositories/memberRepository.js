@@ -42,9 +42,13 @@ export async function ensure(serverId, userId) {
     return existing;
 }
 
-export async function updateLevel(serverId, userId, memberLevel) {
+export async function updateLevel(serverId, userId, memberLevel, memberExp = null) {
     const sb = getSupabase();
-    const { data, error } = await sb.schema(getSchema()).from(TABLE).update({ member_level: Number(memberLevel), updated_at: new Date().toISOString() }).eq('server_id', serverId).eq('user_id', userId).select(COLS).single();
+    const payload = { member_level: Number(memberLevel), updated_at: new Date().toISOString() };
+    if (memberExp !== null && memberExp !== undefined) {
+        payload.member_exp = Number(memberExp);
+    }
+    const { data, error } = await sb.schema(getSchema()).from(TABLE).update(payload).eq('server_id', serverId).eq('user_id', userId).select(COLS).single();
     if (error) throw error;
     return rowToMember(data);
 }
