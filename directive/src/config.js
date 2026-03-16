@@ -19,3 +19,14 @@ const DEFAULT_MAIN_IMAGE_URL = isLocalBackend
 
 export const mainImageURL =
   process.env.MAIN_IMAGE_URL ?? DEFAULT_MAIN_IMAGE_URL;
+
+if (process.env.MAIN_IMAGE_URL) {
+  console.log('[config] mainImageURL: từ env MAIN_IMAGE_URL =', mainImageURL);
+} else {
+  console.log(
+    '[config] mainImageURL: BACKEND_API_URL=%s, isLocalBackend=%s → %s',
+    BACKEND_API_URL,
+    isLocalBackend,
+    mainImageURL
+  );
+}
