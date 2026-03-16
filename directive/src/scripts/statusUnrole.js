@@ -1,5 +1,6 @@
 import * as api from '../api.js';
-import { getEmbedContent } from '../embedDefaults.js';
+
+const SUCCESS_MESSAGE = 'Updated Status Unrole: \\n Mute: {unrole_mute} \\n Lock: {unrole_lock}.';
 
 const SUCCESS_MESSAGE = 'Updated Status Unrole: \\n Mute: {unrole_mute} \\n Lock: {unrole_lock}.';
 

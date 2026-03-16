@@ -1,5 +1,6 @@
 import * as api from '../api.js';
-import { getEmbedContent } from '../embedDefaults.js';
+
+const SUCCESS_MESSAGE = "{Server Profile Name} has been Kicked.";
 
 const SUCCESS_MESSAGE = "{Server Profile Name} has been Kicked.";
 

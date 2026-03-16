@@ -1,5 +1,6 @@
 import * as api from '../api.js';
-import { getEmbedContent } from '../embedDefaults.js';
+
+const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Locked until {Member Expires}.";
 
 const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Locked until {Member Expires} - UTC.";
 
@@ -33,7 +34,11 @@ export async function run(interaction, client, actionContext) {
   await api.ensureMember(guild.id, member.id, member.user?.username);
   await api.setMemberStatus(guild.id, member.id, 'Locked', expiresAt);
   const displayName = member.displayName ?? member.user?.username ?? 'User';
+<<<<<<< HEAD:directive/src/scripts/memberLock.js
   const expiresStr = expiresAt ? expiresAt.toLocaleString('en-US') : 'permanent';
+=======
+  const expiresStr = expiresAt ? expiresAt.toLocaleString('vi-VN') : 'vĩnh viễn';
+>>>>>>> 0e48cdd (Add new scripts for managing greeting and leaving channels and messages: Implement GreetingChannel, GreetingMessage, LeavingChannel, and LeavingMessage to enhance server interaction capabilities. Introduce embed handling for these messages, allowing for dynamic content resolution and improved user engagement.):directive/src/scripts/MemberLock.js
   const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { 'Server Profile Name': displayName, 'Member Expires': expiresStr }));
   await api.replyOrEdit(interaction, content);
   const updatedProfile = await api.getMember(guild.id, member.id).catch(() => null);

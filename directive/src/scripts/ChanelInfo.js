@@ -1,8 +1,8 @@
 import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
-import { getChannelInfoEmbed } from '../embeds/ChannelInfo.js';
 import { buildChannelInfoComponents } from '../utils/components.js';
 import { mainImageURL } from '../config.js';
+import { getEmbedBuilder } from '../embedRoutes.js';
 
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction.guild;
@@ -18,7 +18,12 @@ export async function run(interaction, client, actionContext = null) {
     await interaction.editReply({ content: api.formatEphemeralContent('Không tìm thấy kênh.') });
     return;
   }
-  const embed = getChannelInfoEmbed(channel, guild, { imageURL: mainImageURL });
+  const buildEmbed = getEmbedBuilder('ChanelInfo');
+  const embed = buildEmbed ? await buildEmbed(channel, guild, { imageURL: mainImageURL }) : null;
+  if (!embed) {
+    await interaction.editReply({ content: api.formatEphemeralContent('Không tạo được embed.') }).catch(() => {});
+    return;
+  }
   const { row } = buildChannelInfoComponents(channel.id, channel, guild);
   await interaction.editReply({ embeds: [embed], components: row ? [row] : [] });
 }

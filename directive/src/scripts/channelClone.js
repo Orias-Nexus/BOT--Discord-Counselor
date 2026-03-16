@@ -1,5 +1,6 @@
 import * as api from '../api.js';
-import { getEmbedContent } from '../embedDefaults.js';
+
+const SUCCESS_MESSAGE = 'Completed Clone {Channel Name}.';
 
 const SUCCESS_MESSAGE = 'Completed Clone {Channel Name}.';
 

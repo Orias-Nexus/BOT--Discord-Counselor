@@ -1,5 +1,6 @@
 import * as api from '../api.js';
-import { getEmbedContent } from '../embedDefaults.js';
+
+const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Good now.";
 
 const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Good now.";
 

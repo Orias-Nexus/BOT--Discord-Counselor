@@ -1,7 +1,9 @@
 import * as api from '../api.js';
+import { sendEventMessage } from '../eventMessages.js';
 
 /**
  * Event MemberLeaved (GuildMemberRemove): đặt status Leaved cho member vừa rời.
+ * Gửi tin nhắn tạm biệt vào kênh đã cấu hình (Messages Leaving), embed resolve qua parser.
  * Không ghi đè nếu đang là Kick (chỉ ghi đè khi user vào lại server → MemberGreeting set Newbie).
  */
 export async function run(interaction, client, actionContext) {
@@ -15,4 +17,5 @@ export async function run(interaction, client, actionContext) {
   if (existing?.member_status === 'Kick') return;
   await api.ensureMember(guild.id, userId, member.user?.username ?? 'User');
   await api.setMemberStatus(guild.id, userId, 'Leaved', null);
+  await sendEventMessage(guild, 'Leaving', { member, guild });
 }
