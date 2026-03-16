@@ -1,5 +1,6 @@
 import * as api from '../api.js';
-import { getEmbedContent } from '../embedDefaults.js';
+
+const SUCCESS_MESSAGE = 'Updated Status Role: \\n Warn: {role_warn} \\n Mute: {role_mute} \\n Lock: {role_lock} \\n Newbie: {role_new}.';
 
 /** Lấy tên role từ slash option hoặc modal (chỉ tên, không resolve ID). */
 function getRoleName(interaction, actionContext, key) {
@@ -52,14 +53,11 @@ export async function run(interaction, client, actionContext = {}) {
 
   await api.setRoles(guild.id, updates);
   const updated = await api.getServer(guild.id);
-  const content = api.formatEphemeralContent(api.replacePlaceholders(
-    getEmbedContent('StatusRole') ?? 'Updated Status Role: \\n Warn: {role_warn} \\n Mute: {role_mute} \\n Lock: {role_lock} \\n Newbie: {role_new}.',
-    {
-      role_warn: roleIdToDisplay(guild, updated?.role_warn),
-      role_mute: roleIdToDisplay(guild, updated?.role_mute),
-      role_lock: roleIdToDisplay(guild, updated?.role_lock),
-      role_new: roleIdToDisplay(guild, updated?.role_new),
-    }
-  ));
+  const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, {
+    role_warn: roleIdToDisplay(guild, updated?.role_warn),
+    role_mute: roleIdToDisplay(guild, updated?.role_mute),
+    role_lock: roleIdToDisplay(guild, updated?.role_lock),
+    role_new: roleIdToDisplay(guild, updated?.role_new),
+  }));
   await api.replyOrEdit(interaction, content);
 }

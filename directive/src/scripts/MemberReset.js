@@ -1,5 +1,6 @@
 import * as api from '../api.js';
-import { getEmbedContent } from '../embedDefaults.js';
+
+const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Good now.";
 
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
@@ -29,10 +30,7 @@ export async function run(interaction, client, actionContext) {
   await api.ensureMember(guild.id, member.id, member.user?.username);
   await api.setMemberStatus(guild.id, member.id, 'Good', null);
   const displayName = member.displayName ?? member.user?.username ?? 'User';
-  const content = api.formatEphemeralContent(api.replacePlaceholders(
-    getEmbedContent('MemberReset') ?? "{Server Profile Name}'s Status is Good now.",
-    { 'Server Profile Name': displayName }
-  ));
+  const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { 'Server Profile Name': displayName }));
   await api.replyOrEdit(interaction, content);
   const updatedProfile = await api.getMember(guild.id, member.id).catch(() => null);
   return { updatedProfile, targetId: member.id };
