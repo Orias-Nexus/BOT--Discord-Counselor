@@ -1,8 +1,9 @@
 import * as api from '../api.js';
+import { sendEventMessage } from '../eventMessages.js';
 
 /**
  * Event MemberJoined (GuildMemberAdd): thêm bản ghi member, gắn role_new, đặt status Newbie.
- * Hiện không gửi tin nhắn chào mừng.
+ * Gửi tin nhắn chào mừng vào kênh đã cấu hình (Messages Greeting), embed resolve qua parser.
  */
 export async function run(interaction, client, actionContext) {
   const guild = actionContext?.guild ?? null;
@@ -16,4 +17,5 @@ export async function run(interaction, client, actionContext) {
     const role = guild.roles.cache.get(server.role_new);
     if (role) await member.roles.add(role).catch(() => {});
   }
+  await sendEventMessage(guild, 'Greeting', { member, guild });
 }

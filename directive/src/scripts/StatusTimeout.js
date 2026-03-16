@@ -1,5 +1,6 @@
 import * as api from '../api.js';
-import { getEmbedContent } from '../embedDefaults.js';
+
+const SUCCESS_MESSAGE = 'Updated Status Timeout: \\n Warn: {time_warn} \\n Mute: {time_mute} \\n Lock: {time_lock} \\n Newbie: {time_new}.';
 
 /** Parse dd:hh:mm hoặc hh:mm hoặc số phút -> tổng phút (backend time_warn/time_mute/time_lock). */
 function parseToMinutes(str) {
@@ -61,9 +62,6 @@ export async function run(interaction, client, actionContext = {}) {
     time_lock: formatMinutesToDDHHMM(times.time_lock),
     time_new: formatMinutesToDDHHMM(times.time_new),
   };
-  const content = api.formatEphemeralContent(api.replacePlaceholders(
-    getEmbedContent('StatusTimeout') ?? 'Updated Status Timeout: \\n Warn: {time_warn} \\n Mute: {time_mute} \\n Lock: {time_lock} \\n Newbie: {time_new}.',
-    placeholders
-  ));
+  const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, placeholders));
   await api.replyOrEdit(interaction, content);
 }

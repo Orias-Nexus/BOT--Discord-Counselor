@@ -1,5 +1,6 @@
 import * as api from '../api.js';
-import { getEmbedContent } from '../embedDefaults.js';
+
+const SUCCESS_MESSAGE = 'Completed Clone {Channel Name}.';
 
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
@@ -19,8 +20,6 @@ export async function run(interaction, client, actionContext) {
   for (let i = 0; i < number; i++) {
     await channel.clone().catch(() => {});
   }
-  const content = api.formatEphemeralContent(
-    (getEmbedContent('ChannelClone') ?? 'Completed Clone {Channel Name}.').replace(/\{Channel Name\}/g, channel.name)
-  );
+  const content = api.formatEphemeralContent(SUCCESS_MESSAGE.replace(/\{Channel Name\}/g, channel.name));
   await interaction.editReply({ content });
 }

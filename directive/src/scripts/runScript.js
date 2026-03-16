@@ -9,15 +9,24 @@ const SCRIPT_NAMES = [
   'CategoryInfo', 'CategoryClone', 'CategoryPrivate', 'CategoryPublic',
   'ChanelInfo', 'ChannelClone', 'ChannelCreate', 'ChannelSync', 'ChannelPrivate', 'ChannelPublic', 'ChannelSFW', 'ChannelNSFW',
   'MemberInfo', 'MemberRename', 'MemberSetlevel', 'MemberMove', 'MemberReset', 'MemberWarn', 'MemberMute', 'MemberLock', 'MemberKick',
-  'MemberGreeting', 'MemberLeaving',
+  'MemberGreeting', 'MemberLeaving', 'MemberBoosting',
+  'GreetingChannel', 'LeavingChannel', 'BoostingChannel', 'GreetingMessage', 'LeavingMessage', 'BoostingMessage',
+  'EmbedCreate', 'EmbedEdit', 'EmbedRename', 'EmbedDelete', 'EmbedApply',
+  'EmbedEditBasic', 'EmbedEditAuthor', 'EmbedEditFooter', 'EmbedEditImages',
 ];
 
 const scriptCache = new Map();
 
+/** Tên script (PascalCase) -> tên file (camelCase). */
+function scriptNameToFileName(name) {
+  return name.charAt(0).toLowerCase() + name.slice(1);
+}
+
 export async function loadAllScripts() {
   for (const name of SCRIPT_NAMES) {
     try {
-      const module = await import(`./${name}.js`);
+      const fileName = scriptNameToFileName(name);
+      const module = await import(`./${fileName}.js`);
       scriptCache.set(name, module);
     } catch (err) {
       console.warn(`[runScript] Không load được script: ${name}`, err.message);
