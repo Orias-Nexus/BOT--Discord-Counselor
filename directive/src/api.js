@@ -124,6 +124,17 @@ export async function deleteServerStatChannels(serverId) {
   return request(`/servers/${encodeURIComponent(serverId)}/channels/stats`, { method: 'DELETE' });
 }
 
+<<<<<<< HEAD
+=======
+export async function getFunction(scriptName) {
+  return request(`/api/functions/script/${encodeURIComponent(scriptName)}`);
+}
+
+export async function getSlashList() {
+  return request('/api/functions/slash');
+}
+
+>>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
 /** Discord API: interaction token expired or already used — do not call reply/editReply/followUp again. */
 export const UNKNOWN_INTERACTION_CODE = 10062;
 
@@ -296,12 +307,12 @@ export async function getGlobalRank(userId) {
   return request(`/users/${userId}/rank`);
 }
 
-/** Gọi backend xử lý member hết hạn (đặt Good). Trả về { count, updated: [{ server_id, user_id }] }. */
+/** Backend: process expired members (set Good). Returns { count, updated: [{ server_id, user_id }] }. */
 export async function processExpires() {
   return request('/api/members/process-expires', { method: 'POST' });
 }
 
-/** Danh sách messages của server (Greeting, Leaving, Boosting, ...). */
+/** Server messages list (Greeting, Leaving, Boosting, ...). */
 export async function listMessages(serverId) {
   try {
     const data = await request(`/api/servers/${serverId}/messages`);
@@ -312,7 +323,7 @@ export async function listMessages(serverId) {
   }
 }
 
-/** Cấu hình tin nhắn theo loại (Greeting, Leaving, Boosting). Backend cần mount message routes. */
+/** Get message config by type (Greeting, Leaving, Boosting). Backend must mount message routes. */
 export async function getMessageByType(serverId, messagesType) {
   try {
     return await request(`/api/servers/${serverId}/messages/${messagesType}`);
@@ -336,7 +347,7 @@ export async function setMessageEmbed(serverId, messagesType, embedId) {
   });
 }
 
-/** Danh sách embed của server. */
+/** Server embed list. */
 export async function listEmbeds(serverId) {
   try {
     const data = await request(`/api/servers/${serverId}/embeds`);
@@ -347,7 +358,7 @@ export async function listEmbeds(serverId) {
   }
 }
 
-/** Lấy embed theo id (server_id + embed_id). */
+/** Get embed by id (server_id + embed_id). */
 export async function getEmbed(serverId, embedId) {
   try {
     return await request(`/api/servers/${serverId}/embeds/${embedId}`);
@@ -357,7 +368,7 @@ export async function getEmbed(serverId, embedId) {
   }
 }
 
-/** Tạo embed mới. */
+/** Create new embed. */
 export async function createEmbed(serverId, embedName, embedData) {
   return request(`/api/servers/${serverId}/embeds`, {
     method: 'POST',
@@ -365,7 +376,7 @@ export async function createEmbed(serverId, embedName, embedData) {
   });
 }
 
-/** Cập nhật embed. */
+/** Update embed. */
 export async function updateEmbed(serverId, embedId, payload) {
   return request(`/api/servers/${serverId}/embeds/${embedId}`, {
     method: 'PATCH',
@@ -373,7 +384,7 @@ export async function updateEmbed(serverId, embedId, payload) {
   });
 }
 
-/** Xóa embed. */
+/** Delete embed. */
 export async function deleteEmbed(serverId, embedId) {
   return request(`/api/servers/${serverId}/embeds/${embedId}`, {
     method: 'DELETE',

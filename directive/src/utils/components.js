@@ -49,6 +49,7 @@ export const SCRIPT_TO_LABEL = {
   EmbedDelete:      'Delete',
 };
 
+<<<<<<< HEAD
 const SERVER_ACTIONS = ['StatusRole', 'StatusUnrole', 'StatusTimeout', 'SetServerStats', 'SetVoiceCreator'];
 const CATEGORY_BASE_ACTIONS = ['CategoryClone'];
 const MEMBER_ACTIONS = ['MemberRename', 'MemberSetlevel', 'MemberMove', 'MemberReset', 'MemberWarn', 'MemberMute', 'MemberLock', 'MemberKick'];
@@ -64,6 +65,32 @@ function buildSelectRow(scriptNames, contextId, { labels = {}, placeholder = 'Ch
         label: String(labels[name] ?? SCRIPT_TO_LABEL[name] ?? name).slice(0, 100),
         value: name,
       }))
+=======
+/** Actions included per parent (Architecture Slash actions_included). */
+const SERVER_INFO_ACTIONS = ['StatusTimeout', 'StatusRole', 'StatusUnrole'];
+const SERVER_INFO_ACTIONS_ROW2 = ['SetVoiceCreator', 'SetServerStats'];
+const CATEGORY_INFO_ACTIONS_BASE = ['CategoryClone'];
+const CHANNEL_INFO_ACTIONS = ['ChannelClone', 'ChannelSync', 'ChannelPrivate', 'ChannelPublic', 'ChannelSFW', 'ChannelNSFW'];
+/** Max 5 buttons per ActionRow (Discord limit). Split 8 actions into 2 rows. */
+const MEMBER_INFO_ACTIONS_ROW1 = ['MemberRename', 'MemberSetlevel', 'MemberMove', 'MemberReset'];
+const MEMBER_INFO_ACTIONS_ROW2 = ['MemberWarn', 'MemberMute', 'MemberLock', 'MemberKick'];
+
+const PREFIX = 'action_';
+/** Default style for buttons without explicit color (same as channel Sync button). */
+const DEFAULT_BUTTON_STYLE = ButtonStyle.Secondary;
+const STYLE_MAP = { Default: ButtonStyle.Primary, Green: ButtonStyle.Success, Red: ButtonStyle.Danger };
+
+function buildActionRow(scriptNames, contextId, styleOverrides = {}, labelOverrides = {}) {
+  const row = new ActionRowBuilder();
+  for (const scriptName of scriptNames) {
+    const label = labelOverrides[scriptName] ?? SCRIPT_TO_LABEL[scriptName] ?? scriptName;
+    const style = styleOverrides[scriptName] ?? DEFAULT_BUTTON_STYLE;
+    row.addComponents(
+      new ButtonBuilder()
+        .setCustomId(`${PREFIX}${scriptName}_${contextId}`)
+        .setLabel(String(label).slice(0, 80))
+        .setStyle(style)
+>>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
     );
   return new ActionRowBuilder().addComponents(select);
 }
@@ -74,6 +101,10 @@ function isPublicChannel(channel, guild) {
   return !overwrite || !overwrite.deny?.has(PermissionFlagsBits.ViewChannel);
 }
 
+<<<<<<< HEAD
+=======
+/** Good button label by member status (Good / Warning / Muted / Locked). */
+>>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
 function getMemberResetLabel(memberStatus) {
   switch (memberStatus) {
     case 'Warning': return 'Unwarn';

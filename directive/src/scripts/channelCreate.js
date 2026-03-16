@@ -63,7 +63,7 @@ async function handleJoinCreator(newState, creatorTriggerChannelIds) {
     const clone = await sourceChannel.clone({
       name: sanitizeChannelName(member.displayName ?? member.user.username),
       parent: sourceChannel.parentId,
-      reason: 'ChannelCreate: clone cho thành viên',
+      reason: 'ChannelCreate: clone for member',
     });
     await member.voice.setChannel(clone).catch((err) => {
       console.warn('[ChannelCreate] setChannel:', err?.message);
@@ -86,7 +86,7 @@ async function handleLeaveChannel(guild, oldState, creatorTriggerChannelIds, cre
     const fetched = await guild.channels.fetch(channel.id).catch(() => null);
     const memberCount = fetched?.members?.size ?? channel.members?.size ?? 0;
     if (memberCount > 0) return;
-    await channel.delete('ChannelCreate: kênh clone rỗng').catch((err) => {
+    await channel.delete('ChannelCreate: empty clone channel').catch((err) => {
       console.warn('[ChannelCreate] delete:', err?.message);
     });
   } catch (err) {

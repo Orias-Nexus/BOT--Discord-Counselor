@@ -6,7 +6,7 @@ const SUCCESS_MESSAGE = 'Completed Clone {Category Name}.';
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   if (!interaction.deferred) await interaction.deferReply();
@@ -17,7 +17,7 @@ export async function run(interaction, client, actionContext) {
     category = ch?.parentId ? guild.channels.cache.get(ch.parentId) : null;
   }
   if (!category || category.type !== ChannelType.GuildCategory) {
-    await interaction.editReply({ content: api.formatEphemeralContent('Không tìm thấy danh mục.') });
+    await interaction.editReply({ content: api.formatEphemeralContent('Category not found.') });
     return;
   }
   const number = Math.max(1, Math.min(10, Number(interaction.options?.get('number')?.value) || 1));

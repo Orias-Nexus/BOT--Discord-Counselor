@@ -37,7 +37,7 @@ export async function run(interaction, client, actionContext = null) {
 =======
   const embed = buildEmbed ? await buildEmbed(category, guild, { imageURL: mainImageURL }) : null;
   if (!embed) {
-    await interaction.editReply({ content: api.formatEphemeralContent('Không tạo được embed.') }).catch(() => {});
+    await interaction.editReply({ content: api.formatEphemeralContent('Could not create embed.') }).catch(() => {});
     return;
   }
   const { row } = buildCategoryInfoComponents(category.id, category, guild);

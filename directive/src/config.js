@@ -1,8 +1,15 @@
+<<<<<<< HEAD
 import 'dotenv/config';
 import { blank_banner } from './customs/handlers/placeholders/links.js';
 
 const isProd = process.env.NODE_ENV === 'production';
 
+=======
+/**
+ * Config from env. BACKEND_API_URL defaults to http://localhost:4000.
+ * mainImageURL: embed image (Discord needs URL). For local use GitHub raw (Discord cannot load localhost).
+ */
+>>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
 export const BACKEND_API_URL =
   process.env.BACKEND_API_URL ??
   (isProd
@@ -24,6 +31,7 @@ const DEFAULT_MAIN_IMAGE_URL = isLocalBackend
 export const mainImageUrl =
   process.env.MAIN_IMAGE_URL ?? DEFAULT_MAIN_IMAGE_URL;
 
+<<<<<<< HEAD
 const env = {
   isProd,
   nodeEnv: process.env.NODE_ENV || 'development',
@@ -39,6 +47,17 @@ if (!isProd) {
   console.log('[config] Backend API:', env.backendApiUrl);
   console.log('[config] Redis:', env.redisUrl);
   console.log('[config] Main Image:', env.mainImageUrl);
+=======
+if (process.env.MAIN_IMAGE_URL) {
+  console.log('[config] mainImageURL from env MAIN_IMAGE_URL =', mainImageURL);
+} else {
+  console.log(
+    '[config] mainImageURL: BACKEND_API_URL=%s, isLocalBackend=%s → %s',
+    BACKEND_API_URL,
+    isLocalBackend,
+    mainImageURL
+  );
+>>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
 }
 
 export default env;

@@ -31,10 +31,14 @@ const SCRIPT_NAMES = [
 const scriptCache = new Map();
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 /** Script name (PascalCase) → file name (camelCase). */
 =======
 /** Tên script (PascalCase) -> tên file (camelCase). */
 >>>>>>> 0e48cdd (Add new scripts for managing greeting and leaving channels and messages: Implement GreetingChannel, GreetingMessage, LeavingChannel, and LeavingMessage to enhance server interaction capabilities. Introduce embed handling for these messages, allowing for dynamic content resolution and improved user engagement.)
+=======
+/** Script name (PascalCase) → file name (camelCase). */
+>>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
 function scriptNameToFileName(name) {
   return name.charAt(0).toLowerCase() + name.slice(1);
 }
