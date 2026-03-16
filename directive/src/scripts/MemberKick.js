@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { getEmbedContent } from '../embedDefaults.js';
 
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
@@ -20,7 +21,7 @@ export async function run(interaction, client, actionContext) {
   await api.setMemberStatus(guild.id, member.id, 'Kick', null);
   const displayName = member.displayName ?? member.user?.username ?? 'User';
   const content = api.formatEphemeralContent(api.replacePlaceholders(
-    (await api.getFunction('MemberKick').catch(() => null))?.embed?.content ?? "{Server Profile Name} has been Kicked.",
+    getEmbedContent('MemberKick') ?? "{Server Profile Name} has been Kicked.",
     { 'Server Profile Name': displayName }
   ));
   await api.replyOrEdit(interaction, content);

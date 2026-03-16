@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { getEmbedContent } from '../embedDefaults.js';
 
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
@@ -22,7 +23,7 @@ export async function run(interaction, client, actionContext) {
     console.error('[ChannelSync] lockPermissions', err?.code ?? err);
   });
   const content = api.formatEphemeralContent(
-    ((await api.getFunction('ChannelSync').catch(() => null))?.embed?.content ?? 'Completed Sync {Channel Name}.').replace(/\{Channel Name\}/g, channel.name)
+    (getEmbedContent('ChannelSync') ?? 'Completed Sync {Channel Name}.').replace(/\{Channel Name\}/g, channel.name)
   );
   await interaction.editReply({ content });
 }
