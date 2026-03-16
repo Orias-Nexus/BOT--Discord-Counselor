@@ -33,7 +33,7 @@ async function updateMemberInfoEmbedIfExists(client, serverId, userId) {
   const member = await guild.members.fetch(userId).catch(() => null);
   if (!member) return;
   const profile = await api.getMember(serverId, userId).catch(() => null);
-  const payload = buildMemberInfoPayload(member, profile);
+  const payload = await buildMemberInfoPayload(member, profile);
   await findAndUpdateMemberInfoInGuild(client, serverId, userId, payload);
 }
 

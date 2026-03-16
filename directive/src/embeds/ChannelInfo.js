@@ -1,14 +1,15 @@
 import { EMBED_COLORS } from './schema.js';
 import { formatShortDate, getChannelTypeName, getChannelStatus } from './utils.js';
+import { resolveEmbed } from './embedContext.js';
 
 /**
- * Trả về embed data Channel Info. channel.send({ embeds: [data] }) hoặc editReply({ embeds: [data] }).
+ * Trả về embed data Channel Info (đã resolve placeholders qua parser).
  * @param {import('discord.js').Channel} channel
  * @param {import('discord.js').Guild} guild
  * @param {{ imageURL?: string }} options
- * @returns {object}
+ * @returns {Promise<object>}
  */
-export function getChannelInfoEmbed(channel, guild, options = {}) {
+export async function getChannelInfoEmbed(channel, guild, options = {}) {
   const created = channel.createdAt ? formatShortDate(channel.createdAt) : 'N/A';
   const categoryName = channel.parent ? channel.parent.name : 'None';
   const typeName = getChannelTypeName(channel);
@@ -17,7 +18,7 @@ export function getChannelInfoEmbed(channel, guild, options = {}) {
   const status = getChannelStatus(channel, guild);
 
   const embed = {
-    title: `✦ Channel: ${channel.name}`,
+    title: '✦ Channel: {channel_name}',
     color: EMBED_COLORS.CHANNEL_INFO,
     timestamp: new Date().toISOString(),
     fields: [
@@ -32,5 +33,6 @@ export function getChannelInfoEmbed(channel, guild, options = {}) {
   };
   if (channel.topic) embed.description = `**Topic:** ${channel.topic}`;
   if (options.imageURL) embed.image = { url: options.imageURL };
-  return embed;
+
+  return resolveEmbed(embed, { guild, channel });
 }

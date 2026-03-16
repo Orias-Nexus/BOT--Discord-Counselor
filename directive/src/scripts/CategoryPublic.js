@@ -1,6 +1,7 @@
 import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
-import { getEmbedContent } from '../embedDefaults.js';
+
+const SUCCESS_MESSAGE = 'Published {Category Name}.';
 
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
@@ -22,7 +23,7 @@ export async function run(interaction, client, actionContext) {
   }
   await category.permissionOverwrites.edit(guild.id, { ViewChannel: true }).catch(() => {});
   const content = api.formatEphemeralContent(
-    (getEmbedContent('CategoryPublic') ?? 'Published {Category Name}.').replace(/\{Category Name\}/g, category.name)
+    SUCCESS_MESSAGE.replace(/\{Category Name\}/g, category.name)
   );
   await interaction.editReply({ content });
 }

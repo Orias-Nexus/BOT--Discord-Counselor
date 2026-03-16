@@ -208,6 +208,99 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.KickMembers,
     options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Thành viên').setRequired(true)),
   },
+  {
+    name: 'greetingchannel',
+    script: 'GreetingChannel',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+    options: (b) =>
+      b.addChannelOption((o) =>
+        o.setName('channel').setDescription('Kênh gửi tin chào mừng').addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement).setRequired(true)
+      ),
+  },
+  {
+    name: 'leavingchannel',
+    script: 'LeavingChannel',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+    options: (b) =>
+      b.addChannelOption((o) =>
+        o.setName('channel').setDescription('Kênh gửi tin tạm biệt').addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement).setRequired(true)
+      ),
+  },
+  {
+    name: 'boostingchannel',
+    script: 'BoostingChannel',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+    options: (b) =>
+      b.addChannelOption((o) =>
+        o.setName('channel').setDescription('Kênh gửi tin boost').addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement).setRequired(true)
+      ),
+  },
+  {
+    name: 'greetingmessage',
+    script: 'GreetingMessage',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+    options: (b) =>
+      b.addStringOption((o) =>
+        o.setName('embed').setDescription('Tên embed (đã tạo trong server)').setRequired(true).setAutocomplete(true)
+      ),
+  },
+  {
+    name: 'leavingmessage',
+    script: 'LeavingMessage',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+    options: (b) =>
+      b.addStringOption((o) =>
+        o.setName('embed').setDescription('Tên embed (đã tạo trong server)').setRequired(true).setAutocomplete(true)
+      ),
+  },
+  {
+    name: 'boostingmessage',
+    script: 'BoostingMessage',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+    options: (b) =>
+      b.addStringOption((o) =>
+        o.setName('embed').setDescription('Tên embed (đã tạo trong server)').setRequired(true).setAutocomplete(true)
+      ),
+  },
+  {
+    name: 'embedcreate',
+    script: 'EmbedCreate',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+    options: (b) => b.addStringOption((o) => o.setName('name').setDescription('Tên embed').setRequired(true)),
+  },
+  {
+    name: 'embededit',
+    script: 'EmbedEdit',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+    options: (b) =>
+      b.addStringOption((o) =>
+        o.setName('target').setDescription('Chọn embed cần sửa').setRequired(true).setAutocomplete(true)
+      ),
+  },
+  {
+    name: 'embedrename',
+    script: 'EmbedRename',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+    options: (b) =>
+      b
+        .addStringOption((o) =>
+          o.setName('target').setDescription('Chọn embed cần đổi tên').setRequired(true).setAutocomplete(true)
+        )
+        .addStringOption((o) => o.setName('newname').setDescription('Tên mới').setRequired(true)),
+  },
+  {
+    name: 'embeddelete',
+    script: 'EmbedDelete',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+    options: (b) =>
+      b
+        .addStringOption((o) =>
+          o.setName('target').setDescription('Chọn embed cần xóa').setRequired(true).setAutocomplete(true)
+        )
+        .addStringOption((o) =>
+          o.setName('confirm').setDescription('Gõ chính xác tên embed để xác nhận xóa').setRequired(true)
+        ),
+  },
 ];
 
 export function getSlashCommands() {

@@ -2,6 +2,17 @@ import { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } from
 
 const MODAL_PREFIX = 'modal_';
 
+/** Tổng phút -> chuỗi dd:hh:mm (prefill StatusTimeout). */
+function formatMinutesToDDHHMM(totalMinutes) {
+  if (totalMinutes == null || totalMinutes < 0) return '';
+  const d = Math.floor(totalMinutes / (24 * 60));
+  const r = totalMinutes % (24 * 60);
+  const h = Math.floor(r / 60);
+  const m = r % 60;
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${pad(d)}:${pad(h)}:${pad(m)}`;
+}
+
 /** Script cần modal khi gọi từ nút: [scriptName, title, { inputCustomId: { label, placeholder, style, required } }] */
 const MODALS = {
   StatusTimeout: {
@@ -38,6 +49,51 @@ const MODALS = {
     title: 'Set level thành viên',
     inputs: [{ id: 'setlevel', label: 'Level (số nguyên)', placeholder: 'VD: 5', required: true }],
   },
+  EmbedEditBasic: {
+    title: 'Edit Embed: Title, Description, Color, Fields',
+    inputs: [
+      { id: 'title', label: 'Title', placeholder: 'Embed Title', required: false },
+      { id: 'description', label: 'Description', placeholder: 'Nội dung embed (có thể dùng {user_name}, {user_avatar}...)', required: false, style: 'Paragraph' },
+      { id: 'color', label: 'Color (số thập lục hoặc decimal)', placeholder: 'VD: 5763719 hoặc 0x57F287', required: false },
+      { id: 'fields', label: 'Fields (chỉ phần trong [ ])', placeholder: '{"name":"Tên","value":"Nội dung","inline":true}', required: false, style: 'Paragraph' },
+    ],
+  },
+  EmbedEditAuthor: {
+    title: 'Edit Embed: Author',
+    inputs: [
+      { id: 'author_name', label: 'Author Name', placeholder: 'Tên tác giả', required: false },
+      { id: 'author_icon_url', label: 'Author Icon URL', placeholder: 'https://...', required: false },
+    ],
+  },
+  EmbedEditFooter: {
+    title: 'Edit Embed: Footer',
+    inputs: [
+      { id: 'footer_text', label: 'Footer Text', placeholder: 'Chữ ở footer', required: false },
+      { id: 'footer_icon_url', label: 'Footer Icon URL', placeholder: 'https://...', required: false },
+    ],
+  },
+  EmbedEditImages: {
+    title: 'Edit Embed: Thumbnail & Image',
+    inputs: [
+      { id: 'thumbnail_url', label: 'Thumbnail URL', placeholder: 'https://... hoặc {user_avatar}', required: false },
+      { id: 'image_url', label: 'Main Image URL', placeholder: 'https://...', required: false },
+    ],
+  },
+  EmbedRename: {
+    title: 'Đổi tên embed',
+    inputs: [{ id: 'newname', label: 'Tên mới', placeholder: 'Tên embed', required: true }],
+  },
+  EmbedDelete: {
+    title: 'Xác nhận xóa embed',
+    inputs: [
+      {
+        id: 'confirm_name',
+        label: 'Gõ chính xác tên embed để xác nhận xóa',
+        placeholder: '(tên embed cần xóa)',
+        required: true,
+      },
+    ],
+  },
 };
 
 export const SCRIPTS_NEED_MODAL = new Set(Object.keys(MODALS));
@@ -52,12 +108,60 @@ export function getModalForScript(scriptName, contextPart, extra = {}) {
   if (!config) return null;
   const customId = `${MODAL_PREFIX}${scriptName}_${contextPart}`;
   const modal = new ModalBuilder().setCustomId(customId).setTitle(config.title.slice(0, 45));
-  const { guild, server } = extra;
+  const { guild, server, embed: embedData, embed_name: embedName, times, member, profile } = extra;
   const rolePlaceholders = { warn: 'Warning Role', mute: 'Muted Role', lock: 'Locked Role', new: 'Newbie Role' };
+  const contextValue = (id) => {
+    if (scriptName === 'StatusTimeout' && times) {
+      const key = { warn: 'time_warn', mute: 'time_mute', lock: 'time_lock', new: 'time_new' }[id];
+      const v = key ? times[key] : undefined;
+      return v != null ? formatMinutesToDDHHMM(v) : undefined;
+    }
+    if (scriptName === 'StatusUnrole' && server) {
+      if (id === 'mute' && server.unrole_mute) return String(server.unrole_mute);
+      if (id === 'lock' && server.unrole_lock) return String(server.unrole_lock);
+    }
+    if (scriptName === 'MemberRename' && id === 'setname' && member) {
+      return (member.displayName ?? member.user?.username ?? '').slice(0, 32);
+    }
+    if (scriptName === 'MemberSetlevel' && id === 'setlevel' && profile) {
+      const lvl = profile.member_level ?? profile.level;
+      return lvl != null ? String(lvl) : undefined;
+    }
+    return undefined;
+  };
+  const embedValue = (id) => {
+    if (scriptName === 'EmbedRename' && id === 'newname') return embedName ?? '';
+    if (scriptName === 'EmbedDelete' && id === 'confirm_name') return '';
+    if (!embedData) return undefined;
+    if (scriptName === 'EmbedEditBasic') {
+      if (id === 'title') return embedData.title ?? '';
+      if (id === 'description') return embedData.description ?? '';
+      if (id === 'color') return embedData.color != null ? String(embedData.color) : '';
+      if (id === 'fields') {
+        if (!Array.isArray(embedData.fields) || embedData.fields.length === 0) return '';
+        const raw = JSON.stringify(embedData.fields);
+        return raw.length > 2 ? raw.slice(1, -1) : '';
+      }
+    }
+    if (scriptName === 'EmbedEditAuthor') {
+      if (id === 'author_name') return embedData.author?.name ?? '';
+      if (id === 'author_icon_url') return embedData.author?.icon_url ?? '';
+    }
+    if (scriptName === 'EmbedEditFooter') {
+      if (id === 'footer_text') return embedData.footer?.text ?? '';
+      if (id === 'footer_icon_url') return embedData.footer?.icon_url ?? '';
+    }
+    if (scriptName === 'EmbedEditImages') {
+      if (id === 'thumbnail_url') return embedData.thumbnail?.url ?? '';
+      if (id === 'image_url') return embedData.image?.url ?? '';
+    }
+    return undefined;
+  };
   for (const input of config.inputs) {
     let placeholder = (input.placeholder || '').slice(0, 100);
-    let value = undefined;
-    if (scriptName === 'StatusRole' && guild && server && input.id in rolePlaceholders) {
+    if (scriptName === 'EmbedDelete' && input.id === 'confirm_name' && embedName) placeholder = String(embedName).slice(0, 100);
+    let value = embedValue(input.id) ?? contextValue(input.id);
+    if (value === undefined && scriptName === 'StatusRole' && guild && server && input.id in rolePlaceholders) {
       const roleId = server[`role_${input.id}`];
       if (roleId) {
         const existingName = guild.roles.cache.get(roleId)?.name;
@@ -67,14 +171,15 @@ export function getModalForScript(scriptName, contextPart, extra = {}) {
         placeholder = rolePlaceholders[input.id];
       }
     }
+    const isParagraph = input.style === 'Paragraph';
     const builder = new TextInputBuilder()
       .setCustomId(input.id)
       .setLabel(input.label.slice(0, 45))
-      .setStyle(TextInputStyle.Short)
+      .setStyle(isParagraph ? TextInputStyle.Paragraph : TextInputStyle.Short)
       .setRequired(Boolean(input.required))
       .setPlaceholder(placeholder)
-      .setMaxLength(100);
-    if (value !== undefined) builder.setValue(value);
+      .setMaxLength(isParagraph ? 4000 : 100);
+    if (value !== undefined) builder.setValue(value.slice(0, isParagraph ? 4000 : 100));
     modal.addComponents(new ActionRowBuilder().addComponents(builder));
   }
   return modal;
