@@ -5,7 +5,6 @@ import serverRoutes from './routes/serverRoutes.js';
 import memberRoutes from './routes/memberRoutes.js';
 import functionRoutes from './routes/functionRoutes.js';
 import levelRoutes from './routes/levelRoutes.js';
-
 const app = express();
 const PORT = process.env.PORT ?? 4000;
 

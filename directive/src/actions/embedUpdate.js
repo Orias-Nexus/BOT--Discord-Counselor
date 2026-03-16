@@ -59,20 +59,21 @@ export async function findAndUpdateParentMessage(channel, botUserId, targetId, p
     );
     if (hasMatch) {
       await msg.edit(payload).catch(() => {});
-      return;
+      return true;
     }
   }
+  return false;
 }
 
 /**
  * Trả về payload { embeds, components } để cập nhật message sau action (embed mới + nút toggle đúng trạng thái).
- * Trả về null nếu script không thuộc nhóm cập nhật embed hoặc thiếu context.
+ * scriptResult: kết quả từ script (có thể chứa updatedProfile để tránh embed dùng profile cũ).
  */
-export async function getEmbedUpdatePayload(scriptName, interaction, actionContext) {
+export async function getEmbedUpdatePayload(scriptName, interaction, actionContext, scriptResult = null) {
   const guild = interaction.guild;
   if (!guild) return null;
 
-  const targetId = actionContext?.targetId ?? null;
+  const targetId = actionContext?.targetId ?? scriptResult?.targetId ?? null;
 
   if (SERVER_SCRIPTS.has(scriptName)) {
     const guildFetched = await guild.fetch().catch(() => guild);
@@ -112,12 +113,10 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
   if (MEMBER_SCRIPTS.has(scriptName) && targetId) {
     const member = await guild.members.fetch(targetId).catch(() => null);
     if (!member) return null;
-    let profile = null;
-    try {
-      profile = await api.getMember(guild.id, member.id);
-    } catch {
-      // ignore
-    }
+    const profile =
+      scriptResult?.updatedProfile && String(scriptResult.targetId || scriptResult.updatedProfile?.user_id) === String(member.id)
+        ? scriptResult.updatedProfile
+        : await api.getMember(guild.id, member.id).catch(() => null);
     const embed = buildMemberInfoEmbed(member, profile);
     const { row, row2 } = buildMemberInfoComponents(member.id, profile);
     const components = [row, row2].filter(Boolean);
@@ -129,4 +128,36 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
   }
 
   return null;
+}
+
+/** Payload (embeds + components) cho message Member Info, dùng khi cập nhật từ expiresCheck. */
+export function buildMemberInfoPayload(member, profile) {
+  const embed = buildMemberInfoEmbed(member, profile);
+  const { row, row2 } = buildMemberInfoComponents(member.id, profile);
+  const components = [row, row2].filter(Boolean);
+  return {
+    content: '',
+    embeds: [embed],
+    components: components.length ? components : [],
+  };
+}
+
+const TEXT_CHANNEL_TYPES = [ChannelType.GuildText, ChannelType.GuildAnnouncement, ChannelType.GuildForum];
+const MAX_CHANNELS_TO_SCAN = 30;
+
+/**
+ * Tìm message Member Info có nút trỏ tới userId trong guild và cập nhật bằng payload.
+ * Dùng khi expires tự đặt Good để embed hiển thị đúng.
+ */
+export async function findAndUpdateMemberInfoInGuild(client, guildId, userId, payload) {
+  const guild = client.guilds.cache.get(guildId);
+  if (!guild || !client.user?.id || !payload) return;
+  const channels = guild.channels.cache.filter((c) => TEXT_CHANNEL_TYPES.includes(c.type));
+  let scanned = 0;
+  for (const channel of channels.values()) {
+    if (scanned >= MAX_CHANNELS_TO_SCAN) break;
+    const edited = await findAndUpdateParentMessage(channel, client.user.id, userId, payload);
+    if (edited) return;
+    scanned += 1;
+  }
 }

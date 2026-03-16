@@ -11,15 +11,14 @@ ALTER TABLE "DiscordCounselor"."members" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "DiscordCounselor"."servers" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "DiscordCounselor"."users" ENABLE ROW LEVEL SECURITY;
 
--- 2. Cho phép API nhìn thấy schema này
-GRANT USAGE ON SCHEMA "DiscordCounselor" TO anon, authenticated;
--- 3. Chỉ cấp quyền thao tác cơ bản trên các bảng hiện tại
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA "DiscordCounselor" TO anon, authenticated;
+-- 2. Cho phép API nhìn thấy schema này (anon, authenticated, service_role)
+GRANT USAGE ON SCHEMA "DiscordCounselor" TO anon, authenticated, service_role;
+-- 3. Cấp quyền thao tác trên các bảng
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA "DiscordCounselor" TO anon, authenticated, service_role;
 -- 4. Cấp quyền chạy hàm
-GRANT EXECUTE ON ALL ROUTINES IN SCHEMA "DiscordCounselor" TO anon, authenticated;
+GRANT EXECUTE ON ALL ROUTINES IN SCHEMA "DiscordCounselor" TO anon, authenticated, service_role;
 -- 5. Cấp quyền sử dụng sequence
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA "DiscordCounselor" TO anon, authenticated;
-
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA "DiscordCounselor" TO anon, authenticated, service_role;
 -- Cho phép Public Key (anon) ĐỌC bảng functions
 CREATE POLICY "Allow public read access on functions" 
 ON "DiscordCounselor"."functions" 
