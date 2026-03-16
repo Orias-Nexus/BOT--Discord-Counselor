@@ -5,7 +5,7 @@ const SUCCESS_MESSAGE = 'Completed Set Level {Server Profile Name}: {member_leve
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   const fromSlash = interaction.options != null;
@@ -17,7 +17,7 @@ export async function run(interaction, client, actionContext = null) {
   const setlevelRaw =
     interaction.options?.get('setlevel')?.value ?? actionContext?.modalValues?.setlevel ?? null;
   if (setlevelRaw == null || setlevelRaw === '') {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Cần nhập level (setlevel).'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Enter level (setlevel).'));
     return;
   }
   const level = Number(setlevelRaw);
@@ -25,7 +25,7 @@ export async function run(interaction, client, actionContext = null) {
   if (Number.isNaN(level) || level < range.min || level > range.max) {
     await api.replyOrEdit(
       interaction,
-      api.formatEphemeralContent(`Level phải trong khoảng ${range.min} - ${range.max}.`)
+      api.formatEphemeralContent(`Level must be between ${range.min} and ${range.max}.`)
     );
     return;
   }

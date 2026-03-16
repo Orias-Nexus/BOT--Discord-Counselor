@@ -6,7 +6,7 @@ import { getEmbedBuilder } from '../embedRoutes.js';
 export async function run(interaction, client, _actionContext) {
   const guild = interaction.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   if (!interaction.deferred) await interaction.deferReply();
@@ -17,14 +17,14 @@ export async function run(interaction, client, _actionContext) {
   } catch (err) {
     console.error('[ServerInfo] ensureServer', err);
     await interaction.editReply({
-      content: api.formatEphemeralContent('Không lấy được thông tin server. Vui lòng thử lại sau.'),
+      content: api.formatEphemeralContent('Could not fetch server info. Try again later.'),
     });
     return;
   }
   const buildEmbed = getEmbedBuilder('ServerInfo');
   const embed = buildEmbed ? await buildEmbed(guild, { imageURL: mainImageURL }) : null;
   if (!embed) {
-    await interaction.editReply({ content: api.formatEphemeralContent('Không tạo được embed.') }).catch(() => {});
+    await interaction.editReply({ content: api.formatEphemeralContent('Could not create embed.') }).catch(() => {});
     return;
   }
   const { row, row2 } = buildServerInfoComponents();

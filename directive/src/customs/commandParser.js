@@ -5,7 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-/** Thư mục gốc repo (để resolve variables.json khi chạy từ directive/). */
+/** Repo root (to resolve variables.json when run from directive/). */
 const CONFIG_BASE = path.resolve(__dirname, '../../..');
 
 // ExecutionContext is passed in by caller (createContext from executionContext.js)
@@ -159,7 +159,7 @@ export class CommandParser {
   }
 
   /**
-   * Chỉ chạy Phase 4 (placeholder replacement) trên một chuỗi. Dùng khi resolve placeholder trong embed object.
+   * Run Phase 4 (placeholder replacement) on a string. Used when resolving placeholders in embed object.
    * @param {string} raw
    * @param {import('./executionContext.js').ExecutionContext} ctx
    * @returns {Promise<string>}

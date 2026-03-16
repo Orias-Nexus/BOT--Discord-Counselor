@@ -1,5 +1,5 @@
 /**
- * Guard: {cooldown: seconds}. Cần inject getCooldownKey(ctx) và setCooldown(key, seconds) / isOnCooldown(key).
+ * Guard: {cooldown: seconds}. Inject getCooldownKey(ctx) and setCooldown(key, seconds) / isOnCooldown(key).
  * Mặc định luôn pass (true) nếu chưa inject.
  */
 

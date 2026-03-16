@@ -6,14 +6,14 @@ import { buildEmbedEditRow } from '../embeds/embedEditUtils.js';
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction?.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   const embedId = interaction.options?.getString('target')?.trim() || actionContext?.targetId;
   const newName =
     interaction.options?.getString('newname')?.trim() || actionContext?.modalValues?.newname?.trim();
   if (!embedId || !newName) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Thiếu embed hoặc tên mới.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Embed or new name missing.'));
     return;
   }
   const isFromModal = !!actionContext?.modalValues;
@@ -36,7 +36,7 @@ export async function run(interaction, client, actionContext = null) {
     } catch (err) {
       console.error('[EmbedRename]', err);
       await interaction.followUp({
-        content: api.formatEphemeralContent('Không thể đổi tên.'),
+        content: api.formatEphemeralContent('Rename failed.'),
         flags: MessageFlags.Ephemeral,
       }).catch(() => {});
     }
@@ -47,13 +47,13 @@ export async function run(interaction, client, actionContext = null) {
     await api.ensureServer(guild.id);
     await api.updateEmbed(guild.id, embedId, { embed_name: newName });
     await interaction.editReply({
-      content: api.formatEphemeralContent(`Đã đổi tên embed thành **${newName}**.`),
+      content: api.formatEphemeralContent(`Embed renamed to **${newName}**.`),
       flags: MessageFlags.Ephemeral,
     }).catch(() => {});
   } catch (err) {
     console.error('[EmbedRename]', err);
     await interaction.editReply({
-      content: api.formatEphemeralContent('Không thể đổi tên embed.'),
+      content: api.formatEphemeralContent('Could not rename embed.'),
       flags: MessageFlags.Ephemeral,
     }).catch(() => {});
   }

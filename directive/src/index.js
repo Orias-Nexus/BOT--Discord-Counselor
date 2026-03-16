@@ -47,9 +47,9 @@ for (const { discordEvent, scriptName, buildContext } of EVENT_HANDLERS) {
   });
 }
 
-/** Slash có option target (embed_id). */
+/** Slash commands with target option (embed_id). */
 const EMBED_TARGET_COMMANDS = ['embededit', 'embedrename', 'embeddelete'];
-/** Slash có option embed (embed_name, dùng cho greeting/leaving/boosting message). */
+/** Slash commands with embed option (embed_name for greeting/leaving/boosting). */
 const EMBED_OPTION_COMMANDS = ['greetingmessage', 'leavingmessage', 'boostingmessage'];
 
 client.on(Events.InteractionCreate, async (interaction) => {
@@ -95,13 +95,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
           }
         }
         await interaction.editReply({
-          content: formatEphemeralContent('Đã cập nhật message gắn embed.'),
+          content: formatEphemeralContent('Message embed updated.'),
           components: [],
         }).catch(() => {});
       } catch (err) {
         console.error('[InteractionCreate] EmbedApply select:', err);
         await interaction.editReply({
-          content: formatEphemeralContent('Không thể cập nhật.'),
+          content: formatEphemeralContent('Update failed.'),
           components: [],
         }).catch(() => {});
       }
@@ -115,8 +115,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
         await doSetServerStats(interaction, channelsIdx);
       } catch (err) {
         console.error('[InteractionCreate] ServerStats select:', err);
-        if (!interaction.deferred) await interaction.reply({ content: 'Có lỗi.', flags: MessageFlags.Ephemeral }).catch(() => {});
-        else await interaction.editReply({ content: 'Có lỗi.', components: [] }).catch(() => {});
+        if (!interaction.deferred) await interaction.reply({ content: 'Error.', flags: MessageFlags.Ephemeral }).catch(() => {});
+        else await interaction.editReply({ content: 'Error.', components: [] }).catch(() => {});
       }
       return;
     }
@@ -132,7 +132,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
         }
       } catch (err) {
         if (isUnknownInteraction(err)) {
-          console.warn('[InteractionCreate] Button defer 10062 - token hết hạn, không gửi được phản hồi nên client sẽ kẹt "thinking..." đến khi timeout. Bấm lại nút.');
+          console.warn('[InteractionCreate] Button defer 10062 - token expired, click the button again.');
           return;
         }
         throw err;
@@ -184,7 +184,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       } catch (err) {
         console.error('[ModalSubmit]', err);
         if (isUnknownInteraction(err)) return;
-        const content = formatEphemeralContent('Có lỗi khi xử lý.');
+        const content = formatEphemeralContent('Something went wrong.');
         if ((isEmbedEditModal || isEmbedDeleteModal) && interaction.deferred) {
           await interaction.followUp({ content, flags: MessageFlags.Ephemeral }).catch(() => {});
         } else if (interaction.deferred) {
@@ -203,13 +203,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
       await interaction.deferReply({ flags: slashUsesEmbed ? 0 : MessageFlags.Ephemeral });
     } catch (err) {
       if (isUnknownInteraction(err)) {
-        console.warn('[InteractionCreate] Token hết hạn (10062) - thử lại lệnh sau vài giây.');
+        console.warn('[InteractionCreate] Token expired (10062) - try the command again in a few seconds.');
         return;
       }
       throw err;
     }
     if (!scriptName) {
-      await interaction.editReply({ content: 'Lệnh không xác định.' }).catch(() => {});
+      await interaction.editReply({ content: 'Unknown command.' }).catch(() => {});
       return;
     }
     const handled = await handleSlash(interaction, client);
@@ -219,7 +219,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
 const token = process.env.DISCORD_TOKEN;
 if (!token) {
-  console.error('Thiếu DISCORD_TOKEN trong .env');
+  console.error('Missing DISCORD_TOKEN in .env');
   process.exit(1);
 }
 

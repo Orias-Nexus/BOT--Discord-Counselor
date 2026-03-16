@@ -4,8 +4,7 @@ import { buildMemberInfoPayload, findAndUpdateMemberInfoInGuild } from '../actio
 const INTERVAL_MS = 60 * 1000;
 
 /**
- * Áp dụng thao tác role giống khi ấn Good (MemberReset): gỡ role_warn, role_mute, role_lock;
- * thêm unrole_mute, unrole_lock. Không gửi tin nhắn.
+ * Apply roles like Good (MemberReset): remove role_warn/mute/lock; add unrole_mute, unrole_lock. No message sent.
  */
 async function applyGoodRoles(client, serverId, userId) {
   const guild = client.guilds.cache.get(serverId);
@@ -25,7 +24,7 @@ async function applyGoodRoles(client, serverId, userId) {
 }
 
 /**
- * Cập nhật embed Member Info (nếu có message hiển thị member đó) sau khi expires đặt Good.
+ * Update Member Info embed (if message exists for that member) after expires sets Good.
  */
 async function updateMemberInfoEmbedIfExists(client, serverId, userId) {
   const guild = client.guilds.cache.get(serverId);
@@ -50,7 +49,7 @@ export function startExpiresCheck(client) {
       const code = err?.cause?.code ?? err?.code;
       const msg = err?.message ?? String(err);
       if (code === 'ECONNREFUSED' || msg === 'fetch failed') {
-        console.warn('[expiresCheck] Backend không phản hồi (fetch failed). Kiểm tra backend đã chạy chưa và BACKEND_API_URL trong .env.');
+        console.warn('[expiresCheck] Backend not responding (fetch failed). Check backend is running and BACKEND_API_URL in .env.');
       } else {
         console.warn('[expiresCheck]', msg, code ? `(${code})` : '');
       }

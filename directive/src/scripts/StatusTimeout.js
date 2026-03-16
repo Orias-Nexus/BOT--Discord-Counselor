@@ -2,7 +2,7 @@ import * as api from '../api.js';
 
 const SUCCESS_MESSAGE = 'Updated Status Timeout: \\n Warn: {time_warn} \\n Mute: {time_mute} \\n Lock: {time_lock} \\n Newbie: {time_new}.';
 
-/** Parse dd:hh:mm hoặc hh:mm hoặc số phút -> tổng phút (backend time_warn/time_mute/time_lock). */
+/** Parse dd:hh:mm or hh:mm or minutes → total minutes (backend time_warn/time_mute/time_lock). */
 function parseToMinutes(str) {
   if (!str || typeof str !== 'string') return null;
   const parts = str.trim().split(':').map(Number);
@@ -12,7 +12,7 @@ function parseToMinutes(str) {
   return null;
 }
 
-/** Đổi tổng phút -> chuỗi dd:hh:mm. */
+/** Convert total minutes → dd:hh:mm string. */
 function formatMinutesToDDHHMM(totalMinutes) {
   if (totalMinutes == null || totalMinutes < 0) return '0:00:00';
   const d = Math.floor(totalMinutes / (24 * 60));
@@ -32,7 +32,7 @@ function getOptionOrModal(interaction, actionContext, key) {
 export async function run(interaction, client, actionContext = {}) {
   const guild = interaction.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   const warn = getOptionOrModal(interaction, actionContext, 'warn');

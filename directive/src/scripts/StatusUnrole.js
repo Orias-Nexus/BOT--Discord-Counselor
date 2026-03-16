@@ -2,7 +2,7 @@ import * as api from '../api.js';
 
 const SUCCESS_MESSAGE = 'Updated Status Unrole: \\n Mute: {unrole_mute} \\n Lock: {unrole_lock}.';
 
-/** Chỉ chấp nhận Role ID (số 17–19 chữ số). Từ slash option string hoặc modal. */
+/** Accepts Role ID only (17–19 digits). From slash option string or modal. */
 function getRoleId(interaction, actionContext, key) {
   const opt = interaction.options?.get?.(key);
   const raw = (opt?.value ?? actionContext?.modalValues?.[key])?.trim?.();
@@ -10,7 +10,7 @@ function getRoleId(interaction, actionContext, key) {
   return /^\d{17,19}$/.test(raw) ? raw : null;
 }
 
-/** Hiển thị: role ID -> tên role hoặc ID. */
+/** Display: role ID → role name or ID. */
 function roleIdToDisplay(guild, roleId) {
   if (!roleId) return '';
   return guild.roles.cache.get(roleId)?.name ?? roleId;
@@ -19,7 +19,7 @@ function roleIdToDisplay(guild, roleId) {
 export async function run(interaction, client, actionContext = {}) {
   const guild = interaction.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   const unrole_mute = getRoleId(interaction, actionContext, 'mute');
