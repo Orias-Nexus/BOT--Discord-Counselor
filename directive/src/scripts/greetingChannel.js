@@ -7,12 +7,12 @@ const MESSAGE_TYPE = 'Greeting';
 export async function run(interaction, client, actionContext) {
   const guild = interaction?.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   const channel = interaction.options?.getChannel('channel') ?? actionContext?.channel ?? null;
   if (!channel) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Hãy chọn một kênh.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Select a channel.'));
     return;
   }
   if (!interaction.deferred) await interaction.deferReply({ flags: MessageFlags.Ephemeral });
@@ -23,6 +23,6 @@ export async function run(interaction, client, actionContext) {
     await interaction.editReply({ content: text, flags: MessageFlags.Ephemeral }).catch(() => {});
   } catch (err) {
     console.error('[GreetingChannel]', err);
-    await interaction.editReply({ content: api.formatEphemeralContent('Không thể cập nhật.'), flags: MessageFlags.Ephemeral }).catch(() => {});
+    await interaction.editReply({ content: api.formatEphemeralContent('Update failed.'), flags: MessageFlags.Ephemeral }).catch(() => {});
   }
 }

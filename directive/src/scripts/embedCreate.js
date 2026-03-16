@@ -7,12 +7,12 @@ import { getEmbedBuilder } from '../embedRoutes.js';
 export async function run(interaction, client) {
   const guild = interaction?.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   const name = interaction.options?.getString('name')?.trim();
   if (!name) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Hãy nhập tên embed.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Enter an embed name.'));
     return;
   }
   if (!interaction.deferred) await interaction.deferReply();
@@ -27,14 +27,14 @@ export async function run(interaction, client) {
       ? await buildEmbed(created.embed ?? template, { member, guild, channel })
       : null;
     if (!resolved) {
-      await interaction.editReply({ content: api.formatEphemeralContent('Không tạo được embed.') }).catch(() => {});
+      await interaction.editReply({ content: api.formatEphemeralContent('Could not create embed.') }).catch(() => {});
       return;
     }
     const components = buildEmbedEditRow(created.embed_id);
     await interaction.editReply({ content: '', embeds: [resolved], components }).catch(() => {});
   } catch (err) {
     console.error('[EmbedCreate]', err);
-    await interaction.followUp({ content: api.formatEphemeralContent('Không thể tạo embed.'), flags: MessageFlags.Ephemeral }).catch(() => {});
+    await interaction.followUp({ content: api.formatEphemeralContent('Could not create embed.'), flags: MessageFlags.Ephemeral }).catch(() => {});
     await interaction.editReply({ content: '', embeds: [], components: [] }).catch(() => {});
   }
 }

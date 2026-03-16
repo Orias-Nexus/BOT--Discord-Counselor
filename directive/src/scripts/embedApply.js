@@ -7,12 +7,12 @@ const MESSAGE_TYPES = ['Greeting', 'Leaving', 'Boosting'];
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction?.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   const embedId = actionContext?.targetId;
   if (!embedId) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Thiếu embed.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Embed missing.'));
     return;
   }
 
@@ -23,7 +23,7 @@ export async function run(interaction, client, actionContext = null) {
     list = await api.listMessages(guild.id);
   } catch (err) {
     console.error('[EmbedApply] listMessages', err);
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Không tải được danh sách messages.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Could not load messages list.'));
     return;
   }
 
@@ -34,21 +34,21 @@ export async function run(interaction, client, actionContext = null) {
 
   const select = new StringSelectMenuBuilder()
     .setCustomId(`${EMBED_APPLY_SELECT_PREFIX}${embedId}`)
-    .setPlaceholder('Chọn message để gắn embed này')
+    .setPlaceholder('Select message(s) to attach this embed')
     .setMinValues(0)
     .setMaxValues(MESSAGE_TYPES.length)
     .addOptions(
       MESSAGE_TYPES.map((type) => ({
         label: type,
         value: type,
-        description: forTypes.some((m) => m.messages_type === type && m.embed_id) ? 'Đang dùng embed' : 'Chưa gắn',
+        description: forTypes.some((m) => m.messages_type === type && m.embed_id) ? 'Using embed' : 'Not set',
       }))
     )
     .setDefaultValues(defaultValues);
 
   const row = new ActionRowBuilder().addComponents(select);
   const payload = {
-    content: api.formatEphemeralContent('Chọn message muốn gắn embed này (có thể chọn nhiều). Bỏ chọn = gỡ embed. Gửi để áp dụng.'),
+    content: api.formatEphemeralContent('Select message(s) to attach. Deselect to detach. Submit to apply.'),
     components: [row],
     flags: MessageFlags.Ephemeral,
   };

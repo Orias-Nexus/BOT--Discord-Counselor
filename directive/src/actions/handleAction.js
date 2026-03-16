@@ -19,13 +19,13 @@ function parseCustomId(customId) {
   return { scriptName, contextId };
 }
 
-/** True nếu nút mở modal (không defer ngay). Dùng để defer sớm trong index cho nút không modal. */
+/** True if button opens a modal (no immediate defer). Used in index for early defer on non-modal buttons. */
 export function isButtonModalScript(customId) {
   const parsed = parseCustomId(customId);
   return parsed ? SCRIPTS_NEED_MODAL.has(parsed.scriptName) : false;
 }
 
-/** True nếu nút chỉ cập nhật message (deferUpdate, không reply). */
+/** True if button only updates message (deferUpdate, no reply). */
 export function isButtonDeferUpdate(customId) {
   return false;
 }
@@ -67,11 +67,11 @@ export async function handleAction(interaction, client, timing = {}) {
       if (modal) await interaction.showModal(modal);
     } catch (err) {
       if (api.isUnknownInteraction(err)) {
-        console.warn('[handleAction] showModal 10062 - token hết hạn trước khi mở form, bấm lại nút.');
+        console.warn('[handleAction] showModal 10062 - token expired before opening form, click again.');
         return true;
       }
       console.error('[handleAction] showModal', err);
-      const payload = { content: api.formatEphemeralContent('Không thể mở form nhập.'), flags: MessageFlags.Ephemeral };
+      const payload = { content: api.formatEphemeralContent('Could not open input form.'), flags: MessageFlags.Ephemeral };
       if (!interaction.replied && !interaction.deferred) await interaction.reply(payload).catch(() => {});
       else if (interaction.deferred) await interaction.editReply(payload).catch(() => {});
     }
@@ -83,7 +83,7 @@ export async function handleAction(interaction, client, timing = {}) {
       await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     } catch (err) {
       if (api.isUnknownInteraction(err)) {
-        console.warn('[handleAction] deferReply 10062 - bấm lại nút.');
+        console.warn('[handleAction] deferReply 10062 - click the button again.');
         return true;
       }
       throw err;
@@ -98,7 +98,7 @@ export async function handleAction(interaction, client, timing = {}) {
   } catch (err) {
     console.error('[handleAction]', err);
     if (api.isUnknownInteraction(err)) return true;
-    const payload = { content: api.formatEphemeralContent('Có lỗi khi thực hiện.'), flags: MessageFlags.Ephemeral };
+    const payload = { content: api.formatEphemeralContent('Action failed.'), flags: MessageFlags.Ephemeral };
     if (interaction.deferred) await interaction.editReply(payload).catch(() => {});
     else if (interaction.replied) await interaction.followUp(payload).catch(() => {});
     else await interaction.reply(payload).catch(() => {});

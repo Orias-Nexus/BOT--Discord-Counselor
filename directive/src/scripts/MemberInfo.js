@@ -8,7 +8,7 @@ const DEBUG = process.env.DEBUG_MEMBER_INFO === '1';
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   if (!interaction.deferred) await interaction.deferReply();
@@ -20,7 +20,7 @@ export async function run(interaction, client, actionContext = null) {
   if (!member) member = interaction.member;
   if (typeof member === 'string') member = await guild.members.fetch(member).catch(() => null);
   if (!member) {
-    await interaction.editReply({ content: api.formatEphemeralContent('Không tìm thấy thành viên.') });
+    await interaction.editReply({ content: api.formatEphemeralContent('Member not found.') });
     return;
   }
   let profile = null;
@@ -29,13 +29,13 @@ export async function run(interaction, client, actionContext = null) {
     if (DEBUG) console.log('[MemberInfo] profile', { guildId: guild.id, memberId: member.id, profile });
   } catch (err) {
     console.error('[MemberInfo] getMember', err);
-    await interaction.editReply({ content: api.formatEphemeralContent('Không lấy được thông tin thành viên.') });
+    await interaction.editReply({ content: api.formatEphemeralContent('Could not fetch member info.') });
     return;
   }
   const buildEmbed = getEmbedBuilder('MemberInfo');
   const embed = buildEmbed ? await buildEmbed(member, profile, { imageURL: mainImageURL }) : null;
   if (!embed) {
-    await interaction.editReply({ content: api.formatEphemeralContent('Không tạo được embed.') }).catch(() => {});
+    await interaction.editReply({ content: api.formatEphemeralContent('Could not create embed.') }).catch(() => {});
     return;
   }
   const { row, row2 } = buildMemberInfoComponents(member.id, profile);
@@ -44,6 +44,6 @@ export async function run(interaction, client, actionContext = null) {
     await interaction.editReply({ embeds: [embed], components: components.length ? components : [] });
   } catch (err) {
     console.error('[MemberInfo] editReply', err);
-    await interaction.editReply({ content: api.formatEphemeralContent('Không gửi được embed.') }).catch(() => {});
+    await interaction.editReply({ content: api.formatEphemeralContent('Could not send embed.') }).catch(() => {});
   }
 }

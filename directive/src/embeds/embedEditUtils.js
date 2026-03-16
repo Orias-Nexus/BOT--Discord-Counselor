@@ -5,7 +5,7 @@ import { ACTION_PREFIX } from '../utils/components.js';
 
 export const EMBED_APPLY_SELECT_PREFIX = 'embedapply_';
 
-/** Trả về mảng 2 row: [row Edit (4 nút), row Rename + Delete + Apply]. */
+/** Returns 2 rows: [Edit row (4 buttons), Rename + Delete + Apply row]. */
 export function buildEmbedEditRow(embedId) {
   const rowEdit = new ActionRowBuilder().addComponents(
     new ButtonBuilder().setCustomId(`${ACTION_PREFIX}EmbedEditBasic_${embedId}`).setLabel('Edit Basic Info').setStyle(ButtonStyle.Secondary),
@@ -31,10 +31,10 @@ function parseColor(value) {
 }
 
 /**
- * Lấy embed từ API, merge updates vào embed object, gọi updateEmbed, trả về embed đã resolve + row.
+ * Get embed from API, merge updates, call updateEmbed, return resolved embed + row.
  * @param {string} guildId
  * @param {string} embedId
- * @param {(embed: object) => object} mergeFn - Hàm nhận embed hiện tại, trả về embed đã merge (có thể mutate)
+ * @param {(embed: object) => object} mergeFn - Receives current embed, returns merged embed (may mutate)
  * @param {{ member?, guild?, channel? }} meta
  * @returns {Promise<{ resolved: object, row: ActionRowBuilder }>}
  */
@@ -50,7 +50,7 @@ export async function updateEmbedAndResolve(guildId, embedId, mergeFn, meta) {
   return { resolved, row: buildEmbedEditRow(embedId) };
 }
 
-/** Parse fields: user chỉ nhập nội dung trong [ ], code tự bọc [ ] trước khi parse. */
+/** Parse fields: user enters content inside [ ]; code wraps in [ ] before parse. */
 function parseFields(value) {
   const s = value != null ? String(value).trim() : '';
   const wrapped = s === '' ? '[]' : `[${s}]`;

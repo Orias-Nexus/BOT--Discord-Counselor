@@ -6,12 +6,12 @@ import { getEmbedBuilder } from '../embedRoutes.js';
 export async function run(interaction, client) {
   const guild = interaction?.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   const embedId = interaction.options?.getString('target')?.trim();
   if (!embedId) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Hãy chọn embed cần sửa.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Select an embed to edit.'));
     return;
   }
   if (!interaction.deferred) await interaction.deferReply();
@@ -20,7 +20,7 @@ export async function run(interaction, client) {
     const embedRow = await api.getEmbed(guild.id, embedId);
     if (!embedRow) {
       await interaction.followUp({
-        content: api.formatEphemeralContent('Không tìm thấy embed.'),
+        content: api.formatEphemeralContent('Embed not found.'),
         flags: MessageFlags.Ephemeral,
       }).catch(() => {});
       await interaction.editReply({ content: '', embeds: [], components: [] }).catch(() => {});
@@ -31,14 +31,14 @@ export async function run(interaction, client) {
     const buildEmbed = getEmbedBuilder('EmbedEdit');
     const resolved = buildEmbed ? await buildEmbed(embedRow.embed ?? {}, { member, guild, channel }) : null;
     if (!resolved) {
-      await interaction.editReply({ content: api.formatEphemeralContent('Không tải được embed.') }).catch(() => {});
+      await interaction.editReply({ content: api.formatEphemeralContent('Could not load embed.') }).catch(() => {});
       return;
     }
     const components = buildEmbedEditRow(embedRow.embed_id);
     await interaction.editReply({ content: '', embeds: [resolved], components }).catch(() => {});
   } catch (err) {
     console.error('[EmbedEdit]', err);
-    await interaction.followUp({ content: api.formatEphemeralContent('Không thể tải embed.'), flags: MessageFlags.Ephemeral }).catch(() => {});
+    await interaction.followUp({ content: api.formatEphemeralContent('Could not load embed.'), flags: MessageFlags.Ephemeral }).catch(() => {});
     await interaction.editReply({ content: '', embeds: [], components: [] }).catch(() => {});
   }
 }

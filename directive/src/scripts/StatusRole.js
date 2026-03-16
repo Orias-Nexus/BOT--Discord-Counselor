@@ -2,14 +2,14 @@ import * as api from '../api.js';
 
 const SUCCESS_MESSAGE = 'Updated Status Role: \\n Warn: {role_warn} \\n Mute: {role_mute} \\n Lock: {role_lock} \\n Newbie: {role_new}.';
 
-/** Lấy tên role từ slash option hoặc modal (chỉ tên, không resolve ID). */
+/** Get role name from slash option or modal (name only, no ID resolve). */
 function getRoleName(interaction, actionContext, key) {
   const opt = interaction.options?.get?.(key);
   const raw = (opt?.value ?? actionContext?.modalValues?.[key])?.trim?.();
   return raw || null;
 }
 
-/** Hiển thị: role ID -> tên role hoặc ID. */
+/** Display: role ID → role name or ID. */
 function roleIdToDisplay(guild, roleId) {
   if (!roleId) return '';
   return guild.roles.cache.get(roleId)?.name ?? roleId;
@@ -18,7 +18,7 @@ function roleIdToDisplay(guild, roleId) {
 export async function run(interaction, client, actionContext = {}) {
   const guild = interaction.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   await api.ensureServer(guild.id);

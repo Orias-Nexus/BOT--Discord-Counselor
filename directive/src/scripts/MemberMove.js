@@ -6,14 +6,14 @@ const SUCCESS_MESSAGE = 'Moved {Number of Member} to {Channel Name}.';
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   const targetOption = interaction.options?.get('target');
   const channelOption = interaction.options?.get('channel');
   const voiceChannel = channelOption?.channel;
   if (!voiceChannel || voiceChannel.type !== ChannelType.GuildVoice) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Cần chọn một kênh thoại (channel).'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Select a voice channel (channel).'));
     return;
   }
   let members = [];
