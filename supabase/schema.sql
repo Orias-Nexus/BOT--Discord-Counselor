@@ -1,40 +1,12 @@
 -- =============================================================================
 -- Schema Supabase — Theo Architecture.json (schema "DiscordCounselor")
 -- Chạy trong Supabase SQL Editor hoặc migration.
+-- Thứ tự: functions.sql → schema.sql → triggers.sql
 -- =============================================================================
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE SCHEMA IF NOT EXISTS "DiscordCounselor";
-
--- -----------------------------------------------------------------------------
--- UUID v7 — Time-ordered UUID (sắp xếp theo thời gian tạo)
--- Thuộc schema DiscordCounselor.
--- -----------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION "DiscordCounselor".uuidv7() RETURNS uuid
-LANGUAGE sql
-VOLATILE
-SET search_path = pg_catalog
-AS $$
-  SELECT (
-    substring(hex FROM 1 FOR 8) || '-' ||
-    substring(hex FROM 9 FOR 4) || '-' ||
-    substring(hex FROM 13 FOR 4) || '-' ||
-    substring(hex FROM 17 FOR 4) || '-' ||
-    substring(hex FROM 21 FOR 12)
-  )::uuid
-  FROM (
-    SELECT encode(
-      substring(int8send(floor(t_ms)::bigint) FROM 3 FOR 6) ||
-      int2send(((7 << 12)::int2 | ((t_ms - floor(t_ms)) * 4096)::int2)) ||
-      substring(uuid_send(gen_random_uuid()) FROM 9 FOR 8),
-      'hex'
-    ) AS hex
-    FROM (SELECT extract(epoch FROM clock_timestamp()) * 1000 AS t_ms) s
-  ) s;
-$$;
-
-COMMENT ON FUNCTION "DiscordCounselor".uuidv7() IS 'UUID v7 time-ordered (RFC 9562). Thuộc schema DiscordCounselor.';
 
 -- -----------------------------------------------------------------------------
 -- ENUM: Member Status (Architecture.json Database.Enum)
@@ -172,15 +144,15 @@ CREATE TABLE IF NOT EXISTS "DiscordCounselor".messages (
     messages_id   UUID PRIMARY KEY DEFAULT "DiscordCounselor".uuidv7(),
     messages_type "DiscordCounselor".message_type_enum NOT NULL,
     server_id     TEXT NOT NULL REFERENCES "DiscordCounselor".servers(server_id) ON DELETE CASCADE,
-    channel_id    TEXT NOT NULL DEFAULT '0',
+    channel_id    TEXT,
     embed_id      UUID REFERENCES "DiscordCounselor".embeds(embed_id) ON DELETE SET NULL,
     created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-COMMENT ON TABLE "DiscordCounselor".messages IS 'Cấu hình tin nhắn theo loại; channel_id = "0" nghĩa là do code quyết định';
+COMMENT ON TABLE "DiscordCounselor".messages IS 'Cấu hình tin nhắn theo loại; channel_id NULL = chưa cấu hình';
 COMMENT ON COLUMN "DiscordCounselor".messages.messages_type IS 'Loại: Messages, Greeting, Leaving, Boosting, Logging';
-COMMENT ON COLUMN "DiscordCounselor".messages.channel_id IS 'Kênh gửi tin; "0" = do code quyết định';
+COMMENT ON COLUMN "DiscordCounselor".messages.channel_id IS 'Kênh gửi tin; NULL = chưa cấu hình';
 COMMENT ON COLUMN "DiscordCounselor".messages.embed_id IS 'Tham chiếu embeds (nullable)';
 
 -- -----------------------------------------------------------------------------
