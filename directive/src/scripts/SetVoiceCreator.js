@@ -8,7 +8,7 @@ const CREATOR_CHANNEL_NAME = '🔹create voice';
 export async function run(interaction, client, _actionContext) {
   const guild = interaction.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
 
@@ -35,13 +35,13 @@ export async function run(interaction, client, _actionContext) {
     const category = await guild.channels.create({
       name: CREATOR_CATEGORY_NAME,
       type: ChannelType.GuildCategory,
-      reason: 'SetVoiceCreator: danh mục Creator',
+      reason: 'SetVoiceCreator: Creator category',
     });
     const voiceChannel = await guild.channels.create({
       name: CREATOR_CHANNEL_NAME,
       type: ChannelType.GuildVoice,
       parent: category.id,
-      reason: 'SetVoiceCreator: kênh trigger',
+      reason: 'SetVoiceCreator: trigger channel',
     });
     await api.upsertChannel(guild.id, category.id, 'Creator', 0);
     await interaction.editReply({

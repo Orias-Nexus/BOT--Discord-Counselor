@@ -1,7 +1,13 @@
 # Chạy toàn bộ hệ thống: docker compose up -d
-# Cần tạo .env ở từng thư mục (bot, backend) hoặc env_file trong từng service
+# Cần tạo .env ở từng thư mục (directive, backend) hoặc env_file trong từng service
 
 services:
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
   backend:
     build:
       context: ./backend
@@ -11,7 +17,10 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=4000
+      - REDIS_URL=redis://redis:6379
     restart: unless-stopped
+    depends_on:
+      - redis
 
   frontend:
     build:
@@ -23,12 +32,15 @@ services:
       - backend
     restart: unless-stopped
 
-  bot:
+  directive:
     build:
-      context: ./bot
+      context: ./directive
       dockerfile: Dockerfile
     env_file:
-      - ./bot/.env
+      - ./directive/.env
+    environment:
+      - REDIS_URL=redis://redis:6379
     restart: unless-stopped
     depends_on:
       - backend
+      - redis

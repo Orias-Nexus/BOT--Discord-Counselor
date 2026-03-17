@@ -70,7 +70,7 @@ export function startStatsCheck(client) {
     } catch (err) {
       const msg = err?.message ?? String(err);
       if (msg === 'fetch failed' || err?.cause?.code === 'ECONNREFUSED') {
-        console.warn('[statsCheck] Backend không phản hồi.');
+        console.warn('[statsCheck] Backend not responding.');
       } else {
         console.warn('[statsCheck]', msg);
       }

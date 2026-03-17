@@ -5,7 +5,7 @@ const SUCCESS_MESSAGE = 'Completed Clone {Channel Name}.';
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   if (!interaction.deferred) await interaction.deferReply();
@@ -13,7 +13,7 @@ export async function run(interaction, client, actionContext) {
   if (!channel && actionContext?.targetId) channel = guild.channels.cache.get(actionContext.targetId);
   if (typeof channel === 'string') channel = guild.channels.cache.get(channel);
   if (!channel) {
-    await interaction.editReply({ content: 'Không tìm thấy kênh.' });
+    await interaction.editReply({ content: 'Channel not found.' });
     return;
   }
   const number = Math.max(1, Math.min(10, Number(interaction.options?.get('number')?.value) || 1));
