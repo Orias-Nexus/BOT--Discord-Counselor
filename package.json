@@ -2,13 +2,13 @@
   "name": "my-discord-system",
   "version": "1.0.0",
   "private": true,
-  "description": "Discord Assistant: Bot + Backend API + Web Dashboard",
+  "description": "Discord Assistant: Directive (Bot) + Backend API + Web Dashboard",
   "scripts": {
-    "dev:bot": "cd bot && npm run dev",
+    "dev:directive": "cd directive && npm run dev",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
-    "deploy:bot": "cd bot && npm run deploy",
-    "install:all": "cd bot && npm ci && cd ../backend && npm ci && cd ../frontend && npm ci"
+    "deploy:directive": "cd directive && npm run deploy",
+    "install:all": "cd directive && npm ci && cd ../backend && npm ci && cd ../frontend && npm ci"
   },
   "engines": {
     "node": ">=18.0.0"
