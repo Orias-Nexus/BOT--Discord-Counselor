@@ -92,6 +92,28 @@ export async function setMemberStatus(serverId, userId, status, expiresAt) {
   });
 }
 
+export async function getChannels(serverId, channelType = null) {
+  const path = channelType
+    ? `/api/servers/${encodeURIComponent(serverId)}/channels?type=${encodeURIComponent(channelType)}`
+    : `/api/servers/${encodeURIComponent(serverId)}/channels`;
+  return request(path);
+}
+
+export async function upsertChannel(serverId, categoryId, categoryType, channelsIdx = 0) {
+  return request(`/api/servers/${encodeURIComponent(serverId)}/channels`, {
+    method: 'POST',
+    body: JSON.stringify({
+      category_id: categoryId,
+      category_type: categoryType,
+      channels_idx: channelsIdx,
+    }),
+  });
+}
+
+export async function deleteServerStatChannels(serverId) {
+  return request(`/api/servers/${encodeURIComponent(serverId)}/channels/stats`, { method: 'DELETE' });
+}
+
 export async function getFunction(scriptName) {
   return request(`/api/functions/script/${encodeURIComponent(scriptName)}`);
 }
