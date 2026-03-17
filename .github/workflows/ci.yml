@@ -46,6 +46,21 @@ jobs:
       - name: Validate Prisma Schema
         run: npx prisma validate
         working-directory: backend
+        env:
+          # --- NHÓM 1: Lấy từ GitHub Secrets ---
+          POOLER_URL: ${{ secrets.POOLER_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+          DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
+
+          # --- NHÓM 2: Cấu hình môi trường Backend ---
+          PORT: 4000
+          REDIS_URL: "redis://redis:6379" 
+          
+          # --- NHÓM 3: Cấu hình môi trường Frontend ---
+          FRONTEND_ORIGIN: "https://discord-counselor.onrender.com" 
+          DISCORD_REDIRECT_URI: "https://discord-counselor.onrender.com/api/auth/discord/callback"
 
       - name: Check Backend syntax (Node --check)
         run: node --check src/index.js
