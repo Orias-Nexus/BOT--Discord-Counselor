@@ -1,5 +1,6 @@
 import * as api from '../api.js';
-import { getEmbedContent } from '../embedDefaults.js';
+
+const SUCCESS_MESSAGE = 'Completed Set Level {Server Profile Name}: {member_level}.';
 
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction.guild;
@@ -31,9 +32,6 @@ export async function run(interaction, client, actionContext = null) {
   await api.ensureMember(guild.id, member.id, member.user.username);
   const updated = await api.setMemberLevel(guild.id, member.id, level);
   const displayName = member.displayName ?? member.user.username;
-  const content = api.formatEphemeralContent(api.replacePlaceholders(
-    getEmbedContent('MemberSetlevel') ?? 'Completed Set Level {Server Profile Name}: {member_level}.',
-    { 'Server Profile Name': displayName, member_level: updated?.member_level ?? level }
-  ));
+  const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { 'Server Profile Name': displayName, member_level: updated?.member_level ?? level }));
   await api.replyOrEdit(interaction, content);
 }

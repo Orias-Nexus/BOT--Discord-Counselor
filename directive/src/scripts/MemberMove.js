@@ -1,6 +1,7 @@
 import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
-import { getEmbedContent } from '../embedDefaults.js';
+
+const SUCCESS_MESSAGE = 'Moved {Number of Member} to {Channel Name}.';
 
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction.guild;
@@ -32,9 +33,6 @@ export async function run(interaction, client, actionContext = null) {
     const ok = await m.voice.setChannel(voiceChannel).then(() => true).catch(() => false);
     if (ok) moved++;
   }
-  const content = api.formatEphemeralContent(api.replacePlaceholders(
-    getEmbedContent('MemberMove') ?? 'Moved {Number of Member} to {Channel Name}.',
-    { 'Number of Member': moved, 'Channel Name': voiceChannel.name }
-  ));
+  const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { 'Number of Member': moved, 'Channel Name': voiceChannel.name }));
   await api.replyOrEdit(interaction, content);
 }
