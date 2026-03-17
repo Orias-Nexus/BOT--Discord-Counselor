@@ -1,7 +1,4 @@
-import { getSupabase, getSchema } from '../config/supabase.js';
-
-const TABLE = 'servers';
-const COLS = 'server_id, time_warn, time_mute, time_lock, time_new, role_warn, role_mute, role_lock, role_new, unrole_mute, unrole_lock';
+import { prisma } from '../config/prisma.js';
 
 function rowToServer(row) {
     if (!row) return null;
@@ -21,32 +18,36 @@ function rowToServer(row) {
 }
 
 export async function getById(serverId) {
-    const sb = getSupabase();
-    const { data, error } = await sb.schema(getSchema()).from(TABLE).select(COLS).eq('server_id', serverId).maybeSingle();
-    if (error) throw error;
-    return rowToServer(data);
+    const row = await prisma.servers.findUnique({
+        where: { server_id: serverId }
+    });
+    return rowToServer(row);
 }
 
 export async function ensure(serverId) {
-    const existing = await getById(serverId);
-    if (existing) return existing;
-    const sb = getSupabase();
-    const { data, error } = await sb.schema(getSchema()).from(TABLE).insert({
-        server_id: serverId,
-        time_warn: 0,
-        time_mute: 0,
-        time_lock: 0,
-        time_new: 0,
-    }).select(COLS).single();
-    if (error) throw error;
-    return rowToServer(data);
+    const row = await prisma.servers.upsert({
+        where: { server_id: serverId },
+        update: {},
+        create: {
+            server_id: serverId,
+            time_warn: 0,
+            time_mute: 0,
+            time_lock: 0,
+            time_new: 0,
+        }
+    });
+    return rowToServer(row);
 }
 
 export async function update(serverId, payload) {
-    const sb = getSupabase();
-    const { data, error } = await sb.schema(getSchema()).from(TABLE).update({ ...payload, updated_at: new Date().toISOString() }).eq('server_id', serverId).select(COLS).single();
-    if (error) throw error;
-    return rowToServer(data);
+    const row = await prisma.servers.update({
+        where: { server_id: serverId },
+        data: {
+            ...payload,
+            updated_at: new Date()
+        }
+    });
+    return rowToServer(row);
 }
 
 export async function setTimes(serverId, { time_warn, time_mute, time_lock, time_new }) {
