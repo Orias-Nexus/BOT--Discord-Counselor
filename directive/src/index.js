@@ -3,14 +3,17 @@ import { Client, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
 import { formatEphemeralContent, isUnknownInteraction } from './api.js';
 import { getScriptNameByCommand } from './slashs/commands.js';
 import { handleSlash } from './slashs/handleSlash.js';
-import { handleAction, isButtonModalScript } from './actions/handleAction.js';
+import { handleAction, isButtonModalScript, isButtonDeferUpdate } from './actions/handleAction.js';
 import { parseModalCustomId, getModalInputIds } from './actions/modalConfig.js';
 import { getEmbedUpdatePayload } from './actions/embedUpdate.js';
 import { runScript, runEvent, loadAllScripts } from './scripts/runScript.js';
 import { startExpiresCheck } from './jobs/expiresCheck.js';
 import { startStatsCheck } from './jobs/statsCheck.js';
 import { EVENT_HANDLERS } from './events/eventRegistry.js';
-import { isServerStatsSelectId, doSetServerStats } from './scripts/SetServerStats.js';
+import { isServerStatsSelectId, doSetServerStats } from './scripts/setServerStats.js';
+import { EMBED_APPLY_SELECT_PREFIX } from './embeds/embedEditUtils.js';
+import { EMBED_BY_SCRIPT } from './embedRoutes.js';
+import * as api from './api.js';
 
 const client = new Client({
   intents: [
@@ -36,6 +39,7 @@ for (const { discordEvent, scriptName, buildContext } of EVENT_HANDLERS) {
   client.on(eventName, async (...payload) => {
     try {
       const context = buildContext(...payload);
+      if (context == null) return;
       await runEvent(scriptName, client, context);
     } catch (err) {
       console.warn(`[${discordEvent}] ${scriptName}:`, err?.message ?? err);
@@ -43,25 +47,89 @@ for (const { discordEvent, scriptName, buildContext } of EVENT_HANDLERS) {
   });
 }
 
+/** Slash có option target (embed_id). */
+const EMBED_TARGET_COMMANDS = ['embededit', 'embedrename', 'embeddelete'];
+/** Slash có option embed (embed_name, dùng cho greeting/leaving/boosting message). */
+const EMBED_OPTION_COMMANDS = ['greetingmessage', 'leavingmessage', 'boostingmessage'];
+
 client.on(Events.InteractionCreate, async (interaction) => {
-  if (interaction.isStringSelectMenu() && isServerStatsSelectId(interaction.customId)) {
-    try {
-      await interaction.deferUpdate();
-      const values = interaction.values ?? [];
-      const channelsIdx = values.length > 0 ? parseInt(values.join(''), 10) : 0;
-      await doSetServerStats(interaction, channelsIdx);
-    } catch (err) {
-      console.error('[InteractionCreate] ServerStats select:', err);
-      if (!interaction.deferred) await interaction.reply({ content: 'Có lỗi.', flags: MessageFlags.Ephemeral }).catch(() => {});
-      else await interaction.editReply({ content: 'Có lỗi.', components: [] }).catch(() => {});
+  if (interaction.isAutocomplete()) {
+    const cmd = interaction.commandName;
+    const useEmbedId = EMBED_TARGET_COMMANDS.includes(cmd);
+    const useEmbedName = EMBED_OPTION_COMMANDS.includes(cmd);
+    if (useEmbedId || useEmbedName) {
+      const guildId = interaction.guildId ?? interaction.guild?.id;
+      if (!guildId) {
+        await interaction.respond([]).catch(() => {});
+        return;
+      }
+      try {
+        const list = await import('./api.js').then((m) => m.listEmbeds(guildId));
+        const arr = Array.isArray(list) ? list : [];
+        const focused = String(interaction.options.getFocused() ?? '').toLowerCase();
+        const filtered = !focused
+          ? arr
+          : arr.filter((e) => (e.embed_name ?? '').toLowerCase().includes(focused));
+        const choices = filtered.slice(0, 25).map((e) => ({
+          name: (e.embed_name || e.embed_id || '').slice(0, 100),
+          value: (useEmbedName ? e.embed_name || e.embed_id : e.embed_id || '').slice(0, 100),
+        }));
+        await interaction.respond(choices).catch(() => {});
+      } catch (err) {
+        await interaction.respond([]).catch(() => {});
+      }
+      return;
     }
-    return;
+  }
+  if (interaction.isStringSelectMenu()) {
+    if (interaction.customId?.startsWith(EMBED_APPLY_SELECT_PREFIX)) {
+      const embedId = interaction.customId.slice(EMBED_APPLY_SELECT_PREFIX.length);
+      const selected = interaction.values ?? [];
+      const guildId = interaction.guildId ?? interaction.guild?.id;
+      try {
+        await interaction.deferUpdate();
+        if (guildId) {
+          const types = ['Greeting', 'Leaving', 'Boosting'];
+          for (const type of types) {
+            await api.setMessageEmbed(guildId, type, selected.includes(type) ? embedId : null);
+          }
+        }
+        await interaction.editReply({
+          content: formatEphemeralContent('Đã cập nhật message gắn embed.'),
+          components: [],
+        }).catch(() => {});
+      } catch (err) {
+        console.error('[InteractionCreate] EmbedApply select:', err);
+        await interaction.editReply({
+          content: formatEphemeralContent('Không thể cập nhật.'),
+          components: [],
+        }).catch(() => {});
+      }
+      return;
+    }
+    if (isServerStatsSelectId(interaction.customId)) {
+      try {
+        await interaction.deferUpdate();
+        const values = interaction.values ?? [];
+        const channelsIdx = values.length > 0 ? parseInt(values.join(''), 10) : 0;
+        await doSetServerStats(interaction, channelsIdx);
+      } catch (err) {
+        console.error('[InteractionCreate] ServerStats select:', err);
+        if (!interaction.deferred) await interaction.reply({ content: 'Có lỗi.', flags: MessageFlags.Ephemeral }).catch(() => {});
+        else await interaction.editReply({ content: 'Có lỗi.', components: [] }).catch(() => {});
+      }
+      return;
+    }
   }
   if (interaction.isButton()) {
     const needsModal = isButtonModalScript(interaction.customId);
     if (!needsModal) {
       try {
-        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+        if (isButtonDeferUpdate(interaction.customId)) {
+          await interaction.deferUpdate();
+        } else {
+          await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+        }
       } catch (err) {
         if (isUnknownInteraction(err)) {
           console.warn('[InteractionCreate] Button defer 10062 - token hết hạn, không gửi được phản hồi nên client sẽ kẹt "thinking..." đến khi timeout. Bấm lại nút.');
@@ -92,11 +160,24 @@ client.on(Events.InteractionCreate, async (interaction) => {
         const value = interaction.fields.getTextInputValue(id);
         modalValues[id] = value?.trim() || null;
       }
+      const isEmbedEditModal =
+        ['EmbedEditBasic', 'EmbedEditAuthor', 'EmbedEditFooter', 'EmbedEditImages', 'EmbedRename'].includes(scriptName);
+      const isEmbedDeleteModal = scriptName === 'EmbedDelete';
       try {
-        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+        if (isEmbedEditModal) {
+          await interaction.deferUpdate();
+        } else if (isEmbedDeleteModal) {
+          if (interaction.message) await interaction.deferUpdate();
+          else await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+        } else {
+          await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+        }
         const actionContext = { targetId, modalValues };
         await runScript(scriptName, interaction, client, actionContext);
-        const payload = await getEmbedUpdatePayload(scriptName, interaction, actionContext);
+        const payload =
+          !isEmbedEditModal && !isEmbedDeleteModal
+            ? await getEmbedUpdatePayload(scriptName, interaction, actionContext)
+            : null;
         if (payload && interaction.message) {
           await interaction.message.edit(payload).catch(() => {});
         }
@@ -104,17 +185,20 @@ client.on(Events.InteractionCreate, async (interaction) => {
         console.error('[ModalSubmit]', err);
         if (isUnknownInteraction(err)) return;
         const content = formatEphemeralContent('Có lỗi khi xử lý.');
-        if (interaction.deferred) await interaction.editReply({ content }).catch(() => {});
-        else await interaction.reply({ content, flags: MessageFlags.Ephemeral }).catch(() => {});
+        if ((isEmbedEditModal || isEmbedDeleteModal) && interaction.deferred) {
+          await interaction.followUp({ content, flags: MessageFlags.Ephemeral }).catch(() => {});
+        } else if (interaction.deferred) {
+          await interaction.editReply({ content }).catch(() => {});
+        } else {
+          await interaction.reply({ content, flags: MessageFlags.Ephemeral }).catch(() => {});
+        }
       }
     }
     return;
   }
   if (interaction.isChatInputCommand()) {
     const scriptName = getScriptNameByCommand(interaction.commandName);
-    const slashUsesEmbed =
-      scriptName &&
-      ['ServerInfo', 'MemberInfo', 'ChanelInfo', 'CategoryInfo'].includes(scriptName);
+    const slashUsesEmbed = scriptName && EMBED_BY_SCRIPT[scriptName]?.replyType === 'embed';
     try {
       await interaction.deferReply({ flags: slashUsesEmbed ? 0 : MessageFlags.Ephemeral });
     } catch (err) {
