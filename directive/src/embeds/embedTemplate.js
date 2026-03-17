@@ -5,7 +5,7 @@ import { EMBED_COLORS } from './schema.js';
 import { omitNull } from './schema.js';
 import { resolveEmbed } from './embedContext.js';
 
-/** Embed mẫu dùng cho /embedcreate. Các chuỗi chứa placeholder sẽ được resolve bằng parser khi hiển thị. */
+/** Default embed template for /embedcreate. Placeholders are resolved by parser when displaying. */
 export const DEFAULT_EMBED_TEMPLATE = {
   title: '**Greeting! {user_name}!**',
   description: '**Welcome to {server_name}!**',

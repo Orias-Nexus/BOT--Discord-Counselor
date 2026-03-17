@@ -26,11 +26,11 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
       b
-        .addStringOption((o) => o.setName('warn').setDescription('Thời gian time_warn (dd:hh:mm)'))
-        .addStringOption((o) => o.setName('mute').setDescription('Thời gian time_mute (dd:hh:mm)'))
-        .addStringOption((o) => o.setName('lock').setDescription('Thời gian time_lock (dd:hh:mm)'))
-        .addStringOption((o) => o.setName('new').setDescription('Thời gian time_new (dd:hh:mm)'))
-        .addStringOption((o) => o.setName('all').setDescription('Một thời gian cho cả 4 trường')),
+        .addStringOption((o) => o.setName('warn').setDescription('time_warn (dd:hh:mm)'))
+        .addStringOption((o) => o.setName('mute').setDescription('time_mute (dd:hh:mm)'))
+        .addStringOption((o) => o.setName('lock').setDescription('time_lock (dd:hh:mm)'))
+        .addStringOption((o) => o.setName('new').setDescription('time_new (dd:hh:mm)'))
+        .addStringOption((o) => o.setName('all').setDescription('Same duration for all four')),
   },
   {
     name: 'statusrole',
@@ -38,10 +38,10 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
       b
-        .addStringOption((o) => o.setName('warn').setDescription('Tên role gắn khi Warn'))
-        .addStringOption((o) => o.setName('mute').setDescription('Tên role gắn khi Mute'))
-        .addStringOption((o) => o.setName('lock').setDescription('Tên role gắn khi Lock'))
-        .addStringOption((o) => o.setName('new').setDescription('Tên role gắn khi Newbie')),
+        .addStringOption((o) => o.setName('warn').setDescription('Role name for Warn'))
+        .addStringOption((o) => o.setName('mute').setDescription('Role name for Mute'))
+        .addStringOption((o) => o.setName('lock').setDescription('Role name for Lock'))
+        .addStringOption((o) => o.setName('new').setDescription('Role name for Newbie')),
   },
   {
     name: 'statusunrole',
@@ -49,8 +49,8 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
       b
-        .addStringOption((o) => o.setName('mute').setDescription('Role ID gỡ khi Mute (chỉ số, VD: 1234567890123456789)'))
-        .addStringOption((o) => o.setName('lock').setDescription('Role ID gỡ khi Lock (chỉ số, VD: 1234567890123456789)')),
+        .addStringOption((o) => o.setName('mute').setDescription('Role ID to remove on Mute (numeric)'))
+        .addStringOption((o) => o.setName('lock').setDescription('Role ID to remove on Lock (numeric)')),
   },
   {
     name: 'categoryinfo',
@@ -58,7 +58,7 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) =>
       b.addChannelOption((o) =>
-        o.setName('target').setDescription('Danh mục (mặc định: danh mục chứa kênh hiện tại)').addChannelTypes(ChannelType.GuildCategory)
+        o.setName('target').setDescription('Category (default: current channel category)').addChannelTypes(ChannelType.GuildCategory)
       ),
   },
   {
@@ -68,9 +68,9 @@ const SLASH_LIST = [
     options: (b) =>
       b
         .addChannelOption((o) =>
-          o.setName('target').setDescription('Danh mục cần clone').addChannelTypes(ChannelType.GuildCategory)
+          o.setName('target').setDescription('Category to clone').addChannelTypes(ChannelType.GuildCategory)
         )
-        .addIntegerOption((o) => o.setName('number').setDescription('Số bản sao (mặc định 1)').setMinValue(1).setMaxValue(10)),
+        .addIntegerOption((o) => o.setName('number').setDescription('Number of copies (default 1)').setMinValue(1).setMaxValue(10)),
   },
   {
     name: 'categoryprivate',
@@ -78,7 +78,7 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) =>
       b.addChannelOption((o) =>
-        o.setName('target').setDescription('Danh mục').addChannelTypes(ChannelType.GuildCategory)
+        o.setName('target').setDescription('Category').addChannelTypes(ChannelType.GuildCategory)
       ),
   },
   {
@@ -87,7 +87,7 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) =>
       b.addChannelOption((o) =>
-        o.setName('target').setDescription('Danh mục').addChannelTypes(ChannelType.GuildCategory)
+        o.setName('target').setDescription('Category').addChannelTypes(ChannelType.GuildCategory)
       ),
   },
   {
@@ -96,7 +96,7 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) =>
       b.addChannelOption((o) =>
-        o.setName('target').setDescription('Kênh (mặc định: kênh hiện tại)').addChannelTypes(
+        o.setName('target').setDescription('Channel (default: current)').addChannelTypes(
           ChannelType.GuildText,
           ChannelType.GuildVoice,
           ChannelType.GuildAnnouncement,
@@ -111,43 +111,43 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) =>
       b
-        .addChannelOption((o) => o.setName('target').setDescription('Kênh cần clone'))
-        .addIntegerOption((o) => o.setName('number').setDescription('Số bản sao (mặc định 1)').setMinValue(1).setMaxValue(10)),
+        .addChannelOption((o) => o.setName('target').setDescription('Channel to clone'))
+        .addIntegerOption((o) => o.setName('number').setDescription('Number of copies (default 1)').setMinValue(1).setMaxValue(10)),
   },
   {
     name: 'channelsync',
     script: 'ChannelSync',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
-    options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Kênh')),
+    options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Channel')),
   },
   {
     name: 'channelprivate',
     script: 'ChannelPrivate',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
-    options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Kênh')),
+    options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Channel')),
   },
   {
     name: 'channelpublic',
     script: 'ChannelPublic',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
-    options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Kênh')),
+    options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Channel')),
   },
   {
     name: 'channelsfw',
     script: 'ChannelSFW',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
-    options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Kênh')),
+    options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Channel')),
   },
   {
     name: 'channelnsfw',
     script: 'ChannelNSFW',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
-    options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Kênh')),
+    options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Channel')),
   },
   {
     name: 'memberinfo',
     script: 'MemberInfo',
-    options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Thành viên (mặc định: bản thân)')),
+    options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Member (default: self)')),
   },
   {
     name: 'memberrename',
@@ -155,8 +155,8 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageNicknames,
     options: (b) =>
       b
-        .addStringOption((o) => o.setName('setname').setDescription('Tên mới').setRequired(true))
-        .addUserOption((o) => o.setName('target').setDescription('Thành viên (mặc định: bản thân)')),
+        .addStringOption((o) => o.setName('setname').setDescription('New display name').setRequired(true))
+        .addUserOption((o) => o.setName('target').setDescription('Member (default: self)')),
   },
   {
     name: 'memberlevel',
@@ -164,8 +164,8 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
       b
-        .addIntegerOption((o) => o.setName('setlevel').setDescription('Level mới (min-max từ bảng Levels)').setRequired(true))
-        .addUserOption((o) => o.setName('target').setDescription('Thành viên (mặc định: bản thân)')),
+        .addIntegerOption((o) => o.setName('setlevel').setDescription('New level (within Levels range)').setRequired(true))
+        .addUserOption((o) => o.setName('target').setDescription('Member (default: self)')),
   },
   {
     name: 'membermove',
@@ -174,39 +174,39 @@ const SLASH_LIST = [
     options: (b) =>
       b
         .addChannelOption((o) =>
-          o.setName('channel').setDescription('Kênh thoại đích').addChannelTypes(ChannelType.GuildVoice, ChannelType.GuildStageVoice).setRequired(true)
+          o.setName('channel').setDescription('Destination voice channel').addChannelTypes(ChannelType.GuildVoice, ChannelType.GuildStageVoice).setRequired(true)
         )
-        .addUserOption((o) => o.setName('target').setDescription('Thành viên (để trống = tất cả trong voice)')),
+        .addUserOption((o) => o.setName('target').setDescription('Member (empty = all in voice)')),
   },
   {
     name: 'memberreset',
     script: 'MemberReset',
     defaultMemberPermissions: PermissionFlagsBits.ModerateMembers,
-    options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Thành viên').setRequired(true)),
+    options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Member').setRequired(true)),
   },
   {
     name: 'memberwarn',
     script: 'MemberWarn',
     defaultMemberPermissions: PermissionFlagsBits.ModerateMembers,
-    options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Thành viên').setRequired(true)),
+    options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Member').setRequired(true)),
   },
   {
     name: 'membermute',
     script: 'MemberMute',
     defaultMemberPermissions: PermissionFlagsBits.ModerateMembers,
-    options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Thành viên').setRequired(true)),
+    options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Member').setRequired(true)),
   },
   {
     name: 'memberlock',
     script: 'MemberLock',
     defaultMemberPermissions: PermissionFlagsBits.ModerateMembers,
-    options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Thành viên').setRequired(true)),
+    options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Member').setRequired(true)),
   },
   {
     name: 'memberkick',
     script: 'MemberKick',
     defaultMemberPermissions: PermissionFlagsBits.KickMembers,
-    options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Thành viên').setRequired(true)),
+    options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Member').setRequired(true)),
   },
   {
     name: 'greetingchannel',
@@ -214,7 +214,7 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
       b.addChannelOption((o) =>
-        o.setName('channel').setDescription('Kênh gửi tin chào mừng').addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement).setRequired(true)
+        o.setName('channel').setDescription('Greeting message channel').addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement).setRequired(true)
       ),
   },
   {
@@ -223,7 +223,7 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
       b.addChannelOption((o) =>
-        o.setName('channel').setDescription('Kênh gửi tin tạm biệt').addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement).setRequired(true)
+        o.setName('channel').setDescription('Leaving message channel').addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement).setRequired(true)
       ),
   },
   {
@@ -232,7 +232,7 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
       b.addChannelOption((o) =>
-        o.setName('channel').setDescription('Kênh gửi tin boost').addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement).setRequired(true)
+        o.setName('channel').setDescription('Boost message channel').addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement).setRequired(true)
       ),
   },
   {
@@ -241,7 +241,7 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
       b.addStringOption((o) =>
-        o.setName('embed').setDescription('Tên embed (đã tạo trong server)').setRequired(true).setAutocomplete(true)
+        o.setName('embed').setDescription('Embed name (created in server)').setRequired(true).setAutocomplete(true)
       ),
   },
   {
@@ -250,7 +250,7 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
       b.addStringOption((o) =>
-        o.setName('embed').setDescription('Tên embed (đã tạo trong server)').setRequired(true).setAutocomplete(true)
+        o.setName('embed').setDescription('Embed name (created in server)').setRequired(true).setAutocomplete(true)
       ),
   },
   {
@@ -259,14 +259,14 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
       b.addStringOption((o) =>
-        o.setName('embed').setDescription('Tên embed (đã tạo trong server)').setRequired(true).setAutocomplete(true)
+        o.setName('embed').setDescription('Embed name (created in server)').setRequired(true).setAutocomplete(true)
       ),
   },
   {
     name: 'embedcreate',
     script: 'EmbedCreate',
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
-    options: (b) => b.addStringOption((o) => o.setName('name').setDescription('Tên embed').setRequired(true)),
+    options: (b) => b.addStringOption((o) => o.setName('name').setDescription('Embed name').setRequired(true)),
   },
   {
     name: 'embededit',
@@ -274,7 +274,7 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
       b.addStringOption((o) =>
-        o.setName('target').setDescription('Chọn embed cần sửa').setRequired(true).setAutocomplete(true)
+        o.setName('target').setDescription('Embed to edit').setRequired(true).setAutocomplete(true)
       ),
   },
   {
@@ -284,9 +284,9 @@ const SLASH_LIST = [
     options: (b) =>
       b
         .addStringOption((o) =>
-          o.setName('target').setDescription('Chọn embed cần đổi tên').setRequired(true).setAutocomplete(true)
+          o.setName('target').setDescription('Embed to rename').setRequired(true).setAutocomplete(true)
         )
-        .addStringOption((o) => o.setName('newname').setDescription('Tên mới').setRequired(true)),
+        .addStringOption((o) => o.setName('newname').setDescription('New name').setRequired(true)),
   },
   {
     name: 'embeddelete',
@@ -295,10 +295,10 @@ const SLASH_LIST = [
     options: (b) =>
       b
         .addStringOption((o) =>
-          o.setName('target').setDescription('Chọn embed cần xóa').setRequired(true).setAutocomplete(true)
+          o.setName('target').setDescription('Embed to delete').setRequired(true).setAutocomplete(true)
         )
         .addStringOption((o) =>
-          o.setName('confirm').setDescription('Gõ chính xác tên embed để xác nhận xóa').setRequired(true)
+          o.setName('confirm').setDescription('Type embed name to confirm delete').setRequired(true)
         ),
   },
 ];

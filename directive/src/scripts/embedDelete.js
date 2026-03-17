@@ -4,12 +4,12 @@ import * as api from '../api.js';
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction?.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   const embedId = interaction.options?.getString('target')?.trim() || actionContext?.targetId;
   if (!embedId) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Thiếu embed cần xóa.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Embed to delete is missing.'));
     return;
   }
 
@@ -21,7 +21,7 @@ export async function run(interaction, client, actionContext = null) {
   }
 
   if (confirmName === null) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Thiếu xác nhận (gõ tên embed).'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Confirm by typing the embed name.'));
     return;
   }
 
@@ -30,17 +30,17 @@ export async function run(interaction, client, actionContext = null) {
     embedRow = await api.getEmbed(guild.id, embedId);
   } catch (err) {
     console.error('[EmbedDelete] getEmbed', err);
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Không tìm thấy embed.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Embed not found.'));
     return;
   }
   if (!embedRow) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Không tìm thấy embed.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Embed not found.'));
     return;
   }
 
   const expectedName = (embedRow.embed_name ?? '').trim();
   if (confirmName !== expectedName) {
-    const msg = api.formatEphemeralContent('Tên không khớp. Không xóa.');
+    const msg = api.formatEphemeralContent('Name does not match. Delete cancelled.');
     if (interaction.deferred) await interaction.followUp({ content: msg, flags: MessageFlags.Ephemeral }).catch(() => {});
     else await interaction.editReply({ content: msg, flags: MessageFlags.Ephemeral }).catch(() => {});
     return;
@@ -50,13 +50,13 @@ export async function run(interaction, client, actionContext = null) {
     await api.deleteEmbed(guild.id, embedId);
   } catch (err) {
     console.error('[EmbedDelete]', err);
-    const payload = { content: api.formatEphemeralContent('Không thể xóa embed.'), flags: MessageFlags.Ephemeral };
+    const payload = { content: api.formatEphemeralContent('Could not delete embed.'), flags: MessageFlags.Ephemeral };
     if (interaction.deferred) await interaction.followUp(payload).catch(() => {});
     else await interaction.editReply(payload).catch(() => {});
     return;
   }
 
-  const successContent = api.formatEphemeralContent('Embed đã xóa.');
+  const successContent = api.formatEphemeralContent('Embed deleted.');
   if (interaction.message) {
     await interaction.message
       .edit({ content: successContent, embeds: [], components: [] })

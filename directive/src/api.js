@@ -73,7 +73,7 @@ export async function getMember(serverId, userId) {
   return request(`/api/members/${serverId}/${userId}`);
 }
 
-/** Gọi GET member để đảm bảo user/member tồn tại (backend ensure). Tham số thứ 3 không dùng. */
+/** GET member to ensure user/member exists (backend ensure). Third param unused. */
 export async function ensureMember(serverId, userId) {
   return request(`/api/members/${serverId}/${userId}`);
 }
@@ -122,20 +122,20 @@ export async function getSlashList() {
   return request('/api/functions/slash');
 }
 
-/** Discord API: token interaction hết hạn hoặc đã dùng — không gọi reply/editReply/followUp nữa trên interaction đó. */
+/** Discord API: interaction token expired or already used — do not call reply/editReply/followUp again. */
 export const UNKNOWN_INTERACTION_CODE = 10062;
 
 export function isUnknownInteraction(err) {
   return err?.code === UNKNOWN_INTERACTION_CODE;
 }
 
-/** Trả lời interaction (replyType ephemeral): dùng editReply nếu đã defer, reply nếu chưa. Ephemeral = chỉ mình thấy, có thể dismiss. */
+/** Reply to interaction (ephemeral): use editReply if deferred, else reply. Ephemeral = only visible to user, dismissible. */
 export async function replyOrEdit(interaction, content, payload = {}) {
   if (interaction.deferred) return interaction.editReply({ content, ...payload }).catch(() => {});
   return interaction.reply({ content, flags: MessageFlags.Ephemeral, ...payload }).catch(() => {});
 }
 
-/** Chuẩn hóa nội dung gửi kèm flag Ephemeral. Discord tự hiển thị dạng "Only you can see this • Dismiss", không cần thêm vào content. */
+/** Normalize content for Ephemeral flag. Discord shows "Only you can see this • Dismiss" automatically. */
 export function formatEphemeralContent(content) {
   if (content == null || content === '') return '';
   return String(content).trim();
@@ -155,12 +155,12 @@ export async function getLevelRange() {
   return request('/api/members/level-range');
 }
 
-/** Gọi backend xử lý member hết hạn (đặt Good). Trả về { count, updated: [{ server_id, user_id }] }. */
+/** Backend: process expired members (set Good). Returns { count, updated: [{ server_id, user_id }] }. */
 export async function processExpires() {
   return request('/api/members/process-expires', { method: 'POST' });
 }
 
-/** Danh sách messages của server (Greeting, Leaving, Boosting, ...). */
+/** Server messages list (Greeting, Leaving, Boosting, ...). */
 export async function listMessages(serverId) {
   try {
     const data = await request(`/api/servers/${serverId}/messages`);
@@ -171,7 +171,7 @@ export async function listMessages(serverId) {
   }
 }
 
-/** Cấu hình tin nhắn theo loại (Greeting, Leaving, Boosting). Backend cần mount message routes. */
+/** Get message config by type (Greeting, Leaving, Boosting). Backend must mount message routes. */
 export async function getMessageByType(serverId, messagesType) {
   try {
     return await request(`/api/servers/${serverId}/messages/${messagesType}`);
@@ -195,7 +195,7 @@ export async function setMessageEmbed(serverId, messagesType, embedId) {
   });
 }
 
-/** Danh sách embed của server. */
+/** Server embed list. */
 export async function listEmbeds(serverId) {
   try {
     const data = await request(`/api/servers/${serverId}/embeds`);
@@ -206,7 +206,7 @@ export async function listEmbeds(serverId) {
   }
 }
 
-/** Lấy embed theo id (server_id + embed_id). */
+/** Get embed by id (server_id + embed_id). */
 export async function getEmbed(serverId, embedId) {
   try {
     return await request(`/api/servers/${serverId}/embeds/${embedId}`);
@@ -216,7 +216,7 @@ export async function getEmbed(serverId, embedId) {
   }
 }
 
-/** Tạo embed mới. */
+/** Create new embed. */
 export async function createEmbed(serverId, embedName, embedData) {
   return request(`/api/servers/${serverId}/embeds`, {
     method: 'POST',
@@ -224,7 +224,7 @@ export async function createEmbed(serverId, embedName, embedData) {
   });
 }
 
-/** Cập nhật embed. */
+/** Update embed. */
 export async function updateEmbed(serverId, embedId, payload) {
   return request(`/api/servers/${serverId}/embeds/${embedId}`, {
     method: 'PATCH',
@@ -232,7 +232,7 @@ export async function updateEmbed(serverId, embedId, payload) {
   });
 }
 
-/** Xóa embed. */
+/** Delete embed. */
 export async function deleteEmbed(serverId, embedId) {
   return request(`/api/servers/${serverId}/embeds/${embedId}`, {
     method: 'DELETE',

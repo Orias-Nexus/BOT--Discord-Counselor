@@ -5,7 +5,7 @@ const SUCCESS_MESSAGE = "{Server Profile Name} has been Kicked.";
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   const fromSlash = interaction.options != null;
@@ -14,7 +14,7 @@ export async function run(interaction, client, actionContext) {
     : (actionContext?.targetId ? await guild.members.fetch(actionContext.targetId).catch(() => null) : null);
   if (member?.id && !member.member) member = await guild.members.fetch(member.id).catch(() => null);
   if (!member) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Cần chọn thành viên (target).'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Select a member (target).'));
     return;
   }
   await member.kick().catch(() => {});

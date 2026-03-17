@@ -28,13 +28,13 @@ import { CommandParser, flattenTagConfig } from './commandParser.js';
 import { registerAll } from './handlers/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-/** variables.json ở repo root; resolve theo vị trí module để chạy được từ directive/ hoặc repo root. */
+/** variables.json at repo root; resolve by module location so it works from directive/ or repo root. */
 const DEFAULT_CONFIG_PATH = resolve(__dirname, '../../../variables.json');
 
 /**
  * Build a handler registry and optionally register all handlers from placeholders, advanced_logic, modifiers, guards, actions.
  * @param {object} [options]
- * @param {boolean} [options.withAll=true] - Register tất cả handler (từ variables.json)
+ * @param {boolean} [options.withAll=true] - Register all handlers (from variables.json)
  * @returns {Map<string, (ctx: import('./executionContext.js').ExecutionContext, argument?: string) => Promise<boolean|string|void>|boolean|string|void>}
  */
 export function createHandlerRegistry(options = {}) {

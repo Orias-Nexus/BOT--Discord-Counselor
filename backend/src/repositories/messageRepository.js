@@ -86,7 +86,7 @@ export async function setEmbed(serverId, messagesType, embedId) {
 
 const MESSAGE_TYPES_FOR_NEW_SERVER = ['Greeting', 'Leaving', 'Boosting'];
 
-/** Tạo 3 bản ghi messages (Greeting, Leaving, Boosting) cho server mới nếu chưa có. */
+/** Create 3 message records (Greeting, Leaving, Boosting) for new server if missing. */
 export async function ensureMessagesForServer(serverId) {
     const sb = getSupabase();
     for (const messagesType of MESSAGE_TYPES_FOR_NEW_SERVER) {
