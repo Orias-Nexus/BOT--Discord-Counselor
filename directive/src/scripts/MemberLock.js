@@ -1,5 +1,6 @@
 import * as api from '../api.js';
-import { getEmbedContent } from '../embedDefaults.js';
+
+const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Locked until {Member Expires}.";
 
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
@@ -32,10 +33,7 @@ export async function run(interaction, client, actionContext) {
   await api.setMemberStatus(guild.id, member.id, 'Locked', expiresAt);
   const displayName = member.displayName ?? member.user?.username ?? 'User';
   const expiresStr = expiresAt ? expiresAt.toLocaleString('vi-VN') : 'vĩnh viễn';
-  const content = api.formatEphemeralContent(api.replacePlaceholders(
-    getEmbedContent('MemberLock') ?? "{Server Profile Name}'s Status is Locked until {Member Expires}.",
-    { 'Server Profile Name': displayName, 'Member Expires': expiresStr }
-  ));
+  const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { 'Server Profile Name': displayName, 'Member Expires': expiresStr }));
   await api.replyOrEdit(interaction, content);
   const updatedProfile = await api.getMember(guild.id, member.id).catch(() => null);
   return { updatedProfile, targetId: member.id };

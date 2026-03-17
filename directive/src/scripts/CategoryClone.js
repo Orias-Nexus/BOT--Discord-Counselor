@@ -1,6 +1,7 @@
 import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
-import { getEmbedContent } from '../embedDefaults.js';
+
+const SUCCESS_MESSAGE = 'Completed Clone {Category Name}.';
 
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
@@ -40,9 +41,6 @@ export async function run(interaction, client, actionContext) {
       cloned.push(clone.name);
     }
   }
-  const content = api.formatEphemeralContent(api.replacePlaceholders(
-    getEmbedContent('CategoryClone') ?? 'Completed Clone {Category Name}.',
-    { 'Category Name': category.name }
-  ).replace('{Category Name}', category.name));
+  const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { 'Category Name': category.name }));
   await interaction.editReply({ content });
 }

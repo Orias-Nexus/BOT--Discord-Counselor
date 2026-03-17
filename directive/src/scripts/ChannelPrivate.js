@@ -1,5 +1,6 @@
 import * as api from '../api.js';
-import { getEmbedContent } from '../embedDefaults.js';
+
+const SUCCESS_MESSAGE = 'Privated {Channel Name}.';
 
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
@@ -17,7 +18,7 @@ export async function run(interaction, client, actionContext) {
   }
   await channel.permissionOverwrites.edit(guild.id, { ViewChannel: false }).catch(() => {});
   const content = api.formatEphemeralContent(
-    (getEmbedContent('ChannelPrivate') ?? 'Privated {Channel Name}.').replace(/\{Channel Name\}/g, channel.name)
+    SUCCESS_MESSAGE.replace(/\{Channel Name\}/g, channel.name)
   );
   await interaction.editReply({ content });
 }

@@ -1,7 +1,7 @@
 import * as api from '../api.js';
-import { getServerInfoEmbed } from '../embeds/ServerInfo.js';
 import { buildServerInfoComponents } from '../utils/components.js';
 import { mainImageURL } from '../config.js';
+import { getEmbedBuilder } from '../embedRoutes.js';
 
 export async function run(interaction, client, _actionContext) {
   const guild = interaction.guild;
@@ -21,7 +21,12 @@ export async function run(interaction, client, _actionContext) {
     });
     return;
   }
-  const embed = getServerInfoEmbed(guild, { imageURL: mainImageURL });
+  const buildEmbed = getEmbedBuilder('ServerInfo');
+  const embed = buildEmbed ? await buildEmbed(guild, { imageURL: mainImageURL }) : null;
+  if (!embed) {
+    await interaction.editReply({ content: api.formatEphemeralContent('Không tạo được embed.') }).catch(() => {});
+    return;
+  }
   const { row, row2 } = buildServerInfoComponents();
   const components = [row, row2].filter(Boolean);
   await interaction.editReply({ embeds: [embed], components });
