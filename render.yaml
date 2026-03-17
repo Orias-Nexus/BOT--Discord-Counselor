@@ -1,0 +1,37 @@
+# Render Blueprint — Deploy Backend + Directive (Discord bot)
+# Database: Supabase (cấu hình qua env, không deploy DB trên Render)
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: discord-counselor-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: FRONTEND_ORIGIN
+        generateValue: true
+
+  - type: worker
+    name: discord-counselor-directive
+    runtime: node
+    rootDir: directive
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: APPLICATION_ID
+        sync: false
+      - key: BACKEND_API_URL
+        sync: false
+        # Điền URL Backend sau khi deploy (vd: https://discord-counselor-backend.onrender.com)

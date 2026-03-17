@@ -1,5 +1,6 @@
 import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
+import { getEmbedContent } from '../embedDefaults.js';
 
 const NSFW_ALLOWED_TYPES = [ChannelType.GuildText, ChannelType.GuildAnnouncement, ChannelType.GuildForum];
 
@@ -34,7 +35,7 @@ export async function run(interaction, client, actionContext) {
     return;
   }
   const content = api.formatEphemeralContent(
-    ((await api.getFunction('ChannelSFW').catch(() => null))?.embed?.content ?? 'Changed channel {Channel Name} to SFW.').replace(/\{Channel Name\}/g, channel.name)
+    (getEmbedContent('ChannelSFW') ?? 'Changed channel {Channel Name} to SFW.').replace(/\{Channel Name\}/g, channel.name)
   );
   await interaction.editReply({ content });
 }

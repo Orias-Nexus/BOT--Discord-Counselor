@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { getEmbedContent } from '../embedDefaults.js';
 
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction.guild;
@@ -22,8 +23,7 @@ export async function run(interaction, client, actionContext = null) {
   await member.setNickname(name).catch(() => {});
   const displayName = member.displayName ?? member.user.username;
   const content = api.formatEphemeralContent(api.replacePlaceholders(
-    (await api.getFunction('MemberRename').catch(() => null))?.embed?.content ??
-      'Completed Rename {Username} to {Server Profile Name}.',
+    getEmbedContent('MemberRename') ?? 'Completed Rename {Username} to {Server Profile Name}.',
     { Username: member.user.username, 'Server Profile Name': displayName }
   ));
   await api.replyOrEdit(interaction, content);

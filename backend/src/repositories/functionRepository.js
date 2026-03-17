@@ -4,9 +4,9 @@ const TABLE = 'functions';
 
 export async function getByScript(scriptName) {
     const sb = getSupabase();
-    const { data, error } = await sb.schema(getSchema()).from(TABLE).select('script, slash, action, embed').eq('script', scriptName).maybeSingle();
+    const { data, error } = await sb.schema(getSchema()).from(TABLE).select('script, slash, action, event').eq('script', scriptName).maybeSingle();
     if (error) throw error;
-    return data;
+    return data ?? null;
 }
 
 export async function getAllSlash() {

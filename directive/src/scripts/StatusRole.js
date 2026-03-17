@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { getEmbedContent } from '../embedDefaults.js';
 
 /** Lấy tên role từ slash option hoặc modal (chỉ tên, không resolve ID). */
 function getRoleName(interaction, actionContext, key) {
@@ -51,9 +52,8 @@ export async function run(interaction, client, actionContext = {}) {
 
   await api.setRoles(guild.id, updates);
   const updated = await api.getServer(guild.id);
-  const fn = await api.getFunction('StatusRole').catch(() => null);
   const content = api.formatEphemeralContent(api.replacePlaceholders(
-    fn?.embed?.content ?? 'Updated Status Role: \\n Warn: {role_warn} \\n Mute: {role_mute} \\n Lock: {role_lock} \\n Newbie: {role_new}.',
+    getEmbedContent('StatusRole') ?? 'Updated Status Role: \\n Warn: {role_warn} \\n Mute: {role_mute} \\n Lock: {role_lock} \\n Newbie: {role_new}.',
     {
       role_warn: roleIdToDisplay(guild, updated?.role_warn),
       role_mute: roleIdToDisplay(guild, updated?.role_mute),
