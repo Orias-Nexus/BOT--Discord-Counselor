@@ -16,6 +16,16 @@ export const EVENT_HANDLERS = [
     buildContext: (member) => ({ guild: member.guild, member }),
   },
   {
+    discordEvent: 'GuildMemberUpdate',
+    scriptName: 'MemberBoosting',
+    buildContext: (oldMember, newMember) => {
+      const hadBoost = !!oldMember?.premiumSince;
+      const hasBoost = !!newMember?.premiumSince;
+      if (!hasBoost || hadBoost) return null;
+      return { guild: newMember.guild, member: newMember };
+    },
+  },
+  {
     discordEvent: 'VoiceStateUpdate',
     scriptName: 'ChannelCreate',
     buildContext: (oldState, newState) => ({ oldState, newState }),
