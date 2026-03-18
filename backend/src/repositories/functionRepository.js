@@ -1,17 +1,17 @@
-import { getSupabase, getSchema } from '../config/supabase.js';
-
-const TABLE = 'functions';
+import { prisma } from '../config/prisma.js';
 
 export async function getByScript(scriptName) {
-    const sb = getSupabase();
-    const { data, error } = await sb.schema(getSchema()).from(TABLE).select('script, slash, action, event').eq('script', scriptName).maybeSingle();
-    if (error) throw error;
-    return data ?? null;
+    const row = await prisma.functions.findUnique({
+        where: { script: scriptName },
+        select: { script: true, slash: true, action: true, event: true }
+    });
+    return row;
 }
 
 export async function getAllSlash() {
-    const sb = getSupabase();
-    const { data, error } = await sb.schema(getSchema()).from(TABLE).select('script, slash').not('slash', 'is', null);
-    if (error) throw error;
-    return data ?? [];
+    const rows = await prisma.functions.findMany({
+        where: { slash: { not: null } },
+        select: { script: true, slash: true }
+    });
+    return rows;
 }
