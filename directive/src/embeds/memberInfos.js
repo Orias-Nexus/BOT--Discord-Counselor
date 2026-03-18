@@ -1,5 +1,5 @@
 import { EMBED_COLORS } from './schema.js';
-import { resolveEmbed } from './embedContext.js';
+import { resolveEmbed } from './.embedContext.js';
 
 function formatMemberStatus(profile) {
   const status = profile?.member_status ?? 'Good';
