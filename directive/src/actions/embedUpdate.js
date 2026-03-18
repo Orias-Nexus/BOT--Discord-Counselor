@@ -81,8 +81,7 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
     const buildEmbed = getEmbedBuilder('ServerInfo');
     const embed = buildEmbed ? await buildEmbed(guildFetched, { imageURL: mainImageURL }) : null;
     if (!embed) return null;
-    const { row, row2 } = buildServerInfoComponents();
-    const components = [row, row2].filter(Boolean);
+    const components = buildServerInfoComponents();
     return {
       content: '',
       embeds: [embed],
@@ -93,14 +92,14 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
   if (CHANNEL_SCRIPTS.has(scriptName) && targetId) {
     const channel = await guild.channels.fetch(targetId).catch(() => null);
     if (!channel || channel.type === ChannelType.GuildCategory) return null;
-    const buildEmbed = getEmbedBuilder('ChanelInfo');
+    const buildEmbed = getEmbedBuilder('ChannelInfo');
     const embed = buildEmbed ? await buildEmbed(channel, guild, { imageURL: mainImageURL }) : null;
     if (!embed) return null;
-    const { row } = buildChannelInfoComponents(channel.id, channel, guild);
+    const components = buildChannelInfoComponents(channel.id, channel, guild);
     return {
       content: '',
       embeds: [embed],
-      components: row ? [row] : [],
+      components,
     };
   }
 
@@ -110,11 +109,11 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
     const buildEmbed = getEmbedBuilder('CategoryInfo');
     const embed = buildEmbed ? await buildEmbed(category, guild, { imageURL: mainImageURL }) : null;
     if (!embed) return null;
-    const { row } = buildCategoryInfoComponents(category.id, category, guild);
+    const components = buildCategoryInfoComponents(category.id, category, guild);
     return {
       content: '',
       embeds: [embed],
-      components: row ? [row] : [],
+      components,
     };
   }
 
@@ -128,12 +127,11 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
     const buildEmbed = getEmbedBuilder('MemberInfo');
     const embed = buildEmbed ? await buildEmbed(member, profile, { imageURL: mainImageURL }) : null;
     if (!embed) return null;
-    const { row, row2 } = buildMemberInfoComponents(member.id, profile);
-    const components = [row, row2].filter(Boolean);
+    const components = buildMemberInfoComponents(member.id, profile);
     return {
       content: '',
       embeds: [embed],
-      components: components.length ? components : [],
+      components,
     };
   }
 
@@ -145,12 +143,11 @@ export async function buildMemberInfoPayload(member, profile) {
   const buildEmbed = getEmbedBuilder('MemberInfo');
   const embed = buildEmbed ? await buildEmbed(member, profile) : null;
   if (!embed) return null;
-  const { row, row2 } = buildMemberInfoComponents(member.id, profile);
-  const components = [row, row2].filter(Boolean);
+  const components = buildMemberInfoComponents(member.id, profile);
   return {
     content: '',
     embeds: [embed],
-    components: components.length ? components : [],
+    components,
   };
 }
 
