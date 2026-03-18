@@ -39,7 +39,7 @@ END $$;
 COMMENT ON TYPE "DiscordCounselor".category_type_enum IS 'Creator: danh mục chứa kênh trigger Voice Creator. Stats: danh mục chứa các kênh stat.';
 
 -- -----------------------------------------------------------------------------
--- ENUM: Message Type (Messages, Greeting, Leaving, Boosting, Logging)
+-- ENUM: Message Type (Messages, Greeting, Leaving, Boosting, Leveling, Logging)
 -- -----------------------------------------------------------------------------
 DO $$ BEGIN
     CREATE TYPE "DiscordCounselor".message_type_enum AS ENUM (
@@ -47,13 +47,14 @@ DO $$ BEGIN
         'Greeting',
         'Leaving',
         'Boosting',
+        'Leveling',
         'Logging'
     );
 EXCEPTION
     WHEN duplicate_object THEN NULL;
 END $$;
 
-COMMENT ON TYPE "DiscordCounselor".message_type_enum IS 'Loại tin nhắn cấu hình: Messages, Greeting, Leaving, Boosting, Logging';
+COMMENT ON TYPE "DiscordCounselor".message_type_enum IS 'Loại tin nhắn cấu hình: Messages, Greeting, Leaving, Boosting, Leveling, Logging';
 
 -- -----------------------------------------------------------------------------
 -- Levels — Định nghĩa các mốc điểm yêu cầu cho các level
@@ -84,9 +85,16 @@ CREATE TABLE IF NOT EXISTS "DiscordCounselor".servers (
     role_new       TEXT,
     unrole_mute    TEXT,
     unrole_lock    TEXT,
+    level_channel  TEXT,
+    logs_channel   TEXT,
     created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Nếu bảng đã tồn tại từ trước, đảm bảo có thêm các cột mới.
+ALTER TABLE IF EXISTS "DiscordCounselor".servers
+    ADD COLUMN IF NOT EXISTS level_channel TEXT,
+    ADD COLUMN IF NOT EXISTS logs_channel TEXT;
 
 COMMENT ON TABLE "DiscordCounselor".servers IS 'Thông tin server (Discord guild)';
 COMMENT ON COLUMN "DiscordCounselor".servers.time_warn IS 'Thời gian tồn tại Warning (phút); 0 = vô hạn';
@@ -99,6 +107,8 @@ COMMENT ON COLUMN "DiscordCounselor".servers.time_new IS 'Thời gian tồn tạ
 COMMENT ON COLUMN "DiscordCounselor".servers.role_new IS 'Role được gắn khi Newbie';
 COMMENT ON COLUMN "DiscordCounselor".servers.unrole_mute IS 'Role bị gỡ khi nhận Mute';
 COMMENT ON COLUMN "DiscordCounselor".servers.unrole_lock IS 'Role bị gỡ khi nhận Lock';
+COMMENT ON COLUMN "DiscordCounselor".servers.level_channel IS 'Kênh gửi thông báo level (Leveling)';
+COMMENT ON COLUMN "DiscordCounselor".servers.logs_channel IS 'Kênh gửi log hệ thống';
 
 -- -----------------------------------------------------------------------------
 -- Embeds — Chỉ embed do người dùng tạo (messages, v.v.). Embed của functions hardcode trong code.
