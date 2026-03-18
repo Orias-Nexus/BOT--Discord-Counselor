@@ -36,6 +36,8 @@ model embeds {
   messages   messages[]
 
   @@unique([embed_name, server_id])
+  @@index([embed_name, server_id], map: "idx_embeds_name_server")
+  @@index([server_id], map: "idx_embeds_server")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -47,6 +49,8 @@ model functions {
   event      String?
   created_at DateTime @default(now()) @db.Timestamptz(6)
   updated_at DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([script], map: "idx_functions_script")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -56,6 +60,8 @@ model levels {
   exp        BigInt
   created_at DateTime @default(now()) @db.Timestamptz(6)
   updated_at DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([level], map: "idx_levels_level")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -94,23 +100,25 @@ model messages {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model servers {
-  server_id   String     @id
-  time_warn   Int        @default(0)
-  time_mute   Int        @default(0)
-  time_lock   Int        @default(0)
-  time_new    Int        @default(0)
-  role_warn   String?
-  role_mute   String?
-  role_lock   String?
-  role_new    String?
-  unrole_mute String?
-  unrole_lock String?
-  created_at  DateTime   @default(now()) @db.Timestamptz(6)
-  updated_at  DateTime   @default(now()) @db.Timestamptz(6)
-  channels    channels[]
-  embeds      embeds[]
-  members     members[]
-  messages    messages[]
+  server_id     String     @id
+  time_warn     Int        @default(0)
+  time_mute     Int        @default(0)
+  time_lock     Int        @default(0)
+  time_new      Int        @default(0)
+  role_warn     String?
+  role_mute     String?
+  role_lock     String?
+  role_new      String?
+  unrole_mute   String?
+  unrole_lock   String?
+  level_channel String?
+  logs_channel  String?
+  created_at    DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime   @default(now()) @db.Timestamptz(6)
+  channels      channels[]
+  embeds        embeds[]
+  members       members[]
+  messages      messages[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -146,5 +154,6 @@ enum message_type_enum {
   Greeting
   Leaving
   Boosting
+  Leveling
   Logging
 }
