@@ -18,12 +18,12 @@ export async function run(interaction, client, actionContext = null) {
     await interaction.editReply({ content: api.formatEphemeralContent('Channel not found.') });
     return;
   }
-  const buildEmbed = getEmbedBuilder('ChanelInfo');
+  const buildEmbed = getEmbedBuilder('ChannelInfo');
   const embed = buildEmbed ? await buildEmbed(channel, guild, { imageURL: mainImageURL }) : null;
   if (!embed) {
     await interaction.editReply({ content: api.formatEphemeralContent('Could not create embed.') }).catch(() => {});
     return;
   }
-  const { row } = buildChannelInfoComponents(channel.id, channel, guild);
-  await interaction.editReply({ embeds: [embed], components: row ? [row] : [] });
+  const components = buildChannelInfoComponents(channel.id, channel, guild);
+  await interaction.editReply({ embeds: [embed], components });
 }

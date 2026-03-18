@@ -1,6 +1,6 @@
 import { MessageFlags } from 'discord.js';
 import * as api from '../api.js';
-import { resolveString } from '../embeds/embedContext.js';
+import { resolveString } from '../embeds/.embedContext.js';
 
 const MESSAGE_TYPE = 'Boosting';
 

@@ -162,7 +162,7 @@
           "triggered_by": ["Slash: /category_public", "Action: Public"]
         },
         {
-          "name": "ChanelInfo",
+          "name": "ChannelInfo",
           "description": "Hiển thị thông tin kênh",
           "required_variable": ["interaction", "client"],
           "triggered_by": ["Slash: /channel_info"]
@@ -591,7 +591,7 @@
               { "name": "ID", "value": "category.id", "inline": true },
               { "name": "Name", "value": "category.name", "inline": true },
               { "name": "\\u200B", "value": "\\u200B", "inline": true },
-              { "name": "Chanel", "value": "Chat: count · Voice: count · Other: count", "inline": true },
+              { "name": "Channel", "value": "Chat: count · Voice: count · Other: count", "inline": true },
               { "name": "Status", "value": "Public | Private", "inline": true },
               { "name": "\\u200B", "value": "\\u200B", "inline": true }
             ],
@@ -632,7 +632,7 @@
         },
         {
           "command": "/channel_info",
-          "script": "ChanelInfo",
+          "script": "ChannelInfo",
           "slashs": [
             "target: target một channel - nếu không chọn sẽ tự target kênh mà lệnh này được gõ"
           ],
