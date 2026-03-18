@@ -30,7 +30,7 @@ export const SCRIPTS_WITH_PARENT_EMBED = new Set([
 ]);
 
 /**
- * Lấy targetId từ slash command options (để tìm embed cha cùng kênh).
+ * Get targetId from slash command options (to find parent embed in same channel).
  */
 export function getTargetIdFromSlash(interaction, scriptName) {
   if (!interaction.isChatInputCommand() || !interaction.options) return null;
@@ -45,8 +45,8 @@ export function getTargetIdFromSlash(interaction, scriptName) {
 }
 
 /**
- * Tìm message embed cha trong kênh (có nút chứa targetId) và cập nhật embed + components.
- * Chỉ cập nhật nếu cùng kênh (channel đã truyền vào).
+ * Find parent embed message in channel (button contains targetId) and update embed + components.
+ * Only updates if same channel (channel passed in).
  */
 export async function findAndUpdateParentMessage(channel, botUserId, targetId, payload) {
   if (!channel || !botUserId || targetId == null || !payload) return;
@@ -140,7 +140,7 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
   return null;
 }
 
-/** Payload (embeds + components) cho message Member Info, dùng khi cập nhật từ expiresCheck. */
+/** Payload (embeds + components) for Member Info message; used when updating from expiresCheck. */
 export async function buildMemberInfoPayload(member, profile) {
   const buildEmbed = getEmbedBuilder('MemberInfo');
   const embed = buildEmbed ? await buildEmbed(member, profile) : null;

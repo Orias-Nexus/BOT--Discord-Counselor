@@ -1,7 +1,4 @@
-import { getSupabase, getSchema } from '../config/supabase.js';
-
-const TABLE = 'embeds';
-const COLS = 'embed_id, embed_name, server_id, embed';
+import { prisma } from '../config/prisma.js';
 
 function rowToEmbed(row) {
     if (!row) return null;
@@ -14,84 +11,67 @@ function rowToEmbed(row) {
 }
 
 export async function listByServer(serverId) {
-    const sb = getSupabase();
-    const { data, error } = await sb
-        .schema(getSchema())
-        .from(TABLE)
-        .select(COLS)
-        .eq('server_id', serverId)
-        .order('embed_name');
-    if (error) throw error;
-    return (data ?? []).map(rowToEmbed);
+    const rows = await prisma.embeds.findMany({
+        where: { server_id: serverId },
+        orderBy: { embed_name: 'asc' }
+    });
+    return rows.map(rowToEmbed);
 }
 
 export async function getById(serverId, embedId) {
-    const sb = getSupabase();
-    const { data, error } = await sb
-        .schema(getSchema())
-        .from(TABLE)
-        .select(COLS)
-        .eq('server_id', serverId)
-        .eq('embed_id', embedId)
-        .maybeSingle();
-    if (error) throw error;
-    return rowToEmbed(data);
+    const row = await prisma.embeds.findFirst({
+        where: { 
+            server_id: serverId,
+            embed_id: embedId
+        }
+    });
+    return rowToEmbed(row);
 }
 
 export async function getByName(serverId, embedName) {
-    const sb = getSupabase();
-    const { data, error } = await sb
-        .schema(getSchema())
-        .from(TABLE)
-        .select(COLS)
-        .eq('server_id', serverId)
-        .eq('embed_name', embedName)
-        .maybeSingle();
-    if (error) throw error;
-    return rowToEmbed(data);
+    const row = await prisma.embeds.findFirst({
+        where: { 
+            server_id: serverId,
+            embed_name: embedName
+        }
+    });
+    return rowToEmbed(row);
 }
 
 export async function create(serverId, embedName, embedData) {
-    const sb = getSupabase();
-    const { data, error } = await sb
-        .schema(getSchema())
-        .from(TABLE)
-        .insert({
+    const row = await prisma.embeds.create({
+        data: {
             server_id: serverId,
             embed_name: embedName,
             embed: embedData ?? null,
-        })
-        .select(COLS)
-        .single();
-    if (error) throw error;
-    return rowToEmbed(data);
+        }
+    });
+    return rowToEmbed(row);
 }
 
 export async function update(serverId, embedId, payload) {
-    const sb = getSupabase();
     const { embed_name, embed } = payload;
-    const updatePayload = { updated_at: new Date().toISOString() };
+    const updatePayload = { updated_at: new Date() };
     if (embed_name !== undefined) updatePayload.embed_name = embed_name;
     if (embed !== undefined) updatePayload.embed = embed;
-    const { data, error } = await sb
-        .schema(getSchema())
-        .from(TABLE)
-        .update(updatePayload)
-        .eq('server_id', serverId)
-        .eq('embed_id', embedId)
-        .select(COLS)
-        .single();
-    if (error) throw error;
-    return rowToEmbed(data);
+    
+    // First find the embed to ensure it belongs to the server
+    const existing = await getById(serverId, embedId);
+    if (!existing) throw new Error('Embed not found or access denied');
+    
+    const row = await prisma.embeds.update({
+        where: { embed_id: embedId },
+        data: updatePayload
+    });
+    return rowToEmbed(row);
 }
 
 export async function remove(serverId, embedId) {
-    const sb = getSupabase();
-    const { error } = await sb
-        .schema(getSchema())
-        .from(TABLE)
-        .delete()
-        .eq('server_id', serverId)
-        .eq('embed_id', embedId);
-    if (error) throw error;
+    // First find the embed to ensure it belongs to the server
+    const existing = await getById(serverId, embedId);
+    if (!existing) return;
+    
+    await prisma.embeds.delete({
+        where: { embed_id: embedId }
+    });
 }

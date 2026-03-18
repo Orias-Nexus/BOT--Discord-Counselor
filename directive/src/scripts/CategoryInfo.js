@@ -7,7 +7,7 @@ import { getEmbedBuilder } from '../embedRoutes.js';
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction.guild;
   if (!guild) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Chỉ dùng trong server.'));
+    await api.replyOrEdit(interaction, api.formatEphemeralContent('Use in a server only.'));
     return;
   }
   if (!interaction.deferred) await interaction.deferReply();
@@ -18,13 +18,13 @@ export async function run(interaction, client, actionContext = null) {
     category = channel?.parentId ? guild.channels.cache.get(channel.parentId) : null;
   }
   if (!category || category.type !== ChannelType.GuildCategory) {
-    await interaction.editReply({ content: api.formatEphemeralContent('Không tìm thấy danh mục.') });
+    await interaction.editReply({ content: api.formatEphemeralContent('Category not found.') });
     return;
   }
   const buildEmbed = getEmbedBuilder('CategoryInfo');
   const embed = buildEmbed ? await buildEmbed(category, guild, { imageURL: mainImageURL }) : null;
   if (!embed) {
-    await interaction.editReply({ content: api.formatEphemeralContent('Không tạo được embed.') }).catch(() => {});
+    await interaction.editReply({ content: api.formatEphemeralContent('Could not create embed.') }).catch(() => {});
     return;
   }
   const { row } = buildCategoryInfoComponents(category.id, category, guild);

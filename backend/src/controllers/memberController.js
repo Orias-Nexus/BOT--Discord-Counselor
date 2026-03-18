@@ -9,7 +9,7 @@ function isGatewayOrHtmlError(message) {
 function normalizeError(err) {
     const msg = err?.message ?? String(err);
     if (isGatewayOrHtmlError(msg)) {
-        return { status: 503, message: 'Database tạm thời không khả dụng (502). Vui lòng thử lại sau.' };
+        return { status: 503, message: 'Database temporarily unavailable (502). Please try again later.' };
     }
     return { status: 500, message: msg };
 }
@@ -75,7 +75,7 @@ export async function getLevelRange(req, res) {
     }
 }
 
-/** POST /api/members/process-expires: đặt Good cho member hết hạn, trả về list để directive áp dụng role. */
+/** POST /api/members/process-expires: set Good for expired members, return list for directive to apply roles. */
 export async function processExpires(req, res) {
     try {
         const result = await memberService.processExpiredMembers();

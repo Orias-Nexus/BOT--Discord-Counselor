@@ -37,12 +37,12 @@ const SERVER_INFO_ACTIONS = ['StatusTimeout', 'StatusRole', 'StatusUnrole'];
 const SERVER_INFO_ACTIONS_ROW2 = ['SetVoiceCreator', 'SetServerStats'];
 const CATEGORY_INFO_ACTIONS_BASE = ['CategoryClone'];
 const CHANNEL_INFO_ACTIONS = ['ChannelClone', 'ChannelSync', 'ChannelPrivate', 'ChannelPublic', 'ChannelSFW', 'ChannelNSFW'];
-/** Tối đa 5 nút mỗi ActionRow (giới hạn Discord). Chia 8 action thành 2 hàng. */
+/** Max 5 buttons per ActionRow (Discord limit). Split 8 actions into 2 rows. */
 const MEMBER_INFO_ACTIONS_ROW1 = ['MemberRename', 'MemberSetlevel', 'MemberMove', 'MemberReset'];
 const MEMBER_INFO_ACTIONS_ROW2 = ['MemberWarn', 'MemberMute', 'MemberLock', 'MemberKick'];
 
 const PREFIX = 'action_';
-/** Màu mặc định cho mọi nút không set màu (giống nút Sync của channel). */
+/** Default style for buttons without explicit color (same as channel Sync button). */
 const DEFAULT_BUTTON_STYLE = ButtonStyle.Secondary;
 const STYLE_MAP = { Default: ButtonStyle.Primary, Green: ButtonStyle.Success, Red: ButtonStyle.Danger };
 
@@ -61,7 +61,7 @@ function buildActionRow(scriptNames, contextId, styleOverrides = {}, labelOverri
   return row;
 }
 
-/** Nhãn nút Good theo trạng thái member (Good / Warning / Muted / Locked). */
+/** Good button label by member status (Good / Warning / Muted / Locked). */
 function getMemberResetLabel(memberStatus) {
   switch (memberStatus) {
     case 'Warning': return 'Unwarn';

@@ -2,10 +2,28 @@ import * as api from '../api.js';
 import { buildMemberInfoPayload, findAndUpdateMemberInfoInGuild } from '../actions/embedUpdate.js';
 
 const INTERVAL_MS = 60 * 1000;
+const RETRY_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 2_000;
+
+function isTransientBackendError(err) {
+  const code = err?.cause?.code ?? err?.code;
+  const msg = err?.message ?? String(err);
+  const isAbort = err?.name === 'AbortError';
+  return (
+    isAbort ||
+    code === 'ECONNREFUSED' ||
+    code === 'ECONNRESET' ||
+    code === 'ETIMEDOUT' ||
+    msg === 'fetch failed'
+  );
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 /**
- * Áp dụng thao tác role giống khi ấn Good (MemberReset): gỡ role_warn, role_mute, role_lock;
- * thêm unrole_mute, unrole_lock. Không gửi tin nhắn.
+ * Apply roles like Good (MemberReset): remove role_warn/mute/lock; add unrole_mute, unrole_lock. No message sent.
  */
 async function applyGoodRoles(client, serverId, userId) {
   const guild = client.guilds.cache.get(serverId);
@@ -25,7 +43,7 @@ async function applyGoodRoles(client, serverId, userId) {
 }
 
 /**
- * Cập nhật embed Member Info (nếu có message hiển thị member đó) sau khi expires đặt Good.
+ * Update Member Info embed (if message exists for that member) after expires sets Good.
  */
 async function updateMemberInfoEmbedIfExists(client, serverId, userId) {
   const guild = client.guilds.cache.get(serverId);
@@ -39,21 +57,35 @@ async function updateMemberInfoEmbedIfExists(client, serverId, userId) {
 
 export function startExpiresCheck(client) {
   async function run() {
-    try {
-      const { count, updated = [] } = await api.processExpires();
-      if (count === 0) return;
-      for (const { server_id, user_id } of updated) {
-        await applyGoodRoles(client, server_id, user_id);
-        await updateMemberInfoEmbedIfExists(client, server_id, user_id);
+    let lastErr;
+    for (let attempt = 1; attempt <= RETRY_ATTEMPTS; attempt++) {
+      try {
+        const { count, updated = [] } = await api.processExpires();
+        if (count === 0) return;
+        for (const { server_id, user_id } of updated) {
+          await applyGoodRoles(client, server_id, user_id);
+          await updateMemberInfoEmbedIfExists(client, server_id, user_id);
+        }
+        return;
+      } catch (err) {
+        lastErr = err;
+        if (attempt < RETRY_ATTEMPTS && isTransientBackendError(err)) {
+          await sleep(RETRY_DELAY_MS);
+          continue;
+        }
+        break;
       }
-    } catch (err) {
-      const code = err?.cause?.code ?? err?.code;
-      const msg = err?.message ?? String(err);
-      if (code === 'ECONNREFUSED' || msg === 'fetch failed') {
-        console.warn('[expiresCheck] Backend không phản hồi (fetch failed). Kiểm tra backend đã chạy chưa và BACKEND_API_URL trong .env.');
-      } else {
-        console.warn('[expiresCheck]', msg, code ? `(${code})` : '');
-      }
+    }
+    if (!lastErr) return;
+    const code = lastErr?.cause?.code ?? lastErr?.code;
+    const msg = lastErr?.message ?? String(lastErr);
+    if (isTransientBackendError(lastErr)) {
+      console.warn(
+        '[expiresCheck] Backend not responding after %d attempts. Check backend is running and BACKEND_API_URL in .env.',
+        RETRY_ATTEMPTS
+      );
+    } else {
+      console.warn('[expiresCheck]', msg, code ? `(${code})` : '');
     }
   }
   run();

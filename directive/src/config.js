@@ -1,6 +1,6 @@
 /**
  * Config from env. BACKEND_API_URL defaults to http://localhost:4000.
- * mainImageURL: ảnh embed (Discord cần URL). Khi chạy local dùng GitHub raw (Discord không tải được localhost).
+ * mainImageURL: embed image (Discord needs URL). For local use GitHub raw (Discord cannot load localhost).
  */
 export const BACKEND_API_URL =
   process.env.BACKEND_API_URL ?? 'http://localhost:4000';
@@ -22,7 +22,7 @@ export const mainImageURL =
   process.env.MAIN_IMAGE_URL ?? DEFAULT_MAIN_IMAGE_URL;
 
 if (process.env.MAIN_IMAGE_URL) {
-  console.log('[config] mainImageURL: từ env MAIN_IMAGE_URL =', mainImageURL);
+  console.log('[config] mainImageURL from env MAIN_IMAGE_URL =', mainImageURL);
 } else {
   console.log(
     '[config] mainImageURL: BACKEND_API_URL=%s, isLocalBackend=%s → %s',
