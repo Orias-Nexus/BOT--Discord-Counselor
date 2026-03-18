@@ -2,20 +2,20 @@
  * Embed route: script → replyType (embed/ephemeral) and builder (embed build fn).
  */
 
-import { getServerInfoEmbed } from './embeds/serverInfo.js';
-import { getCategoryInfoEmbed } from './embeds/categoryInfo.js';
-import { getChannelInfoEmbed } from './embeds/channelInfo.js';
-import { getMemberInfoEmbed } from './embeds/memberInfo.js';
-import { getResolvedEmbedForDisplay } from './embeds/embedTemplate.js';
+import { getServerInfoEmbed } from './embeds/ServerInfo.js';
+import { getCategoryInfoEmbed } from './embeds/CategoryInfo.js';
+import { getChannelInfoEmbed } from './embeds/ChannelInfo.js';
+import { getMemberInfoEmbed } from './embeds/MemberInfo.js';
+import { getResolvedEmbedForDisplay } from './embeds/.embedContext.js';
 
 /** script name -> { replyType: 'embed', builder? } */
 export const EMBED_BY_SCRIPT = {
   ServerInfo: { replyType: 'embed', builder: 'serverInfoEmbed.buildEmbed' },
   CategoryInfo: { replyType: 'embed', builder: 'categoryInfoEmbed.buildCategoryEmbed' },
-  ChanelInfo: { replyType: 'embed', builder: 'channelInfoEmbed.buildChannelEmbed' },
+  ChannelInfo: { replyType: 'embed', builder: 'channelInfoEmbed.buildChannelEmbed' },
   MemberInfo: { replyType: 'embed', builder: 'memberInfoEmbed.buildEmbed' },
-  EmbedCreate: { replyType: 'embed', builder: 'embedTemplate.getResolvedEmbedForDisplay' },
-  EmbedEdit: { replyType: 'embed', builder: 'embedTemplate.getResolvedEmbedForDisplay' },
+  EmbedCreate: { replyType: 'embed', builder: 'embedContext.getResolvedEmbedForDisplay' },
+  EmbedEdit: { replyType: 'embed', builder: 'embedContext.getResolvedEmbedForDisplay' },
 };
 
 /** builder key → embed build fn */
@@ -24,7 +24,7 @@ const EMBED_BUILDER_FNS = {
   'categoryInfoEmbed.buildCategoryEmbed': getCategoryInfoEmbed,
   'channelInfoEmbed.buildChannelEmbed': getChannelInfoEmbed,
   'memberInfoEmbed.buildEmbed': getMemberInfoEmbed,
-  'embedTemplate.getResolvedEmbedForDisplay': getResolvedEmbedForDisplay,
+  'embedContext.getResolvedEmbedForDisplay': getResolvedEmbedForDisplay,
 };
 
 /**
