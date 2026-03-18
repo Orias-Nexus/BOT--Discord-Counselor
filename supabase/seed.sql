@@ -25,7 +25,7 @@ INSERT INTO "DiscordCounselor".functions (script_id, script, slash, action, even
 ("DiscordCounselor".uuidv7(), 'CategoryClone', '/categoryclone', 'Clone', NULL),
 ("DiscordCounselor".uuidv7(), 'CategoryPrivate', '/categoryprivate', 'Private', NULL),
 ("DiscordCounselor".uuidv7(), 'CategoryPublic', '/categorypublic', 'Public', NULL),
-("DiscordCounselor".uuidv7(), 'ChanelInfo', '/channelinfo', NULL, NULL),
+("DiscordCounselor".uuidv7(), 'ChannelInfo', '/channelinfo', NULL, NULL),
 ("DiscordCounselor".uuidv7(), 'ChannelClone', '/channelclone', 'Clone', NULL),
 ("DiscordCounselor".uuidv7(), 'ChannelCreate', NULL, NULL, 'VoiceStateUpdate'),
 ("DiscordCounselor".uuidv7(), 'ChannelSync', '/channelsync', 'Sync', NULL),
