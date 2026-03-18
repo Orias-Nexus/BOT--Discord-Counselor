@@ -92,7 +92,7 @@ const SLASH_LIST = [
   },
   {
     name: 'channelinfo',
-    script: 'ChanelInfo',
+    script: 'ChannelInfo',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) =>
       b.addChannelOption((o) =>
@@ -299,6 +299,61 @@ const SLASH_LIST = [
         )
         .addStringOption((o) =>
           o.setName('confirm').setDescription('Type embed name to confirm delete').setRequired(true)
+        ),
+  },
+  {
+    name: 'messagesend',
+    script: 'MessageSend',
+    defaultMemberPermissions: PermissionFlagsBits.ManageMessages,
+    options: (b) =>
+      b
+        .addChannelOption((o) =>
+          o
+            .setName('channel')
+            .setDescription('Target channel (default: current)')
+            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
+        )
+        .addStringOption((o) =>
+          o
+            .setName('embed')
+            .setDescription('Embed (from saved embeds list)')
+            .setAutocomplete(true)
+        )
+        .addStringOption((o) =>
+          o
+            .setName('input')
+            .setDescription('Raw embed JSON')
+        ),
+  },
+  {
+    name: 'messagedele',
+    script: 'MessageDele',
+    defaultMemberPermissions: PermissionFlagsBits.ManageMessages,
+    options: (b) =>
+      b
+        .addIntegerOption((o) =>
+          o
+            .setName('number')
+            .setDescription('How many messages to delete (max 100)')
+            .setMinValue(1)
+            .setMaxValue(100)
+            .setRequired(true)
+        )
+        .addRoleOption((o) =>
+          o
+            .setName('role')
+            .setDescription('Only delete messages from members with this role')
+        )
+        .addUserOption((o) =>
+          o
+            .setName('member')
+            .setDescription('Only delete messages from this member')
+        )
+        .addChannelOption((o) =>
+          o
+            .setName('channel')
+            .setDescription('Target channel (default: current)')
+            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
         ),
   },
 ];
