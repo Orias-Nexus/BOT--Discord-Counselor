@@ -1,6 +1,6 @@
 import { ActionRowBuilder, StringSelectMenuBuilder, MessageFlags } from 'discord.js';
 import * as api from '../api.js';
-import { EMBED_APPLY_SELECT_PREFIX } from '../embeds/embedEditUtils.js';
+import { EMBED_APPLY_SELECT_PREFIX } from '../embeds/embedEdit.js';
 
 const MESSAGE_TYPES = ['Greeting', 'Leaving', 'Boosting'];
 
@@ -42,9 +42,9 @@ export async function run(interaction, client, actionContext = null) {
         label: type,
         value: type,
         description: forTypes.some((m) => m.messages_type === type && m.embed_id) ? 'Using embed' : 'Not set',
+        default: defaultValues.includes(type),
       }))
-    )
-    .setDefaultValues(defaultValues);
+    );
 
   const row = new ActionRowBuilder().addComponents(select);
   const payload = {
