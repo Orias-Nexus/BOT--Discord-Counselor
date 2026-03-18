@@ -39,9 +39,9 @@ docker compose up redis -d    # Khởi động Redis bằng Docker
 
 npm run install:all           # Lần đầu: cài dependency cho directive, backend, frontend
 
-# npx prisma db pull:backend  # Kéo schema từ database nếu chưa có schema.prisma
-npx prisma generate:backend   # Tạo schema client trên server
-# npx prisma db push:backend  # Đẩy schema lên database nếu database chưa có schema
+# npm run prisma:pull:backend  # Kéo schema từ database nếu chưa có schema.prisma
+npm run prisma:generate:backend   # Tạo schema client trên server
+# npm run prisma:push:backend  # Đẩy schema lên database nếu database chưa có schema
 npm run dev:backend           # Chạy process backend server
 
 npm run deploy:directive      # Đăng ký Slash Commands lên Discord
@@ -100,8 +100,8 @@ npm run dev                   # Chạy Vite dev server port 3000
 Hình thức tự động khởi chạy Production môi trường Staging/Production lên các máy ảo cá nhân (VPS AWS, DO, Linode...).
 
 1. Chỉnh sửa cấu hình `.env` cho `backend` và `directive`. Lưu ý dùng URL nội bộ của Docker thay vì `localhost`:
-   - `backend/.env`: Cấu hình `REDIS_URL=redis://redis:6379`
-   - `directive/.env`: Cấu hình `REDIS_URL=redis://redis:6379` và `BACKEND_API_URL=http://backend:4000/api`
+  - `backend/.env`: Cấu hình `REDIS_URL=redis://redis:6379`
+  - `directive/.env`: Cấu hình `REDIS_URL=redis://redis:6379` và `BACKEND_API_URL=http://backend:4000/api`
 2. Tại root thư mục, build và khởi chạy hệ thống:
 
 ```bash
@@ -136,9 +136,10 @@ Khuyến khích tách rời 3 thành phần Database, Redis và App Source code.
 
 ## 7. Tài liệu nội bộ
 
-- [Kiến trúc &amp; cài đặt](docs/README.md)
+- [Kiến trúc & cài đặt](docs/README.md)
 
 ## 8. Trình độ yêu cầu
 
 - Môi trường chạy ít nhất Node.js >= 18
 - Máy cài đặt sẵn Docker & Docker Compose (nếu sử dụng docker-compose)
+
