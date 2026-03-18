@@ -1,7 +1,7 @@
 import { ChannelType } from 'discord.js';
 import { EMBED_COLORS } from './schema.js';
 import { getChannelStatus } from './utils.js';
-import { resolveEmbed } from './embedContext.js';
+import { resolveEmbed } from './.embedContext.js';
 
 function getCategoryChannelCounts(guild, categoryId) {
   const children = guild.channels.cache.filter((c) => c.parentId === categoryId);
@@ -38,7 +38,7 @@ export async function getCategoryInfoEmbed(category, guild, options = {}) {
       { name: 'ID', value: category.id, inline: true },
       { name: 'Name', value: '{channel_name}', inline: true },
       { name: '\u200B', value: '\u200B', inline: true },
-      { name: 'Chanel', value: channelLine, inline: true },
+      { name: 'Channel', value: channelLine, inline: true },
       { name: 'Status', value: status, inline: true },
       { name: '\u200B', value: '\u200B', inline: true },
     ],
