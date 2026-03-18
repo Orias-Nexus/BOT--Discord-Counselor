@@ -27,7 +27,6 @@ export async function run(interaction, client, _actionContext) {
     await interaction.editReply({ content: api.formatEphemeralContent('Could not create embed.') }).catch(() => {});
     return;
   }
-  const { row, row2 } = buildServerInfoComponents();
-  const components = [row, row2].filter(Boolean);
+  const components = buildServerInfoComponents();
   await interaction.editReply({ embeds: [embed], components });
 }

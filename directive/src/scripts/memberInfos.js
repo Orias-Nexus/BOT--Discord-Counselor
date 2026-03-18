@@ -38,10 +38,9 @@ export async function run(interaction, client, actionContext = null) {
     await interaction.editReply({ content: api.formatEphemeralContent('Could not create embed.') }).catch(() => {});
     return;
   }
-  const { row, row2 } = buildMemberInfoComponents(member.id, profile);
-  const components = [row, row2].filter(Boolean);
+  const components = buildMemberInfoComponents(member.id, profile);
   try {
-    await interaction.editReply({ embeds: [embed], components: components.length ? components : [] });
+    await interaction.editReply({ embeds: [embed], components });
   } catch (err) {
     console.error('[MemberInfo] editReply', err);
     await interaction.editReply({ content: api.formatEphemeralContent('Could not send embed.') }).catch(() => {});
