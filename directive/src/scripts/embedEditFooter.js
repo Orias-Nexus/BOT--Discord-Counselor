@@ -1,6 +1,7 @@
 import { MessageFlags } from 'discord.js';
 import * as api from '../api.js';
-import { updateEmbedAndResolve, mergeFooter } from '../embeds/embedEditUtils.js';
+import { updateEmbedAndResolve } from '../embeds/embedEdit.js';
+import { mergeFooter } from '../utils/embedFormatters.js';
 
 export async function run(interaction, client, actionContext) {
   const guild = interaction?.guild;
@@ -10,14 +11,14 @@ export async function run(interaction, client, actionContext) {
   if (!guild || !embedId || !modalValues) return;
   try {
     const meta = { member: interaction.member ?? null, guild, channel: interaction.channel ?? null };
-    const { resolved, row } = await updateEmbedAndResolve(
+    const { resolved, components } = await updateEmbedAndResolve(
       guild.id,
       embedId,
       (embed) => mergeFooter(embed, modalValues),
       meta
     );
     if (interaction.message) {
-      await interaction.message.edit({ embeds: [resolved], components: row }).catch(() => {});
+      await interaction.message.edit({ embeds: [resolved], components }).catch(() => {});
     }
   } catch (err) {
     console.error('[EmbedEditFooter]', err);

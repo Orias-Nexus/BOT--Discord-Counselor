@@ -7,12 +7,13 @@ import { formatEphemeralContent } from '../api.js';
 const SCRIPT_NAMES = [
   'ServerInfo', 'StatusTimeout', 'StatusRole', 'StatusUnrole', 'SetVoiceCreator', 'SetServerStats',
   'CategoryInfo', 'CategoryClone', 'CategoryPrivate', 'CategoryPublic',
-  'ChanelInfo', 'ChannelClone', 'ChannelCreate', 'ChannelSync', 'ChannelPrivate', 'ChannelPublic', 'ChannelSFW', 'ChannelNSFW',
+  'ChannelInfo', 'ChannelClone', 'ChannelCreate', 'ChannelSync', 'ChannelPrivate', 'ChannelPublic', 'ChannelSFW', 'ChannelNSFW',
   'MemberInfo', 'MemberRename', 'MemberSetlevel', 'MemberMove', 'MemberReset', 'MemberWarn', 'MemberMute', 'MemberLock', 'MemberKick',
   'MemberGreeting', 'MemberLeaving', 'MemberBoosting',
   'GreetingChannel', 'LeavingChannel', 'BoostingChannel', 'GreetingMessage', 'LeavingMessage', 'BoostingMessage',
   'EmbedCreate', 'EmbedEdit', 'EmbedRename', 'EmbedDelete', 'EmbedApply',
   'EmbedEditBasic', 'EmbedEditAuthor', 'EmbedEditFooter', 'EmbedEditImages',
+  'MessageSend', 'MessageDele',
 ];
 
 const scriptCache = new Map();

@@ -3,7 +3,7 @@
  * Only when channel_id and embed_id are set (user-defined embed).
  */
 import * as api from './api.js';
-import { resolveEmbed } from './embeds/embedContext.js';
+import { messageSender } from './utils/messageSender.js';
 
 /**
  * Send embed to channel per Messages config (channel_id, embed_id). Requires embed_id in config (no default embed).
@@ -23,23 +23,19 @@ export async function sendEventMessage(guild, messagesType, meta = {}) {
   if (!config) return false;
   const channelId = config.channel_id ?? null;
   if (!channelId || channelId === '0') return false;
-  const channel = await guild.channels.fetch(channelId).catch(() => null);
-  if (!channel) return false;
-
-  const resolvedMeta = { ...meta, guild: meta.guild ?? guild, channel };
 
   let embedData;
   if (config.embed_id) {
     const row = await api.getEmbed(guild.id, config.embed_id).catch(() => null);
     if (row?.embed) {
-      embedData = await resolveEmbed(row.embed, resolvedMeta);
+      embedData = row.embed;
     }
   }
   if (!embedData) return false;
 
   try {
-    await channel.send({ embeds: [embedData] });
-    return true;
+    const res = await messageSender(guild, channelId, embedData, meta);
+    return res.ok;
   } catch (err) {
     return false;
   }

@@ -54,8 +54,8 @@ const MODALS = {
     inputs: [
       { id: 'title', label: 'Title', placeholder: 'Embed Title', required: false },
       { id: 'description', label: 'Description', placeholder: 'e.g. {user_name}, {user_avatar}', required: false, style: 'Paragraph' },
-      { id: 'color', label: 'Color (hex or decimal)', placeholder: 'e.g. 5763719 or 0x57F287', required: false },
-      { id: 'fields', label: 'Fields (content inside [ ] only)', placeholder: '{"name":"Name","value":"Value","inline":true}', required: false, style: 'Paragraph' },
+      { id: 'color', label: 'Hex Color', placeholder: '#57F287', required: false },
+      { id: 'fields', label: 'Fields', placeholder: '{"name":"name","value":"value","inline":true/false}', required: false, style: 'Paragraph' },
     ],
   },
   EmbedEditAuthor: {
@@ -137,7 +137,13 @@ export function getModalForScript(scriptName, contextPart, extra = {}) {
     if (scriptName === 'EmbedEditBasic') {
       if (id === 'title') return embedData.title ?? '';
       if (id === 'description') return embedData.description ?? '';
-      if (id === 'color') return embedData.color != null ? String(embedData.color) : '';
+      if (id === 'color') {
+        if (embedData.color == null) return '';
+        const n = Number(embedData.color);
+        if (!Number.isFinite(n)) return '';
+        const hex = Math.max(0, Math.min(0xffffff, Math.trunc(n))).toString(16).padStart(6, '0').toUpperCase();
+        return `#${hex}`;
+      }
       if (id === 'fields') {
         if (!Array.isArray(embedData.fields) || embedData.fields.length === 0) return '';
         const raw = JSON.stringify(embedData.fields);

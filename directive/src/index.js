@@ -13,7 +13,7 @@ import { startExpiresCheck } from './jobs/expiresCheck.js';
 import { startStatsCheck } from './jobs/statsCheck.js';
 import { EVENT_HANDLERS } from './events/eventRegistry.js';
 import { isServerStatsSelectId, doSetServerStats } from './scripts/setServerStats.js';
-import { EMBED_APPLY_SELECT_PREFIX } from './embeds/embedEditUtils.js';
+import { EMBED_APPLY_SELECT_PREFIX } from './embeds/embedEdit.js';
 import { EMBED_BY_SCRIPT } from './embedRoutes.js';
 import * as api from './api.js';
 
@@ -54,7 +54,7 @@ for (const { discordEvent, scriptName, buildContext } of EVENT_HANDLERS) {
 }
 
 /** Slash commands with target option (embed_id). */
-const EMBED_TARGET_COMMANDS = ['embededit', 'embedrename', 'embeddelete'];
+const EMBED_TARGET_COMMANDS = ['embededit', 'embedrename', 'embeddelete', 'messagesend'];
 /** Slash commands with embed option (embed_name for greeting/leaving/boosting). */
 const EMBED_OPTION_COMMANDS = ['greetingmessage', 'leavingmessage', 'boostingmessage'];
 
