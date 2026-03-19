@@ -2,6 +2,7 @@ import { MessageFlags } from 'discord.js';
 import * as api from '../api.js';
 import { ACTION_PREFIX } from '../utils/components.js';
 import { runScript } from '../scripts/runScript.js';
+import { getVoiceRoomControlOwner } from '../scripts/channelCreate.js';
 import { SCRIPTS_NEED_MODAL, getModalForScript, buildModalContext } from './modalConfig.js';
 import { getEmbedUpdatePayload } from './embedUpdate.js';
 
@@ -35,6 +36,29 @@ export async function handleAction(interaction, client, timing = {}) {
   const parsed = parseCustomId(interaction.customId);
   if (!parsed) return false;
   const { scriptName, contextId } = parsed;
+  const ownerOnlyRoomScripts = new Set([
+    'ChannelPrivate',
+    'ChannelPublic',
+    'ChannelSync',
+    'ChannelSFW',
+    'ChannelNSFW',
+    'ChannelClone',
+  ]);
+
+  if (ownerOnlyRoomScripts.has(scriptName)) {
+    const controlOwnerId = getVoiceRoomControlOwner(interaction.message?.id);
+    if (controlOwnerId && interaction.user?.id !== controlOwnerId) {
+      const deniedPayload = {
+        content: api.formatEphemeralContent('Only the room owner can use these controls.'),
+        flags: MessageFlags.Ephemeral,
+      };
+      if (interaction.deferred) await interaction.editReply(deniedPayload).catch(() => {});
+      else if (interaction.replied) await interaction.followUp(deniedPayload).catch(() => {});
+      else await interaction.reply(deniedPayload).catch(() => {});
+      return true;
+    }
+  }
+
   if (SCRIPTS_NEED_MODAL.has(scriptName)) {
     const guildId = interaction.guildId ?? '';
     const guild = interaction.guild ?? null;
