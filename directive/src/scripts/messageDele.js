@@ -1,6 +1,9 @@
 import { MessageFlags, PermissionFlagsBits } from 'discord.js';
 import * as api from '../api.js';
 
+const MAX_BULK_DELETE = 100;
+const MAX_DELETE_ALL_TOTAL = 5000;
+
 function toUserId(userOrMember) {
   const id = userOrMember?.user?.id ?? userOrMember?.id ?? null;
   return id ? String(id) : null;
@@ -23,18 +26,10 @@ export async function run(interaction, client) {
   }
 
   const amount = interaction.options?.getInteger('number');
-  const number = typeof amount === 'number' ? Math.min(Math.max(amount, 1), 100) : 0;
-  if (!number) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Number is required.'));
-    return;
-  }
+  const requestedLimit = typeof amount === 'number' ? Math.min(Math.max(amount, 1), MAX_BULK_DELETE) : null;
 
   const role = interaction.options?.getRole('role');
   const member = interaction.options?.getUser('member');
-  if (!role && !member) {
-    await api.replyOrEdit(interaction, api.formatEphemeralContent('Provide role or member.'));
-    return;
-  }
 
   const channel = interaction.options?.getChannel('channel') ?? interaction.channel;
   if (!channel || !channel.isTextBased?.() || !('bulkDelete' in channel)) {
@@ -55,40 +50,67 @@ export async function run(interaction, client) {
     const userId = member ? toUserId(member) : null;
     const roleId = role?.id ? String(role.id) : null;
 
-    const fetched = await channel.messages.fetch({ limit: 100 }).catch(() => null);
-    const all = fetched ? Array.from(fetched.values()) : [];
+    const memberCache = new Map();
+    const getGuildMember = async (authorId) => {
+      if (!authorId) return null;
+      if (memberCache.has(authorId)) return memberCache.get(authorId);
+      const gm = await guild.members.fetch(authorId).catch(() => null);
+      memberCache.set(authorId, gm);
+      return gm;
+    };
 
-    const matched = [];
-    for (const msg of all) {
-      if (matched.length >= number) break;
-      if (!isBulkDeletable(msg)) continue;
+    const matchMessage = async (msg) => {
+      if (!isBulkDeletable(msg)) return false;
 
       if (userId) {
-        if (String(msg.author?.id ?? '') !== userId) continue;
-        matched.push(msg);
-        continue;
+        return String(msg.author?.id ?? '') === userId;
       }
 
       if (roleId) {
         const authorId = String(msg.author?.id ?? '');
-        if (!authorId) continue;
-        const gm = msg.member ?? (await guild.members.fetch(authorId).catch(() => null));
-        if (!gm?.roles?.cache?.has(roleId)) continue;
-        matched.push(msg);
+        const gm = msg.member ?? (await getGuildMember(authorId));
+        return !!gm?.roles?.cache?.has(roleId);
       }
+
+      return true;
+    };
+
+    let deletedCount = 0;
+    let before = null;
+
+    while (true) {
+      if (requestedLimit != null && deletedCount >= requestedLimit) break;
+      if (requestedLimit == null && deletedCount >= MAX_DELETE_ALL_TOTAL) break;
+
+      const fetched = await channel.messages.fetch({ limit: MAX_BULK_DELETE, ...(before ? { before } : {}) }).catch(() => null);
+      const all = fetched ? Array.from(fetched.values()) : [];
+      if (all.length === 0) break;
+
+      const matchedIds = [];
+      for (const msg of all) {
+        if (requestedLimit != null && matchedIds.length + deletedCount >= requestedLimit) break;
+        // eslint-disable-next-line no-await-in-loop
+        if (await matchMessage(msg)) matchedIds.push(msg.id);
+      }
+
+      before = all[all.length - 1]?.id ?? null;
+
+      if (matchedIds.length > 0) {
+        const deleted = await channel.bulkDelete(matchedIds, true).catch(() => null);
+        deletedCount += deleted?.size ?? 0;
+      }
+
+      if (all.length < MAX_BULK_DELETE) break;
+      if (!before) break;
     }
 
-    if (matched.length === 0) {
+    if (deletedCount === 0) {
       await interaction.editReply({
-        content: api.formatEphemeralContent('No messages matched (or messages are too old to bulk delete).'),
+        content: api.formatEphemeralContent('No messages matched (or messages are too old/pinned to bulk delete).'),
         flags: MessageFlags.Ephemeral,
       }).catch(() => {});
       return;
     }
-
-    const ids = matched.map((m) => m.id);
-    const deleted = await channel.bulkDelete(ids, true).catch(() => null);
-    const deletedCount = deleted?.size ?? 0;
 
     await interaction.editReply({
       content: api.formatEphemeralContent(`Deleted ${deletedCount} message(s).`),

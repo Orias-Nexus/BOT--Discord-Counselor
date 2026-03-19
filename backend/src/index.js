@@ -1,12 +1,12 @@
-import 'dotenv/config';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import { createServer } from 'http';
 import cors from 'cors';
-import { logger } from './utils/logger.js'; // Init logger overrides console.log
-import './utils/redis.js'; // Init redis connection and queue
-import { initSocket } from './utils/socket.js'; // Init socket.io
+import env from './config/env.js';
+import { logger } from './utils/logger.js';
+import './utils/redis.js';
+import { initSocket } from './utils/socket.js';
 import { getHealthStatus } from './utils/health.js';
 import { monitoringMiddleware, getMetrics } from './utils/monitoring.js';
 import { errorHandler, notFoundHandler } from './utils/errorHandler.js';
@@ -23,12 +23,10 @@ import messageRoutes from './routes/messageRoutes.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const httpServer = createServer(app);
-const PORT = process.env.PORT ?? 4000;
 
-// Khởi tạo Websocket Global
 initSocket(httpServer);
 
-app.use(cors({ origin: process.env.FRONTEND_ORIGIN ?? '*' }));
+app.use(cors({ origin: env.frontendOrigin }));
 app.use(express.json());
 app.use(monitoringMiddleware);
 app.use('/assets', express.static(path.join(__dirname, '../../assets')));
@@ -64,6 +62,6 @@ app.use('/api/levels', levelRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-httpServer.listen(PORT, () => {
-  console.log(`Backend API running at http://localhost:${PORT}`);
+httpServer.listen(env.port, () => {
+  console.log(`Backend API running at http://localhost:${env.port} [${env.nodeEnv}]`);
 });

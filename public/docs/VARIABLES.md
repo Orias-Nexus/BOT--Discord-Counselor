@@ -106,14 +106,14 @@ Biến logic nâng cao, yêu cầu đối số.
 Điều khiển cách bot gửi phản hồi.
 
 
-| Group    | Name                   | Value      | Descript                              |
-| -------- | ---------------------- | ---------- | ------------------------------------- |
-| Modifier | `{dm}`                 | —          | Gửi phản hồi vào tin nhắn riêng       |
-| Modifier | `{sendto: channel_id}` | Channel ID | Gửi phản hồi vào kênh cụ thể          |
-| Modifier | `{embed: embed_name}`  | Embed Name | Gọi mẫu embed từ Database             |
-| Modifier | `{silent}`             | —          | Gửi tin nhắn silent (không thông báo) |
-| Modifier | `{delete}`             | —          | Xoá tin nhắn gọi lệnh                 |
-| Modifier | `{delete_reply: 5}`    | Seconds    | Xoá phản hồi bot sau X giây           |
+| Group    | Name                   | Value      | Descript                             |
+| -------- | ---------------------- | ---------- | ------------------------------------ |
+| Modifier | `{dm}`                 | —          | Gửi phản hồi vào tin nhắn riêng      |
+| Modifier | `{sendto: channel_id}` | Channel ID | Gửi phản hồi vào kênh cụ thể         |
+| Modifier | `{embed: embed_id}`    | Embed ID   | Gọi mẫu embed từ Database            |
+| Modifier | `{silent}`             | —          | Gửi tin nhắn silent                  |
+| Modifier | `{delete}`             | —          | Xoá tin nhắn gọi lệnh                |
+| Modifier | `{delete_reply: 5}`    | Seconds    | Xoá phản hồi bot sau X giây          |
 
 
 ---
