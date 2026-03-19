@@ -2,10 +2,10 @@
  * Embed route: script → replyType (embed/ephemeral) and builder (embed build fn).
  */
 
-import { getServerInfoEmbed } from './embeds/ServerInfo.js';
-import { getCategoryInfoEmbed } from './embeds/CategoryInfo.js';
-import { getChannelInfoEmbed } from './embeds/ChannelInfo.js';
-import { getMemberInfoEmbed } from './embeds/MemberInfo.js';
+import { getServerInfoEmbed } from './embeds/serverInfo.js';
+import { getCategoryInfoEmbed } from './embeds/categoryInfo.js';
+import { getChannelInfoEmbed } from './embeds/channelInfo.js';
+import { getMemberInfoEmbed } from './embeds/memberInfo.js';
 import { getResolvedEmbedForDisplay } from './embeds/.embedContext.js';
 
 /** script name -> { replyType: 'embed', builder? } */
