@@ -1,8 +1,15 @@
 import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
+import { buildChannelInfoPayload } from './channelInfo.js';
 
 const MAX_CHANNEL_NAME_LENGTH = 100;
 const SAFE_NAME_REGEX = /[^\w\s-]/g;
+const voiceRoomControlOwners = new Map();
+
+export function getVoiceRoomControlOwner(messageId) {
+  if (!messageId) return null;
+  return voiceRoomControlOwners.get(messageId) ?? null;
+}
 
 function sanitizeChannelName(name) {
   if (typeof name !== 'string') return 'voice';
@@ -65,9 +72,46 @@ async function handleJoinCreator(newState, creatorTriggerChannelIds) {
       parent: sourceChannel.parentId,
       reason: 'ChannelCreate: clone for member',
     });
+
+    await clone.permissionOverwrites.edit(member.id, {
+      ViewChannel: true,
+      Connect: true,
+      Speak: true,
+      Stream: true,
+      UseVAD: true,
+      MoveMembers: true,
+      ManageChannels: true,
+    }).catch((err) => {
+      console.warn('[ChannelCreate] owner permissions:', err?.message);
+    });
+
     await member.voice.setChannel(clone).catch((err) => {
       console.warn('[ChannelCreate] setChannel:', err?.message);
     });
+
+    if (clone.isTextBased()) {
+      const infoPayload = await buildChannelInfoPayload(clone, clone.guild);
+      if (infoPayload) {
+        const controlMessage = await clone.send({
+          content: api.formatEphemeralContent(
+            `Welcome ${member}. This room is yours. Use the controls below to manage room status quickly.`
+          ),
+          ...infoPayload,
+        }).catch((err) => {
+          console.warn('[ChannelCreate] send ChannelInfo:', err?.message);
+          return null;
+        });
+
+        if (controlMessage?.id) {
+          voiceRoomControlOwners.set(controlMessage.id, member.id);
+          // Keep map bounded to avoid unlimited growth in long-running process.
+          if (voiceRoomControlOwners.size > 2000) {
+            const oldestKey = voiceRoomControlOwners.keys().next().value;
+            if (oldestKey) voiceRoomControlOwners.delete(oldestKey);
+          }
+        }
+      }
+    }
   } catch (err) {
     console.warn('[ChannelCreate] clone/setChannel:', err?.message ?? err);
   }
