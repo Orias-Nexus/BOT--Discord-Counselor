@@ -117,91 +117,91 @@
           "name": "ServerInfo",
           "description": "Hiển thị các thông tin của server",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /server_info"]
+          "triggered_by": ["Slash: /serverinfo"]
         },
         {
           "name": "StatusTimeout",
           "description": "Cập nhật 4 trường time_warn, time_mute, time_lock, time_new",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /status_timeout", "Action: Status Timeout"]
+          "triggered_by": ["Slash: /statustimeout", "Action: Status Timeout"]
         },
         {
           "name": "StatusRole",
           "description": "Cập nhật 4 trường role_warn, role_mute, role_lock, role_new",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /status_role", "Action: Status Role"]
+          "triggered_by": ["Slash: /statusrole", "Action: Status Role"]
         },
         {
           "name": "StatusUnrole",
           "description": "Cập nhật 2 trường unrole_mute, unrole_lock",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /status_unrole", "Action: Status Unrole"]
+          "triggered_by": ["Slash: /statusunrole", "Action: Status Unrole"]
         },
         {
           "name": "CategoryInfo",
           "description": "Hiển thị thông tin danh mục",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /category_info"]
+          "triggered_by": ["Slash: /categoryinfo"]
         },
         {
           "name": "CategoryClone",
           "description": "Sao chép danh mục (kể cả toàn bộ kênh trong danh mục đó)",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /category_clone", "Action: Clone"]
+          "triggered_by": ["Slash: /categoryclone", "Action: Clone"]
         },
         {
           "name": "CategoryPrivate",
           "description": "Chuyển trạng thái danh mục sang Private",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /category_private", "Action: Private"]
+          "triggered_by": ["Slash: /categoryprivate", "Action: Private"]
         },
         {
           "name": "CategoryPublic",
           "description": "Chuyển trạng thái danh mục sang Public",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /category_public", "Action: Public"]
+          "triggered_by": ["Slash: /categorypublic", "Action: Public"]
         },
         {
           "name": "ChannelInfo",
           "description": "Hiển thị thông tin kênh",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /channel_info"]
+          "triggered_by": ["Slash: /channelinfo"]
         },
         {
           "name": "ChannelClone",
           "description": "Sao chép kênh",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /channel_clone", "Action: Clone"]
+          "triggered_by": ["Slash: /channelclone", "Action: Clone"]
         },
         {
           "name": "ChannelSync",
           "description": "Đồng bộ kênh với danh mục chứa nó",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /channel_sync", "Action: Sync"]
+          "triggered_by": ["Slash: /channelsync", "Action: Sync"]
         },
         {
           "name": "ChannelPrivate",
           "description": "Chuyển trạng thái kênh sang Private",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /channel_private", "Action: Private"]
+          "triggered_by": ["Slash: /channelprivate", "Action: Private"]
         },
         {
           "name": "ChannelPublic",
           "description": "Chuyển trạng thái kênh sang Public",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /channel_public", "Action: Public"]
+          "triggered_by": ["Slash: /channelpublic", "Action: Public"]
         },
         {
           "name": "ChannelSFW",
           "description": "Chuyển trạng thái kênh sang SFW",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /channel_sfw", "Action: SFW"]
+          "triggered_by": ["Slash: /channelsfw", "Action: SFW"]
         },
         {
           "name": "ChannelNSFW",
           "description": "Chuyển trạng thái kênh sang NSFW",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /channel_nsfw", "Action: NSFW"]
+          "triggered_by": ["Slash: /channelnsfw", "Action: NSFW"]
         },
         {
           "name": "ChannelCreate",
@@ -211,69 +211,69 @@
         },
         {
           "name": "SetVoiceCreator",
-          "description": "Đặt một kênh thoại làm kênh Creator (ghi vào bảng Channels). Gọi từ Slash /set_voice_creator hoặc nút Voice Creator trong server_info.",
+          "description": "Đặt một kênh thoại làm kênh Creator (ghi vào bảng Channels). Gọi từ Slash /setvoicecreator hoặc nút Voice Creator trong serverinfo.",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /set_voice_creator", "Action: Voice Creator"]
+          "triggered_by": ["Slash: /setvoicecreator", "Action: Voice Creator"]
         },
         {
           "name": "SetServerStats",
           "description": "Xoá các kênh stat cũ của server, tạo 6 kênh thoại stat (Member, Bot, Role, Category, Channel, Boost) trong danh mục đã chọn và ghi vào bảng Channels.",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /set_server_stats", "Action: Server Stats"]
+          "triggered_by": ["Slash: /setserverstats", "Action: Server Stats"]
         },
         {
           "name": "MemberInfo",
           "description": "Hiển thị thông tin thành viên",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /member_info"]
+          "triggered_by": ["Slash: /memberinfo"]
         },
         {
           "name": "MemberRename",
           "description": "Đổi tên thành viên",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /member_rename", "Action: Name"]
+          "triggered_by": ["Slash: /memberrename", "Action: Name"]
         },
         {
           "name": "MemberSetlevel",
           "description": "Đổi level thành viên, member_exp sẽ bằng với exp yêu cầu của level, user_level không đổi",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /member_level", "Action: Level"]
+          "triggered_by": ["Slash: /memberlevel", "Action: Level"]
         },
         {
           "name": "MemberMove",
           "description": "Di chuyển thành viên",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /member_move", "Action: Move"]
+          "triggered_by": ["Slash: /membermove", "Action: Move"]
         },
         {
           "name": "MemberReset",
           "description": "Đặt lại trạng thái thành viên về \"Good\"; gỡ role newbie",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /member_reset", "Action: Good"]
+          "triggered_by": ["Slash: /memberreset", "Action: Good"]
         },
         {
           "name": "MemberWarn",
           "description": "Đổi trạng thái thành viên thành \"Warn\"; gắn role_warn",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /member_warn", "Action: Warn"]
+          "triggered_by": ["Slash: /memberwarn", "Action: Warn"]
         },
         {
           "name": "MemberMute",
           "description": "Đổi trạng thái thành viên thành \"Mute\"; gắn role_mute",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /member_mute", "Action: Mute"]
+          "triggered_by": ["Slash: /membermute", "Action: Mute"]
         },
         {
           "name": "MemberLock",
           "description": "Đổi trạng thái thành viên thành \"Lock\"; gắn role_lock",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /member_lock", "Action: Lock"]
+          "triggered_by": ["Slash: /memberlock", "Action: Lock"]
         },
         {
           "name": "MemberKick",
           "description": "Đổi trạng thái thành viên thành \"Kick\"",
           "required_variable": ["interaction", "client"],
-          "triggered_by": ["Slash: /member_kick", "Action: Kick"]
+          "triggered_by": ["Slash: /memberkick", "Action: Kick"]
         },
         {
           "name": "MemberGreeting",
@@ -333,154 +333,154 @@
         {
           "label": "Status Timeout",
           "script": "StatusTimeout",
-          "parent_embed_schema": "/server_info",
+          "parent_embed_schema": "/serverinfo",
           "color": "Default",
           "note": "None"
         },
         {
           "label": "Status Role",
           "script": "StatusRole",
-          "parent_embed_schema": "/server_info",
+          "parent_embed_schema": "/serverinfo",
           "color": "Default",
           "note": "None"
         },
         {
           "label": "Status Unrole",
           "script": "StatusUnrole",
-          "parent_embed_schema": "/server_info",
+          "parent_embed_schema": "/serverinfo",
           "color": "Default",
           "note": "None"
         },
         {
           "label": "Voice Creator",
           "script": "SetVoiceCreator",
-          "parent_embed_schema": "/server_info",
+          "parent_embed_schema": "/serverinfo",
           "color": "Default",
-          "note": "Gợi ý dùng lệnh /set_voice_creator để chọn kênh"
+          "note": "Gợi ý dùng lệnh /setvoicecreator để chọn kênh"
         },
         {
           "label": "Server Stats",
           "script": "SetServerStats",
-          "parent_embed_schema": "/server_info",
+          "parent_embed_schema": "/serverinfo",
           "color": "Default",
-          "note": "Gợi ý dùng lệnh /set_server_stats để chọn danh mục"
+          "note": "Gợi ý dùng lệnh /setserverstats để chọn danh mục"
         },
         {
           "label": "Clone",
           "script": "CategoryClone",
-          "parent_embed_schema": "/category_info",
+          "parent_embed_schema": "/categoryinfo",
           "color": "Default",
           "note": "None"
         },
         {
           "label": "Private",
           "script": "CategoryPrivate",
-          "parent_embed_schema": "/category_info",
+          "parent_embed_schema": "/categoryinfo",
           "color": "Default",
           "note": "Private hay Public sẽ tuỳ vào trạng thái hiện tại của category"
         },
         {
           "label": "Public",
           "script": "CategoryPublic",
-          "parent_embed_schema": "/category_info",
+          "parent_embed_schema": "/categoryinfo",
           "color": "Default",
           "note": "Private hay Public sẽ tuỳ vào trạng thái hiện tại của category"
         },
         {
           "label": "Clone",
           "script": "ChannelClone",
-          "parent_embed_schema": "/channel_info",
+          "parent_embed_schema": "/channelinfo",
           "color": "Default",
           "note": "None"
         },
         {
           "label": "Sync",
           "script": "ChannelSync",
-          "parent_embed_schema": "/channel_info",
+          "parent_embed_schema": "/channelinfo",
           "color": "Default",
           "note": "None"
         },
         {
           "label": "Private",
           "script": "ChannelPrivate",
-          "parent_embed_schema": "/channel_info",
+          "parent_embed_schema": "/channelinfo",
           "color": "Default",
           "note": "Tuỳ vào trạng thái hiện tại"
         },
         {
           "label": "Public",
           "script": "ChannelPublic",
-          "parent_embed_schema": "/channel_info",
+          "parent_embed_schema": "/channelinfo",
           "color": "Default",
           "note": "Tuỳ vào trạng thái hiện tại"
         },
         {
           "label": "SFW",
           "script": "ChannelSFW",
-          "parent_embed_schema": "/channel_info",
+          "parent_embed_schema": "/channelinfo",
           "color": "Default",
           "note": "Tuỳ vào trạng thái hiện tại"
         },
         {
           "label": "NSFW",
           "script": "ChannelNSFW",
-          "parent_embed_schema": "/channel_info",
+          "parent_embed_schema": "/channelinfo",
           "color": "Default",
           "note": "Tuỳ vào trạng thái hiện tại"
         },
         {
           "label": "Name",
           "script": "MemberRename",
-          "parent_embed_schema": "/member_info",
+          "parent_embed_schema": "/memberinfo",
           "color": "Default",
           "note": "None"
         },
         {
           "label": "Level",
           "script": "MemberSetlevel",
-          "parent_embed_schema": "/member_info",
+          "parent_embed_schema": "/memberinfo",
           "color": "Default",
           "note": "None"
         },
         {
           "label": "Move",
           "script": "MemberMove",
-          "parent_embed_schema": "/member_info",
+          "parent_embed_schema": "/memberinfo",
           "color": "Default",
           "note": "None"
         },
         {
           "label": "Good",
           "script": "MemberReset",
-          "parent_embed_schema": "/member_info",
+          "parent_embed_schema": "/memberinfo",
           "color": "Green",
           "note": "None"
         },
         {
           "label": "Warn",
           "script": "MemberWarn",
-          "parent_embed_schema": "/member_info",
+          "parent_embed_schema": "/memberinfo",
           "color": "Default",
           "note": "None"
         },
         {
           "label": "Mute",
           "script": "MemberMute",
-          "parent_embed_schema": "/member_info",
+          "parent_embed_schema": "/memberinfo",
           "color": "Default",
           "note": "None"
         },
         {
           "label": "Lock",
           "script": "MemberLock",
-          "parent_embed_schema": "/member_info",
+          "parent_embed_schema": "/memberinfo",
           "color": "Default",
           "note": "None"
         },
         {
           "label": "Kick",
           "script": "MemberKick",
-          "parent_embed_schema": "/member_info",
+          "parent_embed_schema": "/memberinfo",
           "color": "Red",
           "note": "None"
         }
@@ -490,7 +490,7 @@
       "description": "Các lệnh slash gọi đến Script. reply_type: embed (embed_schema từ builder) hoặc ephemeral (embed_schema = nội dung tin nhắc). slashs: sub-option; dấu * = bắt buộc.",
       "items": [
         {
-          "command": "/server_info",
+          "command": "/serverinfo",
           "script": "ServerInfo",
           "slashs": [],
           "reply_type": "embed",
@@ -524,7 +524,7 @@
           "actions_included": ["Status Timeout", "Status Role", "Status Unrole", "Voice Creator", "Server Stats"]
         },
         {
-          "command": "/set_voice_creator",
+          "command": "/setvoicecreator",
           "script": "SetVoiceCreator",
           "slashs": ["target*: chọn kênh thoại làm kênh Creator"],
           "reply_type": "ephemeral",
@@ -532,7 +532,7 @@
           "actions_included": []
         },
         {
-          "command": "/set_server_stats",
+          "command": "/setserverstats",
           "script": "SetServerStats",
           "slashs": ["target*: chọn danh mục (category) để tạo 6 kênh stat"],
           "reply_type": "ephemeral",
@@ -540,7 +540,7 @@
           "actions_included": []
         },
         {
-          "command": "/status_timeout",
+          "command": "/statustimeout",
           "script": "StatusTimeout",
           "slashs": [
             "warn: điền thời gian time_warn (hh:mm:ss)",
@@ -553,7 +553,7 @@
           "actions_included": []
         },
         {
-          "command": "/status_role",
+          "command": "/statusrole",
           "script": "StatusRole",
           "slashs": [
             "warn: điền tên role_warn",
@@ -565,7 +565,7 @@
           "actions_included": []
         },
         {
-          "command": "/status_unrole",
+          "command": "/statusunrole",
           "script": "StatusUnrole",
           "slashs": [
             "mute: điền tên unrole_mute",
@@ -576,7 +576,7 @@
           "actions_included": []
         },
         {
-          "command": "/category_info",
+          "command": "/categoryinfo",
           "script": "CategoryInfo",
           "slashs": [
             "target: target một category - nếu không chọn sẽ tự target danh mục chứa kênh mà lệnh này được gõ"
@@ -600,7 +600,7 @@
           "actions_included": ["Clone", "Private", "Public"]
         },
         {
-          "command": "/category_clone",
+          "command": "/categoryclone",
           "script": "CategoryClone",
           "slashs": [
             "target: target một category - nếu không chọn sẽ tự target danh mục chứa kênh mà lệnh này được gõ",
@@ -611,7 +611,7 @@
           "actions_included": []
         },
         {
-          "command": "/category_private",
+          "command": "/categoryprivate",
           "script": "CategoryPrivate",
           "slashs": [
             "target: target một category - nếu không chọn sẽ tự target danh mục chứa kênh mà lệnh này được gõ"
@@ -621,7 +621,7 @@
           "actions_included": []
         },
         {
-          "command": "/category_public",
+          "command": "/categorypublic",
           "script": "CategoryPublic",
           "slashs": [
             "target: target một category - nếu không chọn sẽ tự target danh mục chứa kênh mà lệnh này được gõ"
@@ -631,7 +631,7 @@
           "actions_included": []
         },
         {
-          "command": "/channel_info",
+          "command": "/channelinfo",
           "script": "ChannelInfo",
           "slashs": [
             "target: target một channel - nếu không chọn sẽ tự target kênh mà lệnh này được gõ"
@@ -657,7 +657,7 @@
           "actions_included": ["Clone", "Sync", "Private", "Public", "SFW", "NSFW"]
         },
         {
-          "command": "/channel_clone",
+          "command": "/channelclone",
           "script": "ChannelClone",
           "slashs": [
             "target: target một channel - nếu không chọn sẽ tự target kênh mà lệnh này được gõ",
@@ -668,7 +668,7 @@
           "actions_included": []
         },
         {
-          "command": "/channel_sync",
+          "command": "/channelsync",
           "script": "ChannelSync",
           "slashs": [
             "target: target một channel - nếu không chọn sẽ tự target kênh mà lệnh này được gõ"
@@ -678,7 +678,7 @@
           "actions_included": []
         },
         {
-          "command": "/channel_private",
+          "command": "/channelprivate",
           "script": "ChannelPrivate",
           "slashs": [
             "target: target một channel - nếu không chọn sẽ tự target kênh mà lệnh này được gõ"
@@ -688,7 +688,7 @@
           "actions_included": []
         },
         {
-          "command": "/channel_public",
+          "command": "/channelpublic",
           "script": "ChannelPublic",
           "slashs": [
             "target: target một channel - nếu không chọn sẽ tự target kênh mà lệnh này được gõ"
@@ -698,7 +698,7 @@
           "actions_included": []
         },
         {
-          "command": "/channel_sfw",
+          "command": "/channelsfw",
           "script": "ChannelSFW",
           "slashs": [
             "target: target một channel - nếu không chọn sẽ tự target kênh mà lệnh này được gõ"
@@ -708,7 +708,7 @@
           "actions_included": []
         },
         {
-          "command": "/channel_nsfw",
+          "command": "/channelnsfw",
           "script": "ChannelNSFW",
           "slashs": [
             "target: target một channel - nếu không chọn sẽ tự target kênh mà lệnh này được gõ"
@@ -718,7 +718,7 @@
           "actions_included": []
         },
         {
-          "command": "/member_info",
+          "command": "/memberinfo",
           "script": "MemberInfo",
           "slashs": [
             "target: target một thành viên - nếu không chọn sẽ tự target chính mình"
@@ -747,7 +747,7 @@
           "actions_included": ["Name", "Level", "Move", "Good", "Warn", "Mute", "Lock", "Kick"]
         },
         {
-          "command": "/member_rename",
+          "command": "/memberrename",
           "script": "MemberRename",
           "slashs": [
             "target: target một thành viên - nếu không chọn sẽ tự target chính mình",
@@ -758,7 +758,7 @@
           "actions_included": []
         },
         {
-          "command": "/member_level",
+          "command": "/memberlevel",
           "script": "MemberSetlevel",
           "slashs": [
             "target: target một thành viên - nếu không chọn sẽ tự target chính mình",
@@ -769,7 +769,7 @@
           "actions_included": []
         },
         {
-          "command": "/member_move",
+          "command": "/membermove",
           "script": "MemberMove",
           "slashs": [
             "target: target 1 thành viên, hoặc 1 kênh, hoặc cả server - nếu không chọn sẽ tự target chính mình",
@@ -780,7 +780,7 @@
           "actions_included": []
         },
         {
-          "command": "/member_reset",
+          "command": "/memberreset",
           "script": "MemberReset",
           "slashs": [
             "target*: target một thành viên"
@@ -790,7 +790,7 @@
           "actions_included": []
         },
         {
-          "command": "/member_warn",
+          "command": "/memberwarn",
           "script": "MemberWarn",
           "slashs": [
             "target*: target một thành viên"
@@ -800,7 +800,7 @@
           "actions_included": []
         },
         {
-          "command": "/member_mute",
+          "command": "/membermute",
           "script": "MemberMute",
           "slashs": [
             "target*: target một thành viên"
@@ -810,7 +810,7 @@
           "actions_included": []
         },
         {
-          "command": "/member_lock",
+          "command": "/memberlock",
           "script": "MemberLock",
           "slashs": [
             "target*: target một thành viên"
@@ -820,7 +820,7 @@
           "actions_included": []
         },
         {
-          "command": "/member_kick",
+          "command": "/memberkick",
           "script": "MemberKick",
           "slashs": [
             "target*: target một thành viên"
