@@ -21,24 +21,33 @@ export async function run(interaction, client, actionContext) {
     return;
   }
   const number = Math.max(1, Math.min(10, Number(interaction.options?.get('number')?.value) || 1));
-  const cloned = [];
+  const childrenInOrder = guild.channels.cache
+    .filter((channel) => channel.parentId === category.id)
+    .sort((a, b) => a.rawPosition - b.rawPosition);
+
   for (let i = 0; i < number; i++) {
-    const clone = await guild.channels.create({
+    const clonedCategory = await category.clone({
       name: category.name,
-      type: ChannelType.GuildCategory,
-      permissionOverwrites: category.permissionOverwrites.cache,
+      reason: `CategoryClone by ${interaction.user?.tag ?? interaction.user?.id ?? 'unknown'}`,
     }).catch(() => null);
-    if (clone) {
-      const children = guild.channels.cache.filter((c) => c.parentId === category.id);
-      for (const child of children.values()) {
-        await guild.channels.create({
+    if (!clonedCategory || clonedCategory.type !== ChannelType.GuildCategory) continue;
+
+    // Giữ vị trí category tương ứng (clone thường đã gần đúng, nhưng set lại để ổn định).
+    await clonedCategory.setPosition(category.rawPosition).catch(() => {});
+
+    for (const child of childrenInOrder.values()) {
+      const clonedChild = await child
+        .clone({
           name: child.name,
-          type: child.type,
-          parent: clone.id,
-          permissionOverwrites: child.permissionOverwrites.cache,
-        }).catch(() => {});
-      }
-      cloned.push(clone.name);
+          reason: `CategoryClone child of ${category.id}`,
+        })
+        .catch(() => null);
+
+      if (!clonedChild) continue;
+
+      // Đưa vào category mới và giữ overwrite riêng của channel nếu có.
+      await clonedChild.setParent(clonedCategory.id, { lockPermissions: false }).catch(() => {});
+      await clonedChild.setPosition(child.rawPosition).catch(() => {});
     }
   }
   const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { 'Category Name': category.name }));
