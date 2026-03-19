@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const LOG_DIR = path.resolve(__dirname, '../../../../private/logs');
+const LOG_DIR = path.resolve(__dirname, '../../../private/logs');
 
 const { combine, timestamp, printf, colorize } = winston.format;
 
