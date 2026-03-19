@@ -5,7 +5,7 @@ const isProd = process.env.NODE_ENV === 'production';
 export const BACKEND_API_URL =
   process.env.BACKEND_API_URL ??
   (isProd
-    ? 'https://discord-counselor-backend.onrender.com/api'
+    ? 'http://orias-counselor.duckdns.org:4000/api'
     : 'http://localhost:4000/api');
 
 export const REDIS_URL =
