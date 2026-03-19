@@ -49,8 +49,8 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
       b
-        .addStringOption((o) => o.setName('mute').setDescription('Role ID to remove on Mute (numeric)'))
-        .addStringOption((o) => o.setName('lock').setDescription('Role ID to remove on Lock (numeric)')),
+        .addRoleOption((o) => o.setName('mute').setDescription('Role to remove on Mute'))
+        .addRoleOption((o) => o.setName('lock').setDescription('Role to remove on Lock')),
   },
   {
     name: 'categoryinfo',
@@ -334,10 +334,10 @@ const SLASH_LIST = [
         .addIntegerOption((o) =>
           o
             .setName('number')
-            .setDescription('How many messages to delete (max 100)')
+            .setDescription('How many messages to delete (optional; empty = delete all possible)')
             .setMinValue(1)
             .setMaxValue(100)
-            .setRequired(true)
+            .setRequired(false)
         )
         .addRoleOption((o) =>
           o
