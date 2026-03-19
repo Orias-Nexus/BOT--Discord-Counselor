@@ -13,7 +13,7 @@ const env = {
   discordRedirectUri:
     process.env.DISCORD_REDIRECT_URI ||
     (isProd
-      ? 'http://orias-counselor.duckdns.org:4000/api/auth/discord/callback'
+      ? 'https://orias-counselor.duckdns.org:4000/api/auth/discord/callback'
       : 'http://localhost:4000/api/auth/discord/callback'),
 
   jwtSecret: process.env.JWT_SECRET || 'super-secret-key-123',
