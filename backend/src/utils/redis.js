@@ -1,32 +1,35 @@
 import Redis from 'ioredis';
 import { Queue } from 'bullmq';
+import env from '../config/env.js';
 
-const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+function buildRedisOptions(url) {
+  const opts = { maxRetriesPerRequest: null };
+  if (url.startsWith('rediss://')) {
+    opts.tls = { rejectUnauthorized: false };
+  }
+  return opts;
+}
 
-// Setup kết nối Redis chung
-export const redisClient = new Redis(REDIS_URL, {
-  maxRetriesPerRequest: null,
-});
+export const redisClient = new Redis(env.redisUrl, buildRedisOptions(env.redisUrl));
 
 redisClient.on('connect', () => {
-  console.log('Connected to Redis');
+  console.log(`[Redis] Connected (${env.isProd ? 'production' : 'local'})`);
 });
 
 redisClient.on('error', (err) => {
-  console.error('Redis Client Error', err);
+  console.error('[Redis] Error:', err.message);
 });
 
-// Khởi tạo hàng đợi đẩy task cho bot (bot sẽ consume queue này)
 export const discordQueue = new Queue('BotTasks', { connection: redisClient });
 
 export const publishBotTask = async (taskName, data) => {
   try {
     await discordQueue.add(taskName, data, {
-      removeOnComplete: true, // Xoá task sau khi chạy xong
-      removeOnFail: false // Giữ lại log lỗi
+      removeOnComplete: true,
+      removeOnFail: false,
     });
-    console.log(`Pushed task ${taskName} to Queue`);
+    console.log(`[Queue] Pushed task: ${taskName}`);
   } catch (error) {
-    console.error('Lỗi khi đẩy task vào Queue:', error);
+    console.error('[Queue] Push error:', error);
   }
 };
