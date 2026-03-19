@@ -1,10 +1,11 @@
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
+import env from '../config/env.js';
 
-const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID;
-const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
-const DISCORD_REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || 'http://localhost:4000/api/auth/discord/callback';
-const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-123';
+const DISCORD_CLIENT_ID = env.discordClientId;
+const DISCORD_CLIENT_SECRET = env.discordClientSecret;
+const DISCORD_REDIRECT_URI = env.discordRedirectUri;
+const JWT_SECRET = env.jwtSecret;
 
 /**
  * Tạo link đăng nhập qua Discord
