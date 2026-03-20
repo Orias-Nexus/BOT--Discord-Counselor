@@ -40,7 +40,6 @@ if (!isProd) {
   console.log('[config] Environment:', env.nodeEnv);
   console.log('[config] Backend API:', env.backendApiUrl);
   console.log('[config] Redis:', env.redisUrl);
-  console.log('[config] mainImageURL:', env.mainImageURL);
 }
 
 export default env;
