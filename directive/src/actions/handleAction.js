@@ -86,6 +86,10 @@ export async function handleAction(interaction, client, timing = {}) {
         if (member) extra = { ...extra, member, profile };
       } catch (_) {}
     }
+    if ((scriptName === 'ChannelSlow' || scriptName === 'ChannelBitrate' || scriptName === 'ChannelLimit') && contextId && guild) {
+      const channel = guild.channels.cache.get(contextId) ?? null;
+      if (channel) extra = { ...extra, channel };
+    }
     const modal = getModalForScript(scriptName, contextPart, extra);
     try {
       if (modal) await interaction.showModal(modal);

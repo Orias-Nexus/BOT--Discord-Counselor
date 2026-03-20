@@ -94,6 +94,24 @@ const MODALS = {
       },
     ],
   },
+  ChannelSlow: {
+    title: 'Set slowmode duration',
+    inputs: [
+      { id: 'seconds', label: 'Seconds (0-21600)', placeholder: 'e.g. 30', required: true },
+    ],
+  },
+  ChannelBitrate: {
+    title: 'Set channel bitrate',
+    inputs: [
+      { id: 'bitrate', label: 'Bitrate in kbps (0 = max)', placeholder: 'e.g. 128', required: true },
+    ],
+  },
+  ChannelLimit: {
+    title: 'Set user limit',
+    inputs: [
+      { id: 'limit', label: 'User limit (0 = unlimited)', placeholder: 'e.g. 10', required: false },
+    ],
+  },
 };
 
 export const SCRIPTS_NEED_MODAL = new Set(Object.keys(MODALS));
@@ -108,7 +126,7 @@ export function getModalForScript(scriptName, contextPart, extra = {}) {
   if (!config) return null;
   const customId = `${MODAL_PREFIX}${scriptName}_${contextPart}`;
   const modal = new ModalBuilder().setCustomId(customId).setTitle(config.title.slice(0, 45));
-  const { guild, server, embed: embedData, embed_name: embedName, times, member, profile } = extra;
+  const { guild, server, embed: embedData, embed_name: embedName, times, member, profile, channel } = extra;
   const rolePlaceholders = { warn: 'Warning Role', mute: 'Muted Role', lock: 'Locked Role', new: 'Newbie Role' };
   const existingRolePlaceholder = 'Existing role name';
   const contextValue = (id) => {
@@ -127,6 +145,15 @@ export function getModalForScript(scriptName, contextPart, extra = {}) {
     if (scriptName === 'MemberSetlevel' && id === 'setlevel' && profile) {
       const lvl = profile.member_level ?? profile.level;
       return lvl != null ? String(lvl) : undefined;
+    }
+    if (scriptName === 'ChannelSlow' && id === 'seconds' && channel) {
+      return channel.rateLimitPerUser != null ? String(channel.rateLimitPerUser) : undefined;
+    }
+    if (scriptName === 'ChannelBitrate' && id === 'bitrate' && channel) {
+      return channel.bitrate != null ? String(Math.floor(channel.bitrate / 1000)) : undefined;
+    }
+    if (scriptName === 'ChannelLimit' && id === 'limit' && channel) {
+      return channel.userLimit ? String(channel.userLimit) : '';
     }
     return undefined;
   };

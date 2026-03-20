@@ -145,6 +145,49 @@ const SLASH_LIST = [
     options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Channel')),
   },
   {
+    name: 'channelslow',
+    script: 'ChannelSlow',
+    defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
+    options: (b) =>
+      b
+        .addChannelOption((o) => o.setName('target').setDescription('Channel'))
+        .addIntegerOption((o) =>
+          o.setName('seconds').setDescription('Slowmode seconds (0-21600)').setMinValue(0).setMaxValue(21600).setRequired(true)
+        ),
+  },
+  {
+    name: 'channelunslow',
+    script: 'ChannelUnslow',
+    defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
+    options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Channel')),
+  },
+  {
+    name: 'channelbitrate',
+    script: 'ChannelBitrate',
+    defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
+    options: (b) =>
+      b
+        .addChannelOption((o) =>
+          o.setName('target').setDescription('Voice channel').addChannelTypes(ChannelType.GuildVoice, ChannelType.GuildStageVoice).setRequired(true)
+        )
+        .addIntegerOption((o) =>
+          o.setName('bitrate').setDescription('Bitrate in kbps (0 = max)').setMinValue(0).setRequired(true)
+        ),
+  },
+  {
+    name: 'channellimit',
+    script: 'ChannelLimit',
+    defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
+    options: (b) =>
+      b
+        .addChannelOption((o) =>
+          o.setName('target').setDescription('Voice channel').addChannelTypes(ChannelType.GuildVoice, ChannelType.GuildStageVoice).setRequired(true)
+        )
+        .addIntegerOption((o) =>
+          o.setName('limit').setDescription('User limit (0 = unlimited)').setMinValue(0).setMaxValue(99)
+        ),
+  },
+  {
     name: 'memberinfo',
     script: 'MemberInfo',
     options: (b) => b.addUserOption((o) => o.setName('target').setDescription('Member (default: self)')),
@@ -261,6 +304,21 @@ const SLASH_LIST = [
       b.addStringOption((o) =>
         o.setName('embed').setDescription('Embed name (created in server)').setRequired(true).setAutocomplete(true)
       ),
+  },
+  {
+    name: 'greetingtest',
+    script: 'GreetingTest',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+  },
+  {
+    name: 'leavingtest',
+    script: 'LeavingTest',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
+  },
+  {
+    name: 'boostingtest',
+    script: 'BoostingTest',
+    defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
   },
   {
     name: 'embedcreate',
