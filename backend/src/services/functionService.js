@@ -1,11 +1,24 @@
 import * as functionRepo from '../repositories/functionRepository.js';
+import { cacheGet, cacheSet } from '../utils/cache.js';
+
+const FN_TTL = 600;
 
 export async function getFunctionByScript(scriptName) {
-    return functionRepo.getByScript(scriptName);
+    const key = `function:${scriptName}`;
+    const cached = await cacheGet(key);
+    if (cached) return cached;
+    const fn = await functionRepo.getByScript(scriptName);
+    if (fn) await cacheSet(key, fn, FN_TTL);
+    return fn;
 }
 
 export async function getAllSlashCommands() {
-    return functionRepo.getAllSlash();
+    const key = 'function:slashList';
+    const cached = await cacheGet(key);
+    if (cached) return cached;
+    const list = await functionRepo.getAllSlash();
+    await cacheSet(key, list, FN_TTL);
+    return list;
 }
 
 export function replacePlaceholders(content, vars = {}) {
