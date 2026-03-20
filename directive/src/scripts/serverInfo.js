@@ -11,16 +11,6 @@ export async function run(interaction, client, _actionContext) {
   }
   if (!interaction.deferred) await interaction.deferReply();
   await guild.fetch().catch(() => {});
-
-  try {
-    await api.ensureServer(guild.id);
-  } catch (err) {
-    console.error('[ServerInfo] ensureServer', err);
-    await interaction.editReply({
-      content: api.formatEphemeralContent('Could not fetch server info. Try again later.'),
-    });
-    return;
-  }
   const buildEmbed = getEmbedBuilder('ServerInfo');
   const embed = buildEmbed ? await buildEmbed(guild, { imageURL: mainImageURL }) : null;
   if (!embed) {
