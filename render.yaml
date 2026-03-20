@@ -3,22 +3,49 @@
 # https://render.com/docs/blueprint-spec
 
 services:
+  # ── Backend API (Web Service) ─────────────────────────────────
   - type: web
     name: discord-counselor-backend
     runtime: node
     rootDir: backend
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /health
     envVars:
+      - key: NODE_ENV
+        value: "production"
       - key: NODE_VERSION
         value: "20"
-      - key: SUPABASE_URL
-        sync: false
-      - key: SUPABASE_SERVICE_ROLE_KEY
-        sync: false
-      - key: FRONTEND_ORIGIN
-        generateValue: true
+      - key: PORT
+        value: "10000"
 
+      # Discord OAuth
+      - key: DISCORD_CLIENT_ID
+        sync: false
+      - key: DISCORD_CLIENT_SECRET
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+
+      # URLs — cập nhật sau khi deploy lần đầu
+      - key: DISCORD_REDIRECT_URI
+        sync: false
+        # VD: https://discord-counselor-backend.onrender.com/api/auth/discord/callback
+      - key: FRONTEND_ORIGIN
+        sync: false
+        # VD: https://your-frontend-domain.com
+
+      # Database (Supabase)
+      - key: POOLER_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+
+      # Redis (Render Redis hoặc Upstash)
+      - key: REDIS_URL
+        sync: false
+
+  # ── Directive / Discord Bot (Background Worker) ───────────────
   - type: worker
     name: discord-counselor-directive
     runtime: node
@@ -26,12 +53,22 @@ services:
     buildCommand: npm install
     startCommand: npm start
     envVars:
+      - key: NODE_ENV
+        value: "production"
       - key: NODE_VERSION
         value: "20"
+
+      # Discord Bot
       - key: DISCORD_TOKEN
         sync: false
       - key: APPLICATION_ID
         sync: false
+
+      # Backend API — điền URL backend sau deploy
       - key: BACKEND_API_URL
         sync: false
-        # Điền URL Backend sau khi deploy (vd: https://discord-counselor-backend.onrender.com)
+        # VD: https://discord-counselor-backend.onrender.com/api
+
+      # Redis (cùng instance với backend)
+      - key: REDIS_URL
+        sync: false
