@@ -2,14 +2,15 @@ import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
 import { digitsFromChannelsIdx, getStatLabelByIndex } from '../config/channelTypes.js';
 
-const INTERVAL_MS = 60 * 1000;
+const INTERVAL_MS = 5 * 60 * 1000;
 
 function getStatValue(guild, statIndex) {
+  const cachedBots = guild.members.cache.filter((m) => m.user.bot).size;
   switch (statIndex) {
     case 1:
-      return guild.members.cache.filter((m) => !m.user.bot).size;
+      return guild.memberCount - cachedBots;
     case 2:
-      return guild.members.cache.filter((m) => m.user.bot).size;
+      return cachedBots;
     case 3:
       return guild.roles.cache.size;
     case 4:
@@ -42,7 +43,6 @@ export function startStatsCheck(client) {
         const statsRows = (rows ?? []).filter((r) => r.category_type === 'Stats');
         if (statsRows.length === 0) continue;
 
-        await guild.members.fetch().catch(() => {});
         for (const row of statsRows) {
           const categoryId = row.category_id;
           const channelsIdx = Number(row.channels_idx) || 0;
