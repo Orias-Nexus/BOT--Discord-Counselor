@@ -6,6 +6,7 @@ services:
   # ── Backend API (Web Service) ─────────────────────────────────
   - type: web
     name: discord-counselor-backend
+    plan: free
     runtime: node
     rootDir: backend
     buildCommand: npm install
@@ -15,7 +16,7 @@ services:
       - key: NODE_ENV
         value: "production"
       - key: NODE_VERSION
-        value: "20"
+        value: "22"
       - key: PORT
         value: "10000"
 
@@ -56,7 +57,7 @@ services:
       - key: NODE_ENV
         value: "production"
       - key: NODE_VERSION
-        value: "20"
+        value: "22"
 
       # Discord Bot
       - key: DISCORD_TOKEN
