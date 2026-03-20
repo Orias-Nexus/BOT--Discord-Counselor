@@ -1,11 +1,16 @@
 import Redis from 'ioredis';
 import { Worker } from 'bullmq';
+import { REDIS_URL } from '../config.js';
 
-const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+function buildRedisOptions(url) {
+  const opts = { maxRetriesPerRequest: null };
+  if (url.startsWith('rediss://')) {
+    opts.tls = { rejectUnauthorized: false };
+  }
+  return opts;
+}
 
-const redisConnection = new Redis(REDIS_URL, {
-  maxRetriesPerRequest: null,
-});
+const redisConnection = new Redis(REDIS_URL, buildRedisOptions(REDIS_URL));
 
 export const initWorker = (client) => {
   const worker = new Worker('BotTasks', async (job) => {
