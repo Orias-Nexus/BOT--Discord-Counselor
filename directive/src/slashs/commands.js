@@ -150,10 +150,10 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) =>
       b
-        .addChannelOption((o) => o.setName('target').setDescription('Channel'))
         .addIntegerOption((o) =>
           o.setName('seconds').setDescription('Slowmode seconds (0-21600)').setMinValue(0).setMaxValue(21600).setRequired(true)
-        ),
+        )
+        .addChannelOption((o) => o.setName('target').setDescription('Channel')),
   },
   {
     name: 'channelunslow',
