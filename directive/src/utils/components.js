@@ -1,6 +1,7 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, PermissionFlagsBits } from 'discord.js';
+import { ActionRowBuilder, ChannelType, PermissionFlagsBits, StringSelectMenuBuilder } from 'discord.js';
 
 export const ACTION_PREFIX = 'action_';
+export const ACTION_SELECT_PREFIX = 'actionsel_';
 
 export const SCRIPT_TO_LABEL = {
   StatusTimeout:    'Status Timeout',
@@ -44,43 +45,23 @@ export const SCRIPT_TO_LABEL = {
   EmbedDelete:      'Delete',
 };
 
-const SERVER_ACTIONS_ROW1 = ['StatusRole', 'StatusUnrole', 'StatusTimeout'];
-const SERVER_ACTIONS_ROW2 = ['SetServerStats', 'SetVoiceCreator'];
+const SERVER_ACTIONS = ['StatusRole', 'StatusUnrole', 'StatusTimeout', 'SetServerStats', 'SetVoiceCreator'];
 const CATEGORY_BASE_ACTIONS = ['CategoryClone'];
-const MEMBER_ACTIONS_ROW1 = ['MemberRename', 'MemberSetlevel', 'MemberMove', 'MemberReset'];
-const MEMBER_ACTIONS_ROW2 = ['MemberWarn', 'MemberMute', 'MemberLock', 'MemberKick'];
+const MEMBER_ACTIONS = ['MemberRename', 'MemberSetlevel', 'MemberMove', 'MemberReset', 'MemberWarn', 'MemberMute', 'MemberLock', 'MemberKick'];
 
-const STYLE = {
-  Default: ButtonStyle.Secondary,
-  Primary: ButtonStyle.Primary,
-  Success: ButtonStyle.Success,
-  Danger:  ButtonStyle.Danger,
-};
-
-const SCRIPT_STYLE = {
-  MemberReset: STYLE.Success,
-  MemberKick:  STYLE.Danger,
-  EmbedApply:  STYLE.Primary,
-  EmbedDelete: STYLE.Danger,
-};
-
-/**
- * Tạo một ActionRow từ danh sách script names.
- * Style tự động tra cứu SCRIPT_STYLE, có thể override qua options.
- * @param {string[]} scriptNames
- * @param {string} contextId
- * @param {{ styles?: Record<string, ButtonStyle>, labels?: Record<string, string> }} options
- * @returns {ActionRowBuilder}
- */
-function buildActionRow(scriptNames, contextId, { styles = {}, labels = {} } = {}) {
-  return new ActionRowBuilder().addComponents(
-    scriptNames.map((name) =>
-      new ButtonBuilder()
-        .setCustomId(`${ACTION_PREFIX}${name}_${contextId}`)
-        .setLabel(String(labels[name] ?? SCRIPT_TO_LABEL[name] ?? name).slice(0, 80))
-        .setStyle(styles[name] ?? SCRIPT_STYLE[name] ?? STYLE.Default)
-    )
-  );
+function buildSelectRow(scriptNames, contextId, { labels = {}, placeholder = 'Choose an action' } = {}) {
+  const select = new StringSelectMenuBuilder()
+    .setCustomId(`${ACTION_SELECT_PREFIX}${contextId}`)
+    .setPlaceholder(placeholder)
+    .setMinValues(1)
+    .setMaxValues(1)
+    .addOptions(
+      scriptNames.map((name) => ({
+        label: String(labels[name] ?? SCRIPT_TO_LABEL[name] ?? name).slice(0, 100),
+        value: name,
+      }))
+    );
+  return new ActionRowBuilder().addComponents(select);
 }
 
 function isPublicChannel(channel, guild) {
@@ -100,16 +81,13 @@ function getMemberResetLabel(memberStatus) {
 
 /** @returns {ActionRowBuilder[]} */
 export function buildServerInfoComponents() {
-  return [
-    buildActionRow(SERVER_ACTIONS_ROW1, 'server'),
-    buildActionRow(SERVER_ACTIONS_ROW2, 'server'),
-  ];
+  return [buildSelectRow(SERVER_ACTIONS, 'server', { placeholder: 'Server actions' })];
 }
 
 /** @returns {ActionRowBuilder[]} */
 export function buildCategoryInfoComponents(categoryId, category = null, guild = null) {
   const toggleScript = isPublicChannel(category, guild) ? 'CategoryPrivate' : 'CategoryPublic';
-  return [buildActionRow([...CATEGORY_BASE_ACTIONS, toggleScript], categoryId)];
+  return [buildSelectRow([...CATEGORY_BASE_ACTIONS, toggleScript], categoryId, { placeholder: 'Category actions' })];
 }
 
 /** @returns {ActionRowBuilder[]} */
@@ -117,29 +95,27 @@ export function buildChannelInfoComponents(channelId, channel = null, guild = nu
   const toggleScript = isPublicChannel(channel, guild) ? 'ChannelPrivate' : 'ChannelPublic';
   const nsfwScript = channel?.nsfw ? 'ChannelSFW' : 'ChannelNSFW';
   const slowScript = channel?.rateLimitPerUser ? 'ChannelUnslow' : 'ChannelSlow';
-  const row1 = ['ChannelClone', toggleScript, 'ChannelSync', nsfwScript, slowScript];
-  const rows = [buildActionRow(row1, channelId)];
+  const scripts = ['ChannelClone', 'ChannelSync', toggleScript, nsfwScript, slowScript];
 
   const isVoice = channel?.type === ChannelType.GuildVoice || channel?.type === ChannelType.GuildStageVoice;
-  if (isVoice) {
-    rows.push(buildActionRow(['ChannelBitrate', 'ChannelLimit'], channelId));
-  }
-  return rows;
+  if (isVoice) scripts.push('ChannelBitrate', 'ChannelLimit');
+
+  return [buildSelectRow(scripts, channelId, { placeholder: 'Channel actions' })];
 }
 
 /** @returns {ActionRowBuilder[]} */
 export function buildMemberInfoComponents(memberId, profile = null) {
   const labels = { MemberReset: getMemberResetLabel(profile?.member_status) };
-  return [
-    buildActionRow(MEMBER_ACTIONS_ROW1, memberId, { labels }),
-    buildActionRow(MEMBER_ACTIONS_ROW2, memberId),
-  ];
+  return [buildSelectRow(MEMBER_ACTIONS, memberId, { labels, placeholder: 'Member actions' })];
 }
 
 /** @returns {ActionRowBuilder[]} */
 export function buildEmbedEditComponents(embedId) {
   return [
-    buildActionRow(['EmbedEditAuthor', 'EmbedEditFooter', 'EmbedEditImages', 'EmbedEditBasic'], embedId),
-    buildActionRow(['EmbedRename', 'EmbedApply', 'EmbedDelete'], embedId),
+    buildSelectRow(
+      ['EmbedEditAuthor', 'EmbedEditFooter', 'EmbedEditImages', 'EmbedEditBasic', 'EmbedRename', 'EmbedApply', 'EmbedDelete'],
+      embedId,
+      { placeholder: 'Embed actions' }
+    ),
   ];
 }
