@@ -6,7 +6,8 @@ import { formatEphemeralContent, isUnknownInteraction } from './api.js';
 import { getScriptNameByCommand } from './slashs/commands.js';
 import { handleSlash } from './slashs/handleSlash.js';
 import { handleAction, isButtonModalScript, isButtonDeferUpdate } from './actions/handleAction.js';
-import { parseModalCustomId, getModalInputIds } from './actions/modalConfig.js';
+import { parseModalCustomId, getModalInputIds, SCRIPTS_NEED_MODAL } from './actions/modalConfig.js';
+import { ACTION_SELECT_PREFIX } from './utils/components.js';
 import { getEmbedUpdatePayload } from './actions/embedUpdate.js';
 import { runScript, runEvent, loadAllScripts } from './scripts/runScript.js';
 import { startExpiresCheck } from './jobs/expiresCheck.js';
@@ -127,6 +128,27 @@ client.on(Events.InteractionCreate, async (interaction) => {
         console.error('[InteractionCreate] ServerStats select:', err);
         if (!interaction.deferred) await interaction.reply({ content: 'Error.', flags: MessageFlags.Ephemeral }).catch(() => {});
         else await interaction.editReply({ content: 'Error.', components: [] }).catch(() => {});
+      }
+      return;
+    }
+    if (interaction.customId?.startsWith(ACTION_SELECT_PREFIX)) {
+      const selectedScript = interaction.values?.[0];
+      if (!selectedScript) return;
+      if (!SCRIPTS_NEED_MODAL.has(selectedScript)) {
+        try {
+          await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+        } catch (err) {
+          if (isUnknownInteraction(err)) {
+            console.warn('[InteractionCreate] Select defer 10062 - try again.');
+            return;
+          }
+          throw err;
+        }
+      }
+      try {
+        await handleAction(interaction, client);
+      } catch (err) {
+        console.error('[InteractionCreate] Action select:', err);
       }
       return;
     }
