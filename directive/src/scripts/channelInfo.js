@@ -1,7 +1,7 @@
 import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
 import { buildChannelInfoComponents } from '../utils/components.js';
-import { MAIN_IMAGE_URL as mainImageUrl } from '../config.js';
+import { mainImageUrl } from '../config.js';
 import { getEmbedBuilder } from '../embedRoutes.js';
 
 export async function buildChannelInfoPayload(channel, guild) {
