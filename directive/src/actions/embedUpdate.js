@@ -7,7 +7,7 @@ import {
   buildCategoryInfoComponents,
   buildMemberInfoComponents,
 } from '../utils/components.js';
-import { mainImageUrl } from '../config.js';
+import { MAIN_IMAGE_URL as mainImageUrl } from '../config.js';
 
 const CHANNEL_SCRIPTS = new Set([
   'ChannelPrivate', 'ChannelPublic', 'ChannelSync', 'ChannelSFW', 'ChannelNSFW', 'ChannelClone',
