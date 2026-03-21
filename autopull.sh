@@ -36,6 +36,7 @@ else
 fi
 
 # tree -I 'node_modules'
-# crontab -e
+# tail -n 20 -f /home/long1/JS--Discord-Counselor/autopull.log
 # pm2 logs
+# crontab -e
 # */1 * * * * /home/long1/JS--Discord-Counselor/autopull.sh >> /home/long1/JS--Discord-Counselor/autopull.log 2>&1
