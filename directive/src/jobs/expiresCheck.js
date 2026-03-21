@@ -1,5 +1,6 @@
 import * as api from '../api.js';
 import { buildMemberInfoPayload, findAndUpdateMemberInfoInGuild } from '../actions/embedUpdate.js';
+import { BACKEND_API_URL } from '../config.js';
 
 const INTERVAL_MS = 60 * 1000;
 const RETRY_ATTEMPTS = 3;
@@ -81,8 +82,8 @@ export function startExpiresCheck(client) {
     const msg = lastErr?.message ?? String(lastErr);
     if (isTransientBackendError(lastErr)) {
       console.warn(
-        '[expiresCheck] Backend not responding after %d attempts. Check backend is running and BACKEND_API_URL in .env.',
-        RETRY_ATTEMPTS
+        `[expiresCheck] Backend not responding after ${RETRY_ATTEMPTS} attempts. ` +
+          `Check backend is running and BACKEND_API_URL in .env. Current BACKEND_API_URL=${BACKEND_API_URL ?? 'unknown'}`
       );
     } else {
       console.warn('[expiresCheck]', msg, code ? `(${code})` : '');
