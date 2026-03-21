@@ -23,7 +23,7 @@ const DEFAULT_MAIN_IMAGE_URL = isLocalBackend
   ? GITHUB_RAW_WHITEPET
   : `${BACKEND_API_URL.replace(/\/api$/, '')}/assets/images/Whitepet.png`;
 
-export const mainImageURL =
+export const MAIN_IMAGE_URL =
   process.env.MAIN_IMAGE_URL ?? DEFAULT_MAIN_IMAGE_URL;
 
 const env = {
@@ -33,7 +33,7 @@ const env = {
   applicationId: process.env.APPLICATION_ID || '',
   backendApiUrl: BACKEND_API_URL,
   redisUrl: REDIS_URL,
-  mainImageURL,
+  mainImageUrl: MAIN_IMAGE_URL,
 };
 
 if (!isProd) {
