@@ -35,7 +35,7 @@ client.once(Events.ClientReady, (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
   console.log(`[startup] BACKEND_API_URL: ${env.backendApiUrl}`);
   console.log(`[startup] REDIS_URL: ${env.redisUrl || '(not set)'}`);
-  console.log(`[startup] mainImageURL: ${env.mainImageURL}`);
+  console.log(`[startup] mainImageUrl: ${env.mainImageUrl}`);
   
   // Khởi chạy Worker lắng nghe các Task từ Redis
   initWorker(c);

@@ -1,7 +1,7 @@
 import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
 import { buildCategoryInfoComponents } from '../utils/components.js';
-import { mainImageURL } from '../config.js';
+import { mainImageUrl } from '../config.js';
 import { getEmbedBuilder } from '../embedRoutes.js';
 
 export async function run(interaction, client, actionContext = null) {
@@ -22,7 +22,7 @@ export async function run(interaction, client, actionContext = null) {
     return;
   }
   const buildEmbed = getEmbedBuilder('CategoryInfo');
-  const embed = buildEmbed ? await buildEmbed(category, guild, { imageURL: mainImageURL }) : null;
+  const embed = buildEmbed ? await buildEmbed(category, guild, { imageURL: mainImageUrl }) : null;
   if (!embed) {
     await interaction.editReply({ content: api.formatEphemeralContent('Could not create embed.') }).catch(() => {});
     return;

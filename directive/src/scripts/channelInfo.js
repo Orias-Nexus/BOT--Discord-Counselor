@@ -1,7 +1,7 @@
 import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
 import { buildChannelInfoComponents } from '../utils/components.js';
-import { mainImageURL } from '../config.js';
+import { mainImageUrl } from '../config.js';
 import { getEmbedBuilder } from '../embedRoutes.js';
 
 export async function buildChannelInfoPayload(channel, guild) {
@@ -10,7 +10,7 @@ export async function buildChannelInfoPayload(channel, guild) {
   }
 
   const buildEmbed = getEmbedBuilder('ChannelInfo');
-  const embed = buildEmbed ? await buildEmbed(channel, guild, { imageURL: mainImageURL }) : null;
+  const embed = buildEmbed ? await buildEmbed(channel, guild, { imageURL: mainImageUrl }) : null;
   if (!embed) return null;
 
   const components = buildChannelInfoComponents(channel.id, channel, guild);

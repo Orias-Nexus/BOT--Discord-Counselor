@@ -499,7 +499,7 @@
             "color": 5895182,
             "title": "✦ {guild.name}",
             "thumbnail": "guild.iconURL({ size: 256 })",
-            "image": "config.resource.mainImageURL",
+            "image": "config.resource.mainImageUrl",
             "fields": [
               { "name": "ID", "value": "guild.id", "inline": true },
               { "name": "Name", "value": "guild.name", "inline": true },
@@ -586,7 +586,7 @@
             "builder": "categoryInfoEmbed.buildCategoryEmbed(category, guild)",
             "color": 5788754,
             "title": "✦ {category.name}",
-            "image": "config.resource.mainImageURL",
+            "image": "config.resource.mainImageUrl",
             "fields": [
               { "name": "ID", "value": "category.id", "inline": true },
               { "name": "Name", "value": "category.name", "inline": true },
@@ -642,7 +642,7 @@
             "color": 15158332,
             "title": "✦ Channel: {channel.name}",
             "description": "**Topic:** {channel.topic} (nếu có)",
-            "image": "config.resource.mainImageURL",
+            "image": "config.resource.mainImageUrl",
             "fields": [
               { "name": "Channel ID", "value": "channel.id", "inline": true },
               { "name": "Type", "value": "Text Channel | Voice | ...", "inline": true },
@@ -729,7 +729,7 @@
             "color": "getStatusColor(status) - Good: 0x57f287, Warning: 0xfee75c, Muted: 0xed4245, Locked: 0x992d22",
             "title": "✦ {user.username}",
             "thumbnail": "user.displayAvatarURL({ dynamic: true })",
-            "image": "config.resource.mainImageURL",
+            "image": "config.resource.mainImageUrl",
             "fields": [
               { "name": "UID", "value": "user.id", "inline": true },
               { "name": "Name", "value": "member.displayName", "inline": true },
