@@ -1,6 +1,6 @@
 import * as api from '../api.js';
 import { buildServerInfoComponents } from '../utils/components.js';
-import { MAIN_IMAGE_URL as mainImageUrl } from '../config.js';
+import { mainImageUrl } from '../config.js';
 import { getEmbedBuilder } from '../embedRoutes.js';
 
 export async function run(interaction, client, _actionContext) {
