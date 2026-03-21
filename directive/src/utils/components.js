@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, PermissionFlagsBits } from 'discord.js';
 
 export const ACTION_PREFIX = 'action_';
 
@@ -17,6 +17,10 @@ export const SCRIPT_TO_LABEL = {
   ChannelSync:      'Sync',
   ChannelNSFW:      'NSFW',
   ChannelSFW:       'SFW',
+  ChannelSlow:      'Slow',
+  ChannelUnslow:    'Unslow',
+  ChannelBitrate:   'Bitrate',
+  ChannelLimit:     'Limit',
   MemberRename:     'Name',
   MemberSetlevel:   'Level',
   MemberMove:       'Move',
@@ -112,7 +116,15 @@ export function buildCategoryInfoComponents(categoryId, category = null, guild =
 export function buildChannelInfoComponents(channelId, channel = null, guild = null) {
   const toggleScript = isPublicChannel(channel, guild) ? 'ChannelPrivate' : 'ChannelPublic';
   const nsfwScript = channel?.nsfw ? 'ChannelSFW' : 'ChannelNSFW';
-  return [buildActionRow(['ChannelClone', toggleScript, 'ChannelSync', nsfwScript], channelId)];
+  const slowScript = channel?.rateLimitPerUser ? 'ChannelUnslow' : 'ChannelSlow';
+  const row1 = ['ChannelClone', toggleScript, 'ChannelSync', nsfwScript, slowScript];
+  const rows = [buildActionRow(row1, channelId)];
+
+  const isVoice = channel?.type === ChannelType.GuildVoice || channel?.type === ChannelType.GuildStageVoice;
+  if (isVoice) {
+    rows.push(buildActionRow(['ChannelBitrate', 'ChannelLimit'], channelId));
+  }
+  return rows;
 }
 
 /** @returns {ActionRowBuilder[]} */

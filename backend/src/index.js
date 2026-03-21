@@ -64,4 +64,9 @@ app.use(errorHandler);
 
 httpServer.listen(env.port, () => {
   console.log(`Backend API running at http://localhost:${env.port} [${env.nodeEnv}]`);
+  console.log(`[startup] API base: http://localhost:${env.port}/api`);
+  console.log(`[startup] Health: http://localhost:${env.port}/health`);
+  console.log(`[startup] FRONTEND_ORIGIN: ${env.frontendOrigin}`);
+  console.log(`[startup] DISCORD_REDIRECT_URI: ${env.discordRedirectUri}`);
+  console.log(`[startup] REDIS_URL: ${env.redisUrl || '(not set)'}`);
 });
