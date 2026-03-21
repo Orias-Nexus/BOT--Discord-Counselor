@@ -7,10 +7,11 @@ LOCAL=$(git rev-parse HEAD)
 REMOTE=$(git rev-parse @{u})
 if [ $LOCAL != $REMOTE ]; then
     : > $AUTOPULL_LOG
-    echo "[$(date)] NEW VERSION DETECTED! UPDATING...\n"
+    echo "[$(date)] NEW VERSION DETECTED. UPDATING..."
     git pull origin main
     npm run install:all
     npm run prisma:generate:backend
+    npm run deploy:directive
     cd frontend && npm run build
     sudo rm -rf /var/www/html/*
     sudo cp -r dist/* /var/www/html/
@@ -18,7 +19,7 @@ if [ $LOCAL != $REMOTE ]; then
     pm2 flush
     rm -rf $PROJECT_DIR/private/logs/*
     pm2 restart all
-    echo "[$(date)] UPDATED SUCCESSFULLY!\n"
+    echo "[$(date)] UPDATED SUCCESSFULLY."
 else
     echo "[$(date)] CHECKED: No changes."
 fi
