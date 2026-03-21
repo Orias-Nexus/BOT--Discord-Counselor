@@ -20,6 +20,7 @@ if [ $LOCAL != $REMOTE ]; then
     rm -rf $PROJECT_DIR/private/logs/*
     pm2 restart all
     echo "[$(date)] UPDATED SUCCESSFULLY."
+    # tree -I 'node_modules'
     # pm2 logs
 else
     echo "[$(date)] CHECKED: No changes."
