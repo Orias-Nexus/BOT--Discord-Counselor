@@ -1,6 +1,6 @@
 import * as api from '../api.js';
 import { buildMemberInfoComponents } from '../utils/components.js';
-import { mainImageURL } from '../config.js';
+import { mainImageUrl } from '../config.js';
 import { getEmbedBuilder } from '../embedRoutes.js';
 
 const DEBUG = process.env.DEBUG_MEMBER_INFO === '1';
@@ -33,7 +33,7 @@ export async function run(interaction, client, actionContext = null) {
     return;
   }
   const buildEmbed = getEmbedBuilder('MemberInfo');
-  const embed = buildEmbed ? await buildEmbed(member, profile, { imageURL: mainImageURL }) : null;
+  const embed = buildEmbed ? await buildEmbed(member, profile, { imageURL: mainImageUrl }) : null;
   if (!embed) {
     await interaction.editReply({ content: api.formatEphemeralContent('Could not create embed.') }).catch(() => {});
     return;
