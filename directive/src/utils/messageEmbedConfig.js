@@ -6,7 +6,7 @@ import { resolveString } from '../embeds/.embedContext.js';
  * Shared handler for GreetingMessage/LeavingMessage/BoostingMessage scripts.
  * Keeps output identical to existing scripts.
  * @param {import('discord.js').ChatInputCommandInteraction} interaction
- * @param {'Greeting'|'Leaving'|'Boosting'} messageType
+ * @param {'Greeting'|'Leaving'|'Boosting'|'Leveling'|'Logging'} messageType
  */
 export async function setMessageEmbedByName(interaction, messageType) {
   const guild = interaction?.guild;
