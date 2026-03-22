@@ -166,7 +166,9 @@ export function getModalForScript(scriptName, contextPart, extra = {}) {
       if (id === 'description') return embedData.description ?? '';
       if (id === 'color') {
         if (embedData.color == null) return '';
-        const n = Number(embedData.color);
+        const raw = String(embedData.color).trim();
+        if (/^#[0-9a-fA-F]{6}$/i.test(raw)) return raw.toUpperCase();
+        const n = Number(raw);
         if (!Number.isFinite(n)) return '';
         const hex = Math.max(0, Math.min(0xffffff, Math.trunc(n))).toString(16).padStart(6, '0').toUpperCase();
         return `#${hex}`;
