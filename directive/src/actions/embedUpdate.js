@@ -11,6 +11,7 @@ import { mainImageUrl } from '../config.js';
 
 const CHANNEL_SCRIPTS = new Set([
   'ChannelPrivate', 'ChannelPublic', 'ChannelSync', 'ChannelSFW', 'ChannelNSFW', 'ChannelClone',
+  'ChannelSlow', 'ChannelUnslow', 'ChannelBitrate', 'ChannelLimit',
 ]);
 const CATEGORY_SCRIPTS = new Set([
   'CategoryPrivate', 'CategoryPublic', 'CategoryClone',
@@ -135,6 +136,32 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
     };
   }
 
+  return null;
+}
+
+/**
+ * Reset only the components (select menu) on the parent message, without rebuilding the embed.
+ * Used when the action doesn't change data displayed in the embed.
+ */
+export function resetComponentsOnly(scriptName, interaction, actionContext) {
+  const guild = interaction.guild;
+  if (!guild) return null;
+  const targetId = actionContext?.targetId ?? null;
+
+  if (SERVER_SCRIPTS.has(scriptName)) {
+    return buildServerInfoComponents();
+  }
+  if (CHANNEL_SCRIPTS.has(scriptName) && targetId) {
+    const channel = guild.channels.cache.get(targetId) ?? null;
+    return buildChannelInfoComponents(targetId, channel, guild);
+  }
+  if (CATEGORY_SCRIPTS.has(scriptName) && targetId) {
+    const category = guild.channels.cache.get(targetId) ?? null;
+    return buildCategoryInfoComponents(targetId, category, guild);
+  }
+  if (MEMBER_SCRIPTS.has(scriptName) && targetId) {
+    return buildMemberInfoComponents(targetId);
+  }
   return null;
 }
 
