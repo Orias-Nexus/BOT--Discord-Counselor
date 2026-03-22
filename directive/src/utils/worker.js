@@ -1,24 +1,12 @@
-import Redis from 'ioredis';
 import { Worker } from 'bullmq';
-import { REDIS_URL } from '../config.js';
-
-function buildRedisOptions(url) {
-  const opts = { maxRetriesPerRequest: null };
-  if (url.startsWith('rediss://')) {
-    opts.tls = { rejectUnauthorized: false };
-  }
-  return opts;
-}
-
-const redisConnection = new Redis(REDIS_URL, buildRedisOptions(REDIS_URL));
+import { redisClient } from './redis.js';
 
 export const initWorker = (client) => {
   const worker = new Worker('BotTasks', async (job) => {
     console.log(`[Worker] Nhận task: ${job.name} (ID: ${job.id})`);
-    
-    // Xử lý các task được đẩy từ backend sang
+
     switch (job.name) {
-      case 'renameChannel':
+      case 'renameChannel': {
         const { channelId, newName } = job.data;
         try {
           const channel = await client.channels.fetch(channelId);
@@ -30,8 +18,9 @@ export const initWorker = (client) => {
           console.error(`[Worker] Lỗi đổi tên kênh ${channelId}:`, error);
         }
         break;
+      }
 
-      case 'sendMessage':
+      case 'sendMessage': {
         const { targetChannelId, content } = job.data;
         try {
           const channel = await client.channels.fetch(targetChannelId);
@@ -43,12 +32,12 @@ export const initWorker = (client) => {
           console.error(`[Worker] Lỗi gửi tin nhắn kênh ${targetChannelId}:`, error);
         }
         break;
+      }
 
       default:
         console.warn(`[Worker] Không có handler cho task type: ${job.name}`);
     }
-
-  }, { connection: redisConnection });
+  }, { connection: redisClient });
 
   worker.on('completed', (job) => {
     console.log(`[Worker] Task ${job.id} hoàn thành thành công`);
