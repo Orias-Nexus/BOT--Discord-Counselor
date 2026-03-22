@@ -16,6 +16,7 @@ import { EVENT_HANDLERS } from './events/eventRegistry.js';
 import { isServerStatsSelectId, doSetServerStats } from './scripts/setServerStats.js';
 import { EMBED_APPLY_SELECT_PREFIX } from './embeds/embedEdit.js';
 import { EMBED_BY_SCRIPT } from './embedRoutes.js';
+import { onMessageCreate } from './leveling/listener.js';
 import env from './config.js';
 import * as api from './api.js';
 
@@ -61,7 +62,7 @@ for (const { discordEvent, scriptName, buildContext } of EVENT_HANDLERS) {
 /** Slash commands with target option (embed_id). */
 const EMBED_TARGET_COMMANDS = ['embededit', 'embedrename', 'embeddelete', 'messagesend'];
 /** Slash commands with embed option (embed_name for greeting/leaving/boosting). */
-const EMBED_OPTION_COMMANDS = ['greetingmessage', 'leavingmessage', 'boostingmessage'];
+const EMBED_OPTION_COMMANDS = ['greetingmessage', 'leavingmessage', 'boostingmessage', 'levelingmessage', 'loggingmessage'];
 
 client.on(Events.InteractionCreate, async (interaction) => {
   if (interaction.isAutocomplete()) {
@@ -100,7 +101,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       try {
         await interaction.deferUpdate();
         if (guildId) {
-          const types = ['Greeting', 'Leaving', 'Boosting'];
+          const types = ['Greeting', 'Leaving', 'Boosting', 'Leveling', 'Logging'];
           for (const type of types) {
             await api.setMessageEmbed(guildId, type, selected.includes(type) ? embedId : null);
           }
@@ -254,6 +255,12 @@ if (!token) {
   console.error('Missing DISCORD_TOKEN in .env');
   process.exit(1);
 }
+
+client.on(Events.MessageCreate, (message) => {
+  onMessageCreate(message).catch((err) => {
+    console.warn('[Leveling]', err?.message ?? err);
+  });
+});
 
 (async () => {
   await loadAllScripts();

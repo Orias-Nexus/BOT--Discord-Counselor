@@ -1,5 +1,5 @@
 /**
- * Send event message (Greeting, Leaving, Boosting) to configured channel.
+ * Send event message (Greeting, Leaving, Boosting, Leveling, Logging) to configured channel.
  * Only when channel_id and embed_id are set (user-defined embed).
  */
 import * as api from './api.js';
@@ -8,7 +8,7 @@ import { messageSender } from './utils/messageSender.js';
 /**
  * Send embed to channel per Messages config (channel_id, embed_id). Requires embed_id in config (no default embed).
  * @param {import('discord.js').Guild} guild
- * @param {'Greeting'|'Leaving'|'Boosting'} messagesType
+ * @param {'Greeting'|'Leaving'|'Boosting'|'Leveling'|'Logging'} messagesType
  * @param {{ member?, guild?, channel? }} meta - member may be partial (Leaving)
  * @returns {Promise<boolean>} true if sent, false if skipped (no config / error)
  */

@@ -170,7 +170,7 @@ export async function processExpires() {
   return request('/members/process-expires', { method: 'POST' });
 }
 
-/** Server messages list (Greeting, Leaving, Boosting, ...). */
+/** Server messages list (Greeting, Leaving, Boosting, Leveling, Logging, ...). */
 export async function listMessages(serverId) {
   try {
     const data = await request(`/servers/${serverId}/messages`);
@@ -181,7 +181,7 @@ export async function listMessages(serverId) {
   }
 }
 
-/** Get message config by type (Greeting, Leaving, Boosting). Backend must mount message routes. */
+/** Get message config by type (Greeting, Leaving, Boosting, Leveling, Logging). Backend must mount message routes. */
 export async function getMessageByType(serverId, messagesType) {
   try {
     return await request(`/servers/${serverId}/messages/${messagesType}`);
@@ -247,4 +247,59 @@ export async function deleteEmbed(serverId, embedId) {
   return request(`/servers/${serverId}/embeds/${embedId}`, {
     method: 'DELETE',
   });
+}
+
+// ---------------------------------------------------------------------------
+// Leveling API
+// ---------------------------------------------------------------------------
+
+/** Add local EXP to a member. Returns { member_exp, member_level, leveled_up, old_level, new_level }. */
+export async function addLocalExp(serverId, userId, exp) {
+  return request(`/members/${serverId}/${userId}/exp`, {
+    method: 'PATCH',
+    body: JSON.stringify({ exp }),
+  });
+}
+
+/** Add global EXP to a user. Returns { user_exp, user_level, leveled_up, old_level, new_level }. */
+export async function addGlobalExp(userId, exp) {
+  return request(`/users/${userId}/exp`, {
+    method: 'PATCH',
+    body: JSON.stringify({ exp }),
+  });
+}
+
+/** Get user (global profile). */
+export async function getUser(userId) {
+  try {
+    return await request(`/users/${userId}`);
+  } catch (err) {
+    if (err?.message?.includes('404') || err?.message?.includes('not found')) return null;
+    throw err;
+  }
+}
+
+/** Local leaderboard for a server. */
+export async function getLocalLeaderboard(serverId, limit = 20) {
+  return request(`/members/${serverId}/leaderboard?limit=${limit}`);
+}
+
+/** Global leaderboard. */
+export async function getGlobalLeaderboard(limit = 20) {
+  return request(`/users/leaderboard?limit=${limit}`);
+}
+
+/** Get level progress info (currentLevelExp, nextLevelExp). */
+export async function getLevelProgress(exp, level) {
+  return request(`/levels/progress?exp=${exp}&level=${level}`);
+}
+
+/** Local rank of a member in a server. */
+export async function getLocalRank(serverId, userId) {
+  return request(`/members/${serverId}/${userId}/rank`);
+}
+
+/** Global rank of a user. */
+export async function getGlobalRank(userId) {
+  return request(`/users/${userId}/rank`);
 }
