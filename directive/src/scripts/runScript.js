@@ -10,12 +10,14 @@ const SCRIPT_NAMES = [
   'ChannelInfo', 'ChannelClone', 'ChannelCreate', 'ChannelSync', 'ChannelPrivate', 'ChannelPublic', 'ChannelSFW', 'ChannelNSFW',
   'ChannelSlow', 'ChannelUnslow', 'ChannelBitrate', 'ChannelLimit',
   'MemberInfo', 'MemberRename', 'MemberSetlevel', 'MemberMove', 'MemberReset', 'MemberWarn', 'MemberMute', 'MemberLock', 'MemberKick',
-  'MemberGreeting', 'MemberLeaving', 'MemberBoosting',
-  'GreetingChannel', 'LeavingChannel', 'BoostingChannel', 'GreetingMessage', 'LeavingMessage', 'BoostingMessage',
-  'GreetingTest', 'LeavingTest', 'BoostingTest',
+  'MemberGreeting', 'MemberLeaving', 'MemberBoosting', 'MemberLeveling', 'MemberLogging',
+  'GreetingChannel', 'LeavingChannel', 'BoostingChannel', 'LevelingChannel', 'LoggingChannel',
+  'GreetingMessage', 'LeavingMessage', 'BoostingMessage', 'LevelingMessage', 'LoggingMessage',
+  'GreetingTest', 'LeavingTest', 'BoostingTest', 'LevelingTest', 'LoggingTest',
   'EmbedCreate', 'EmbedEdit', 'EmbedRename', 'EmbedDelete', 'EmbedApply',
   'EmbedEditBasic', 'EmbedEditAuthor', 'EmbedEditFooter', 'EmbedEditImages',
   'MessageSend', 'MessageDele',
+  'LevelLocal', 'LevelGlobal', 'TopLocal', 'TopGlobal',
 ];
 
 const scriptCache = new Map();
