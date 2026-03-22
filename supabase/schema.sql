@@ -39,6 +39,22 @@ END $$;
 COMMENT ON TYPE "DiscordCounselor".category_type_enum IS 'Creator: danh mục chứa kênh trigger Voice Creator. Stats: danh mục chứa các kênh stat.';
 
 -- -----------------------------------------------------------------------------
+-- ENUM: Server Status (Standard, Premium, Deluxe, Leaved)
+-- -----------------------------------------------------------------------------
+DO $$ BEGIN
+    CREATE TYPE "DiscordCounselor".server_status_enum AS ENUM (
+        'Standard',
+        'Premium',
+        'Deluxe',
+        'Leaved'
+    );
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
+
+COMMENT ON TYPE "DiscordCounselor".server_status_enum IS 'Trạng thái server: Standard (mặc định), Premium, Deluxe, Leaved (bot đã rời)';
+
+-- -----------------------------------------------------------------------------
 -- ENUM: Message Type (Messages, Greeting, Leaving, Boosting, Leveling, Logging)
 -- -----------------------------------------------------------------------------
 DO $$ BEGIN
@@ -85,16 +101,17 @@ CREATE TABLE IF NOT EXISTS "DiscordCounselor".servers (
     role_new       TEXT,
     unrole_mute    TEXT,
     unrole_lock    TEXT,
-    level_channel  TEXT,
-    logs_channel   TEXT,
     created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    status         "DiscordCounselor".server_status_enum NOT NULL DEFAULT 'Standard'
 );
 
--- Nếu bảng đã tồn tại từ trước, đảm bảo có thêm các cột mới.
+-- Nếu bảng đã tồn tại từ trước, đảm bảo có cột status và xóa cột cũ.
 ALTER TABLE IF EXISTS "DiscordCounselor".servers
-    ADD COLUMN IF NOT EXISTS level_channel TEXT,
-    ADD COLUMN IF NOT EXISTS logs_channel TEXT;
+    ADD COLUMN IF NOT EXISTS status "DiscordCounselor".server_status_enum NOT NULL DEFAULT 'Standard';
+ALTER TABLE IF EXISTS "DiscordCounselor".servers
+    DROP COLUMN IF EXISTS level_channel,
+    DROP COLUMN IF EXISTS logs_channel;
 
 COMMENT ON TABLE "DiscordCounselor".servers IS 'Thông tin server (Discord guild)';
 COMMENT ON COLUMN "DiscordCounselor".servers.time_warn IS 'Thời gian tồn tại Warning (phút); 0 = vô hạn';
@@ -107,8 +124,7 @@ COMMENT ON COLUMN "DiscordCounselor".servers.time_new IS 'Thời gian tồn tạ
 COMMENT ON COLUMN "DiscordCounselor".servers.role_new IS 'Role được gắn khi Newbie';
 COMMENT ON COLUMN "DiscordCounselor".servers.unrole_mute IS 'Role bị gỡ khi nhận Mute';
 COMMENT ON COLUMN "DiscordCounselor".servers.unrole_lock IS 'Role bị gỡ khi nhận Lock';
-COMMENT ON COLUMN "DiscordCounselor".servers.level_channel IS 'Kênh gửi thông báo level (Leveling)';
-COMMENT ON COLUMN "DiscordCounselor".servers.logs_channel IS 'Kênh gửi log hệ thống';
+COMMENT ON COLUMN "DiscordCounselor".servers.status IS 'Trạng thái server: Standard (mặc định), Premium, Deluxe, Leaved';
 
 -- -----------------------------------------------------------------------------
 -- Embeds — Chỉ embed do người dùng tạo (messages, v.v.). Embed của functions hardcode trong code.
