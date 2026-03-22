@@ -60,11 +60,8 @@ export function omitNull(obj) {
   return out;
 }
 
-/**
- * Màu embed (integer, decimal).
- */
 export const EMBED_COLORS = {
-  DEFAULT: 5763719,
+  DEFAULT: 0x57f287,
   SERVER_INFO: 0xfcfcfc,
   CATEGORY_INFO: 0xfdfcfa,
   CHANNEL_INFO: 0xfbfcf8,
