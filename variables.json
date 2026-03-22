@@ -80,6 +80,31 @@
             "has_argument": false,
             "desc": "Danh sách kho đồ của user"
         },
+        "user_exp": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "EXP toàn cục (global) của user"
+        },
+        "user_rank": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Thứ hạng toàn cục (global) của user"
+        },
+        "member_exp": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "EXP cục bộ (local) của member trong server"
+        },
+        "member_level": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Level cục bộ (local) của member trong server"
+        },
+        "member_rank": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Thứ hạng cục bộ (local) của member trong server"
+        },
         "server_prefix": {
             "phase": 4,
             "has_argument": false,
