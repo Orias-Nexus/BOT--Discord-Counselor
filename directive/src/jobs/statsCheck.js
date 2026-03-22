@@ -4,13 +4,12 @@ import { digitsFromChannelsIdx, getStatLabelByIndex } from '../config/channelTyp
 
 const INTERVAL_MS = 5 * 60 * 1000;
 
-function getStatValue(guild, statIndex) {
-  const cachedBots = guild.members.cache.filter((m) => m.user.bot).size;
+function getStatValue(guild, statIndex, botCount) {
   switch (statIndex) {
     case 1:
-      return guild.memberCount - cachedBots;
+      return guild.memberCount - botCount;
     case 2:
-      return cachedBots;
+      return botCount;
     case 3:
       return guild.roles.cache.size;
     case 4:
@@ -43,6 +42,16 @@ export function startStatsCheck(client) {
         const statsRows = (rows ?? []).filter((r) => r.category_type === 'Stats');
         if (statsRows.length === 0) continue;
 
+        const allDigits = statsRows.flatMap((r) => digitsFromChannelsIdx(Number(r.channels_idx) || 0));
+        const needsBotCount = allDigits.includes(1) || allDigits.includes(2);
+        let botCount = 0;
+        if (needsBotCount) {
+          try {
+            await guild.members.fetch();
+          } catch (_) {}
+          botCount = guild.members.cache.filter((m) => m.user.bot).size;
+        }
+
         for (const row of statsRows) {
           const categoryId = row.category_id;
           const channelsIdx = Number(row.channels_idx) || 0;
@@ -57,7 +66,7 @@ export function startStatsCheck(client) {
           for (let i = 0; i < sorted.length && i < digits.length; i++) {
             const channel = sorted[i];
             const statIndex = digits[i];
-            const value = getStatValue(guild, statIndex);
+            const value = getStatValue(guild, statIndex, botCount);
             const newName = formatChannelName(statIndex, value);
             if (channel.name !== newName) {
               await channel.setName(newName).catch((err) => {
