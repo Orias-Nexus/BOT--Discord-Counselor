@@ -97,6 +97,10 @@ export function createContextFromMeta(meta = {}) {
       channel,
       member,
       user,
+      memberProfile: meta.memberProfile ?? null,
+      memberRank: meta.memberRank ?? null,
+      userProfile: meta.userProfile ?? null,
+      userRank: meta.userRank ?? null,
     },
   };
 }
