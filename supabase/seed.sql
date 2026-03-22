@@ -41,7 +41,11 @@ INSERT INTO "DiscordCounselor".functions (script_id, script, slash, action, even
 ("DiscordCounselor".uuidv7(), 'MemberWarn', '/memberwarn', 'Warn', NULL),
 ("DiscordCounselor".uuidv7(), 'MemberMute', '/membermute', 'Mute', NULL),
 ("DiscordCounselor".uuidv7(), 'MemberLock', '/memberlock', 'Lock', NULL),
-("DiscordCounselor".uuidv7(), 'MemberKick', '/memberkick', 'Kick', NULL)
+("DiscordCounselor".uuidv7(), 'MemberKick', '/memberkick', 'Kick', NULL),
+("DiscordCounselor".uuidv7(), 'LevelLocal', '/levellocal', NULL, NULL),
+("DiscordCounselor".uuidv7(), 'LevelGlobal', '/levelglobal', NULL, NULL),
+("DiscordCounselor".uuidv7(), 'TopLocal', '/toplocal', NULL, NULL),
+("DiscordCounselor".uuidv7(), 'TopGlobal', '/topglobal', NULL, NULL)
 ON CONFLICT (script) DO UPDATE SET
   slash = EXCLUDED.slash,
   action = EXCLUDED.action,
