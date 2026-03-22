@@ -1,4 +1,4 @@
-import { tryAwardExp } from './engine.js';
+import { tryAwardExp } from '../utils/levelingEngine.js';
 import * as api from '../api.js';
 import { sendEventMessage } from '../eventMessages.js';
 
@@ -15,13 +15,28 @@ function shouldIgnore(message) {
   return false;
 }
 
+/**
+ * Send level-up notification.
+ * Priority: configured channel (from messages table) -> fallback to interaction channel.
+ */
+async function notifyLevelUp(message, newLevel) {
+  const guild = message.guild;
+  const member = message.member ?? message.author;
+  const displayName = member.displayName ?? member.user?.username ?? 'Unknown';
+
+  const sent = await sendEventMessage(guild, 'Leveling', { member, guild }).catch(() => false);
+  if (sent) return;
+
+  const fallbackContent = `**${displayName}** reached **Level ${newLevel}**!`;
+  await message.channel.send(fallbackContent).catch(() => {});
+}
+
 async function processLocal(guildId, userId, exp, message) {
   const result = await api.addLocalExp(guildId, userId, exp);
   if (!result) return;
 
   if (result.leveled_up) {
-    const member = message.member ?? message.author;
-    await sendEventMessage(message.guild, 'Leveling', { member, guild: message.guild }).catch(() => {});
+    await notifyLevelUp(message, result.new_level);
   }
 }
 
