@@ -19,3 +19,16 @@ export async function getRange(req, res) {
         res.status(500).json({ error: err.message });
     }
 }
+
+/** GET /api/levels/progress?exp=X&level=Y -> { currentLevelExp, nextLevelExp } */
+export async function getProgress(req, res) {
+    try {
+        const exp = Number(req.query.exp ?? 0);
+        const level = Number(req.query.level ?? 0);
+        const data = await levelService.getLevelProgress(exp, level);
+        res.json(data);
+    } catch (err) {
+        console.error('[levelController] getProgress:', err);
+        res.status(500).json({ error: err.message });
+    }
+}
