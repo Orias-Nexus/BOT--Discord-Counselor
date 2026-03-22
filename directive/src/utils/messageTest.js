@@ -3,7 +3,7 @@ import * as api from '../api.js';
 import { messageSender } from './messageSender.js';
 
 /**
- * Test sending a configured event message (Greeting / Leaving / Boosting).
+ * Test sending a configured event message (Greeting / Leaving / Boosting / Leveling / Logging).
  * Guides the user if channel or embed is not set up yet.
  */
 export async function testEventMessage(interaction, messagesType) {
