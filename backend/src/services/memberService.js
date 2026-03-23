@@ -1,5 +1,6 @@
 import * as memberRepo from '../repositories/memberRepository.js';
 import * as levelRepo from '../repositories/levelRepository.js';
+import * as levelService from './levelService.js';
 import { cacheGet, cacheSet, cacheDel } from '../utils/cache.js';
 
 const MEMBER_TTL = 120;
@@ -35,6 +36,43 @@ export async function setMemberStatus(serverId, userId, status, expiresAt = null
 
 export async function getLevelRange() {
     return levelRepo.getMinMax();
+}
+
+/**
+ * Atomically add EXP to a member, check level-up, update level if needed.
+ * Returns { member_exp, member_level, leveled_up, old_level, new_level }.
+ */
+export async function addMemberExp(serverId, userId, expAmount) {
+    const updated = await memberRepo.addExp(serverId, userId, expAmount);
+    if (!updated) return null;
+
+    const oldLevel = updated.member_level;
+    const newLevel = await levelService.getLevelForExp(updated.member_exp);
+
+    let leveledUp = false;
+    if (newLevel > oldLevel) {
+        await memberRepo.updateLevel(serverId, userId, newLevel);
+        updated.member_level = newLevel;
+        leveledUp = true;
+    }
+
+    await cacheDel(memberKey(serverId, userId));
+
+    return {
+        member_exp: updated.member_exp,
+        member_level: updated.member_level,
+        leveled_up: leveledUp,
+        old_level: oldLevel,
+        new_level: newLevel,
+    };
+}
+
+export async function getMemberLeaderboard(serverId, limit = 20) {
+    return memberRepo.getLeaderboard(serverId, limit);
+}
+
+export async function getMemberRank(serverId, userId) {
+    return memberRepo.getRank(serverId, userId);
 }
 
 /**

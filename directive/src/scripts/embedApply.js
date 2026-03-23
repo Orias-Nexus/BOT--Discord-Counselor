@@ -2,7 +2,7 @@ import { ActionRowBuilder, StringSelectMenuBuilder, MessageFlags } from 'discord
 import * as api from '../api.js';
 import { EMBED_APPLY_SELECT_PREFIX } from '../embeds/embedEdit.js';
 
-const MESSAGE_TYPES = ['Greeting', 'Leaving', 'Boosting'];
+const MESSAGE_TYPES = ['Greeting', 'Leaving', 'Boosting', 'Leveling', 'Logging'];
 
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction?.guild;
