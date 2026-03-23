@@ -17,7 +17,8 @@ const SCRIPT_NAMES = [
   'EmbedCreate', 'EmbedEdit', 'EmbedRename', 'EmbedDelete', 'EmbedApply',
   'EmbedEditBasic', 'EmbedEditAuthor', 'EmbedEditFooter', 'EmbedEditImages',
   'MessageSend', 'MessageDele',
-  'LevelLocal', 'LevelGlobal', 'TopLocal', 'TopGlobal',
+  'LevelLocal', 'LevelGlobal', 'LevelCheck', 'TopLocal', 'TopGlobal',
+  'Dashboard', 'Variables',
 ];
 
 const scriptCache = new Map();
