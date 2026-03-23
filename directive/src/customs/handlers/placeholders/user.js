@@ -111,3 +111,13 @@ export function user_inventory(ctx, argument) {
   if (Array.isArray(list)) return list.join(', ');
   return typeof list === 'string' ? list : '';
 }
+
+export function user_exp(ctx) {
+  const exp = ctx.meta?.userProfile?.user_exp ?? 0;
+  return Number(exp).toLocaleString('en-US');
+}
+
+export function user_rank(ctx) {
+  const rank = ctx.meta?.userRank ?? '?';
+  return `#${rank}`;
+}
