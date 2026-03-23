@@ -14,7 +14,6 @@ import { errorHandler, notFoundHandler } from './utils/errorHandler.js';
 import serverRoutes from './routes/serverRoutes.js';
 import channelRoutes from './routes/channelRoutes.js';
 import memberRoutes from './routes/memberRoutes.js';
-import functionRoutes from './routes/functionRoutes.js';
 import levelRoutes from './routes/levelRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import embedRoutes from './routes/embedRoutes.js';
@@ -46,7 +45,7 @@ app.get('/api/info', (_req, res) => {
   res.json({
     name: 'Discord Counselor API',
     version: '1.0.0',
-    endpoints: ['/health', '/api/info', '/api/servers', '/api/servers/:serverId/channels', '/api/servers/:serverId/embeds', '/api/servers/:serverId/messages', '/api/members', '/api/users', '/api/functions', '/api/levels', '/api/auth/discord'],
+    endpoints: ['/health', '/api/info', '/api/servers', '/api/servers/:serverId/channels', '/api/servers/:serverId/embeds', '/api/servers/:serverId/messages', '/api/members', '/api/users', '/api/levels', '/api/auth/discord'],
   });
 });
 
@@ -56,7 +55,6 @@ app.use('/api/servers/:serverId/channels', channelRoutes);
 app.use('/api/servers/:serverId/embeds', embedRoutes);
 app.use('/api/servers/:serverId/messages', messageRoutes);
 app.use('/api/members', memberRoutes);
-app.use('/api/functions', functionRoutes);
 app.use('/api/levels', levelRoutes);
 app.use('/api/users', userRoutes);
 
