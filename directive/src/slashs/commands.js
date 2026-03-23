@@ -480,6 +480,16 @@ const SLASH_LIST = [
             .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
         ),
   },
+  {
+    name: 'levelcheck',
+    script: 'LevelCheck',
+    options: (b) =>
+      b.addUserOption((o) =>
+        o.setName('target').setDescription('Target member (default: you)')
+      ),
+  },
+  { name: 'dashboard', script: 'Dashboard' },
+  { name: 'variables', script: 'Variables' },
 ];
 
 export function getSlashCommands() {
