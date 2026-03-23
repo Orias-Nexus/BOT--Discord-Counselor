@@ -41,19 +41,6 @@ model embeds {
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model functions {
-  script_id  String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  script     String   @unique
-  slash      String?
-  action     String?
-  event      String?
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @default(now()) @db.Timestamptz(6)
-
-  @@index([script], map: "idx_functions_script")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model levels {
   level_id   String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   level      Int      @unique
