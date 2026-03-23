@@ -47,6 +47,7 @@ while true; do
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] UPDATED SUCCESSFULLY."
 done
 
+# tree -I 'node_modules'
 # tail -n 20 -f /home/long1/JS--Discord-Counselor/autopull.log
 # pm2 logs
 # crontab -e
