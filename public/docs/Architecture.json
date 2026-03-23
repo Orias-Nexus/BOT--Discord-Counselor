@@ -496,7 +496,7 @@
           "reply_type": "embed",
           "embed_schema": {
             "builder": "serverInfoEmbed.buildEmbed(guild, inviteLink)",
-            "color": 5895182,
+            "color": "0xFCFCFC",
             "title": "✦ {guild.name}",
             "thumbnail": "guild.iconURL({ size: 256 })",
             "image": "config.resource.mainImageUrl",
@@ -584,7 +584,7 @@
           "reply_type": "embed",
           "embed_schema": {
             "builder": "categoryInfoEmbed.buildCategoryEmbed(category, guild)",
-            "color": 5788754,
+            "color": "0xFDFCFA",
             "title": "✦ {category.name}",
             "image": "config.resource.mainImageUrl",
             "fields": [
@@ -639,7 +639,7 @@
           "reply_type": "embed",
           "embed_schema": {
             "builder": "channelInfoEmbed.buildChannelEmbed(channel, guild)",
-            "color": 15158332,
+            "color": "0xFBFCF8",
             "title": "✦ Channel: {channel.name}",
             "description": "**Topic:** {channel.topic} (nếu có)",
             "image": "config.resource.mainImageUrl",
