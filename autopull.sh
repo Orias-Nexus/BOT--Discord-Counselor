@@ -3,7 +3,15 @@ export TZ="Asia/Ho_Chi_Minh"
 
 PROJECT_DIR="/home/long1/JS--Discord-Counselor"
 AUTOPULL_LOG="$PROJECT_DIR/autopull.log"
-cd $PROJECT_DIR
+LOCK_FILE="/tmp/autopull.lock"
+
+exec 200>"$LOCK_FILE"
+if ! flock -n 200; then
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] SKIPPED: Another update is running." >> "$AUTOPULL_LOG"
+    exit 0
+fi
+
+cd "$PROJECT_DIR"
 
 if [ -s "$AUTOPULL_LOG" ]; then
     LAST_DATE=$(tail -n 1 "$AUTOPULL_LOG" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}')
@@ -13,11 +21,17 @@ if [ -s "$AUTOPULL_LOG" ]; then
     fi
 fi
 
-git fetch origin main > /dev/null 2>&1
-LOCAL=$(git rev-parse HEAD)
-REMOTE=$(git rev-parse @{u})
-if [ $LOCAL != $REMOTE ]; then
-    : > $AUTOPULL_LOG
+while true; do
+    git fetch origin main > /dev/null 2>&1
+    LOCAL=$(git rev-parse HEAD)
+    REMOTE=$(git rev-parse @{u})
+
+    if [ "$LOCAL" = "$REMOTE" ]; then
+        echo "[$(date +'%Y-%m-%d %H:%M:%S')] CHECKED: NO CHANGES."
+        break
+    fi
+
+    : > "$AUTOPULL_LOG"
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] NEW VERSION DETECTED. UPDATING..."
     git pull origin main
     npm run install:all
@@ -26,16 +40,13 @@ if [ $LOCAL != $REMOTE ]; then
     cd frontend && npm run build
     sudo rm -rf /var/www/html/*
     sudo cp -r dist/* /var/www/html/
-    cd ..
+    cd "$PROJECT_DIR"
     pm2 flush
-    rm -rf $PROJECT_DIR/private/logs/*
+    rm -rf "$PROJECT_DIR/private/logs/"*
     pm2 restart all
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] UPDATED SUCCESSFULLY."
-else
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] CHECKED: NO CHANGES."
-fi
+done
 
-# tree -I 'node_modules'
 # tail -n 20 -f /home/long1/JS--Discord-Counselor/autopull.log
 # pm2 logs
 # crontab -e

@@ -1,4 +1,4 @@
-import { redisClient } from '../utils/redis.js';
+import { redisClient } from './redis.js';
 
 const BASE_EXP = 40;
 const COOLDOWN_SECONDS = 300;
