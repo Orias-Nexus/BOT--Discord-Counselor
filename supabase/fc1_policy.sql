@@ -9,7 +9,6 @@
 -- -----------------------------------------------------------------------------
 
 -- 1.1 Drop tất cả policy đã tạo (theo tên cũ)
-DROP POLICY IF EXISTS "Allow public read access on functions" ON "DiscordCounselor"."functions";
 DROP POLICY IF EXISTS "Allow public read access on levels" ON "DiscordCounselor"."levels";
 DROP POLICY IF EXISTS "Allow public read access on members" ON "DiscordCounselor"."members";
 DROP POLICY IF EXISTS "Allow public read access on servers" ON "DiscordCounselor"."servers";
@@ -32,7 +31,6 @@ REVOKE USAGE ON SCHEMA "DiscordCounselor" FROM anon, authenticated, service_role
 GRANT USAGE ON SCHEMA "DiscordCounselor" TO anon, authenticated, service_role;
 
 -- 2.2 Bảng: cấp đủ quyền SELECT, INSERT, UPDATE, DELETE cho từng bảng (tường minh)
-GRANT SELECT, INSERT, UPDATE, DELETE ON "DiscordCounselor"."functions" TO anon, authenticated, service_role;
 GRANT SELECT, INSERT, UPDATE, DELETE ON "DiscordCounselor"."levels" TO anon, authenticated, service_role;
 GRANT SELECT, INSERT, UPDATE, DELETE ON "DiscordCounselor"."servers" TO anon, authenticated, service_role;
 GRANT SELECT, INSERT, UPDATE, DELETE ON "DiscordCounselor"."users" TO anon, authenticated, service_role;
@@ -46,7 +44,6 @@ GRANT EXECUTE ON ALL ROUTINES IN SCHEMA "DiscordCounselor" TO anon, authenticate
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA "DiscordCounselor" TO anon, authenticated, service_role;
 
 -- 2.4 Bật RLS cho tất cả bảng
-ALTER TABLE "DiscordCounselor"."functions" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "DiscordCounselor"."levels" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "DiscordCounselor"."servers" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "DiscordCounselor"."users" ENABLE ROW LEVEL SECURITY;
@@ -56,9 +53,6 @@ ALTER TABLE "DiscordCounselor"."messages" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "DiscordCounselor"."embeds" ENABLE ROW LEVEL SECURITY;
 
 -- 2.5 Tạo policy: anon và authenticated được SELECT toàn bộ (backend dùng service_role, bypass RLS)
-CREATE POLICY "dc_functions_select"
-  ON "DiscordCounselor"."functions" FOR SELECT TO anon, authenticated USING (true);
-
 CREATE POLICY "dc_levels_select"
   ON "DiscordCounselor"."levels" FOR SELECT TO anon, authenticated USING (true);
 
@@ -81,8 +75,6 @@ CREATE POLICY "dc_embeds_select"
   ON "DiscordCounselor"."embeds" FOR SELECT TO anon, authenticated USING (true);
 
 -- 2.6 Cho phép service_role đủ thao tác qua RLS (trùng với grant; Supabase service_role thường bypass RLS)
-CREATE POLICY "dc_functions_all"
-  ON "DiscordCounselor"."functions" FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "dc_levels_all"
   ON "DiscordCounselor"."levels" FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "dc_servers_all"

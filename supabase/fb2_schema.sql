@@ -4,73 +4,7 @@
 -- Thứ tự: functions.sql → schema.sql → triggers.sql
 -- =============================================================================
 
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
-CREATE SCHEMA IF NOT EXISTS "DiscordCounselor";
-
--- -----------------------------------------------------------------------------
--- ENUM: Member Status (Architecture.json Database.Enum)
--- -----------------------------------------------------------------------------
-DO $$ BEGIN
-    CREATE TYPE "DiscordCounselor".member_status_enum AS ENUM (
-        'Newbie',
-        'Good',
-        'Warn',
-        'Mute',
-        'Lock',
-        'Kick',
-        'Leaved'
-    );
-EXCEPTION
-    WHEN duplicate_object THEN NULL;
-END $$;
-
-COMMENT ON TYPE "DiscordCounselor".member_status_enum IS 'Trạng thái thành viên trong server';
-
--- -----------------------------------------------------------------------------
--- ENUM: Category Type (Creator = danh mục Voice Creator; Stats = danh mục Server Stats)
--- -----------------------------------------------------------------------------
-DO $$ BEGIN
-    CREATE TYPE "DiscordCounselor".category_type_enum AS ENUM ('Creator', 'Stats');
-EXCEPTION
-    WHEN duplicate_object THEN NULL;
-END $$;
-
-COMMENT ON TYPE "DiscordCounselor".category_type_enum IS 'Creator: danh mục chứa kênh trigger Voice Creator. Stats: danh mục chứa các kênh stat.';
-
--- -----------------------------------------------------------------------------
--- ENUM: Server Status (Standard, Premium, Deluxe, Leaved)
--- -----------------------------------------------------------------------------
-DO $$ BEGIN
-    CREATE TYPE "DiscordCounselor".server_status_enum AS ENUM (
-        'Standard',
-        'Premium',
-        'Deluxe',
-        'Leaved'
-    );
-EXCEPTION
-    WHEN duplicate_object THEN NULL;
-END $$;
-
-COMMENT ON TYPE "DiscordCounselor".server_status_enum IS 'Trạng thái server: Standard (mặc định), Premium, Deluxe, Leaved (bot đã rời)';
-
--- -----------------------------------------------------------------------------
--- ENUM: Message Type (Messages, Greeting, Leaving, Boosting, Leveling, Logging)
--- -----------------------------------------------------------------------------
-DO $$ BEGIN
-    CREATE TYPE "DiscordCounselor".message_type_enum AS ENUM (
-        'Messages',
-        'Greeting',
-        'Leaving',
-        'Boosting',
-        'Leveling',
-        'Logging'
-    );
-EXCEPTION
-    WHEN duplicate_object THEN NULL;
-END $$;
-
-COMMENT ON TYPE "DiscordCounselor".message_type_enum IS 'Loại tin nhắn cấu hình: Messages, Greeting, Leaving, Boosting, Leveling, Logging';
+DROP SCHEMA IF EXISTS "DiscordCounselor" CASCADE;
 
 -- -----------------------------------------------------------------------------
 -- Levels — Định nghĩa các mốc điểm yêu cầu cho các level
@@ -127,7 +61,7 @@ COMMENT ON COLUMN "DiscordCounselor".servers.unrole_lock IS 'Role bị gỡ khi 
 COMMENT ON COLUMN "DiscordCounselor".servers.status IS 'Trạng thái server: Standard (mặc định), Premium, Deluxe, Leaved';
 
 -- -----------------------------------------------------------------------------
--- Embeds — Chỉ embed do người dùng tạo (messages, v.v.). Embed của functions hardcode trong code.
+-- Embeds — Chỉ embed do người dùng tạo (messages, v.v.). Embed của lệnh hardcode trong code.
 -- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS "DiscordCounselor".embeds (
     embed_id    UUID PRIMARY KEY DEFAULT "DiscordCounselor".uuidv7(),
@@ -139,29 +73,9 @@ CREATE TABLE IF NOT EXISTS "DiscordCounselor".embeds (
     UNIQUE (embed_name, server_id)
 );
 
-COMMENT ON TABLE "DiscordCounselor".embeds IS 'Chỉ embed do người dùng tạo; embed của lệnh/tính năng (functions) hardcode trong code';
+COMMENT ON TABLE "DiscordCounselor".embeds IS 'Chỉ embed do người dùng tạo; embed của lệnh hardcode trong code';
 COMMENT ON COLUMN "DiscordCounselor".embeds.embed_name IS 'Tên embed do người dùng đặt';
 COMMENT ON COLUMN "DiscordCounselor".embeds.server_id IS 'Server sở hữu embed';
-
--- -----------------------------------------------------------------------------
--- Functions — Slash, action, event (embed nội dung hardcode trong directive)
--- -----------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS "DiscordCounselor".functions (
-    script_id   UUID PRIMARY KEY DEFAULT "DiscordCounselor".uuidv7(),
-    script      TEXT NOT NULL UNIQUE,
-    slash       TEXT,
-    action      TEXT,
-    event       TEXT,
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-COMMENT ON TABLE "DiscordCounselor".functions IS 'Slash/action/event của từng tính năng; nội dung embed hardcode trong code, không lưu DB';
-COMMENT ON COLUMN "DiscordCounselor".functions.script IS 'Tên tính năng (script)';
-COMMENT ON COLUMN "DiscordCounselor".functions.slash IS 'Lệnh slash (ví dụ /serverinfo)';
-COMMENT ON COLUMN "DiscordCounselor".functions.action IS 'Tên action (nút giao diện)';
-COMMENT ON COLUMN "DiscordCounselor".functions.event IS 'Tên event';
-COMMENT ON COLUMN "DiscordCounselor".functions.created_at IS 'Thời gian tạo; UUID v7 đã sắp xếp theo thời gian (ORDER BY script_id)';
 
 -- -----------------------------------------------------------------------------
 -- Messages — Cấu hình tin nhắn theo loại (Greeting, Leaving, Boosting, Logging...)
@@ -243,7 +157,3 @@ CREATE INDEX IF NOT EXISTS idx_members_user ON "DiscordCounselor".members(user_i
 CREATE INDEX IF NOT EXISTS idx_levels_level ON "DiscordCounselor".levels(level);
 CREATE INDEX IF NOT EXISTS idx_embeds_server ON "DiscordCounselor".embeds(server_id);
 CREATE INDEX IF NOT EXISTS idx_embeds_name_server ON "DiscordCounselor".embeds(embed_name, server_id);
-CREATE INDEX IF NOT EXISTS idx_functions_script ON "DiscordCounselor".functions(script);
-CREATE INDEX IF NOT EXISTS idx_functions_slash ON "DiscordCounselor".functions(slash) WHERE slash IS NOT NULL;
-CREATE INDEX IF NOT EXISTS idx_functions_action ON "DiscordCounselor".functions(action) WHERE action IS NOT NULL;
-CREATE INDEX IF NOT EXISTS idx_functions_event ON "DiscordCounselor".functions(event) WHERE event IS NOT NULL;
