@@ -4,7 +4,7 @@ import { ACTION_PREFIX, ACTION_SELECT_PREFIX } from '../utils/components.js';
 import { runScript } from '../scripts/runScript.js';
 import { getVoiceRoomControlOwner } from '../scripts/channelCreate.js';
 import { SCRIPTS_NEED_MODAL, getModalForScript, buildModalContext } from './modalConfig.js';
-import { getEmbedUpdatePayload } from './embedUpdate.js';
+import { getEmbedUpdatePayload, resetComponentsOnly } from './embedUpdate.js';
 
 function parseButtonCustomId(customId) {
   if (!customId || !customId.startsWith(ACTION_PREFIX)) return null;
@@ -131,8 +131,15 @@ export async function handleAction(interaction, client, timing = {}) {
   try {
     const scriptResult = await runScript(scriptName, interaction, client, actionContext);
     const payload = await getEmbedUpdatePayload(scriptName, interaction, actionContext, scriptResult);
-    if (payload && interaction.message) {
-      await interaction.message.edit(payload).catch(() => {});
+    if (interaction.message) {
+      if (payload) {
+        await interaction.message.edit(payload).catch(() => {});
+      } else {
+        const componentsOnly = resetComponentsOnly(scriptName, interaction, actionContext);
+        if (componentsOnly) {
+          await interaction.message.edit({ components: componentsOnly }).catch(() => {});
+        }
+      }
     }
   } catch (err) {
     console.error('[handleAction]', err);
