@@ -30,8 +30,7 @@ export function parseFields(value) {
 export function mergeBasic(embed, modalValues) {
   if (modalValues.title !== undefined) embed.title = modalValues.title || null;
   if (modalValues.description !== undefined) embed.description = modalValues.description || null;
-  const color = parseColor(modalValues.color);
-  if (color !== null) embed.color = color;
+  if (modalValues.color !== undefined) embed.color = parseColor(modalValues.color);
   const fields = parseFields(modalValues.fields);
   if (fields !== null) embed.fields = fields;
   return embed;
@@ -40,14 +39,14 @@ export function mergeBasic(embed, modalValues) {
 export function mergeAuthor(embed, modalValues) {
   const name = modalValues.author_name ?? embed.author?.name ?? null;
   const icon_url = modalValues.author_icon_url ?? embed.author?.icon_url ?? null;
-  if (name || icon_url) embed.author = { name: name || null, icon_url: icon_url || null };
+  embed.author = (name || icon_url) ? { name: name || null, icon_url: icon_url || null } : null;
   return embed;
 }
 
 export function mergeFooter(embed, modalValues) {
   const text = modalValues.footer_text ?? embed.footer?.text ?? null;
   const icon_url = modalValues.footer_icon_url ?? embed.footer?.icon_url ?? null;
-  if (text || icon_url) embed.footer = { text: text || null, icon_url: icon_url || null };
+  embed.footer = (text || icon_url) ? { text: text || null, icon_url: icon_url || null } : null;
   return embed;
 }
 
