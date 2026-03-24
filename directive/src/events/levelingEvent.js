@@ -48,7 +48,8 @@ async function processLocal(guildId, userId, exp, message) {
   if (!result) return;
 
   if (result.leveled_up) {
-    await notifyLevelUp(message, result);
+    // Fire-and-forget to avoid blocking the main leveling flow.
+    notifyLevelUp(message, result).catch(() => {});
   }
 }
 
