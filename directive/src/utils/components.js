@@ -1,107 +1,125 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } from 'discord.js';
+import { ActionRowBuilder, ChannelType, PermissionFlagsBits, StringSelectMenuBuilder } from 'discord.js';
 
-/** Map script name to action label (Architecture Action items). */
+export const ACTION_PREFIX = 'action_';
+export const ACTION_SELECT_PREFIX = 'actionsel_';
+
 export const SCRIPT_TO_LABEL = {
-  StatusTimeout: 'Status Timeout',
-  StatusRole: 'Status Role',
-  StatusUnrole: 'Status Unrole',
-  CategoryClone: 'Clone',
-  CategoryPrivate: 'Private',
-  CategoryPublic: 'Public',
-  ChannelClone: 'Clone',
-  ChannelSync: 'Sync',
-  ChannelPrivate: 'Private',
-  ChannelPublic: 'Public',
-  ChannelSFW: 'SFW',
-  ChannelNSFW: 'NSFW',
-  MemberRename: 'Name',
-  MemberSetlevel: 'Level',
-  MemberMove: 'Move',
-  MemberReset: 'Good - Unwarn - Unmute - Unlock',
-  MemberWarn: 'Warn',
-  MemberMute: 'Mute',
-  MemberLock: 'Lock',
-  MemberKick: 'Kick',
+  StatusTimeout:    'Status Timeout',
+  StatusRole:       'Status Roles',
+  StatusUnrole:     'Status Unrole',
+  SetVoiceCreator:  'Voice Creator',
+  SetServerStats:   'Server Stats',
+  CategoryClone:    'Clone',
+  CategoryPrivate:  'Private',
+  CategoryPublic:   'Public',
+  ChannelClone:     'Clone',
+  ChannelPrivate:   'Private',
+  ChannelPublic:    'Public',
+  ChannelSync:      'Sync',
+  ChannelNSFW:      'NSFW',
+  ChannelSFW:       'SFW',
+  ChannelSlow:      'Slow',
+  ChannelUnslow:    'Unslow',
+  ChannelBitrate:   'Bitrate',
+  ChannelLimit:     'Limit',
+  MemberRename:     'Name',
+  MemberSetlevel:   'Level',
+  MemberMove:       'Move',
+  MemberReset:      'Good',
+  MemberWarn:       'Warn',
+  MemberMute:       'Mute',
+  MemberLock:       'Lock',
+  MemberKick:       'Kick',
+  GreetingChannel:  'Greeting Channel',
+  LeavingChannel:   'Leaving Channel',
+  BoostingChannel:  'Boosting Channel',
+  LevelingChannel:  'Leveling Channel',
+  LoggingChannel:   'Logging Channel',
+  GreetingMessage:  'Greeting Message',
+  LeavingMessage:   'Leaving Message',
+  BoostingMessage:  'Boosting Message',
+  LevelingMessage:  'Leveling Message',
+  LoggingMessage:   'Logging Message',
+  EmbedEditAuthor:  'Author',
+  EmbedEditFooter:  'Footer',
+  EmbedEditImages:  'Images',
+  EmbedEditBasic:   'Basic Info',
+  EmbedRename:      'Rename',
+  EmbedApply:       'Apply',
+  EmbedDelete:      'Delete',
 };
 
-/** Actions included per parent (Architecture Slash actions_included). */
-const SERVER_INFO_ACTIONS = ['StatusTimeout', 'StatusRole', 'StatusUnrole'];
-const CATEGORY_INFO_ACTIONS_BASE = ['CategoryClone'];
-const CHANNEL_INFO_ACTIONS = ['ChannelClone', 'ChannelSync', 'ChannelPrivate', 'ChannelPublic', 'ChannelSFW', 'ChannelNSFW'];
-/** Tối đa 5 nút mỗi ActionRow (giới hạn Discord). Chia 8 action thành 2 hàng. */
-const MEMBER_INFO_ACTIONS_ROW1 = ['MemberRename', 'MemberSetlevel', 'MemberMove', 'MemberReset'];
-const MEMBER_INFO_ACTIONS_ROW2 = ['MemberWarn', 'MemberMute', 'MemberLock', 'MemberKick'];
+const SERVER_ACTIONS = ['StatusRole', 'StatusUnrole', 'StatusTimeout', 'SetServerStats', 'SetVoiceCreator'];
+const CATEGORY_BASE_ACTIONS = ['CategoryClone'];
+const MEMBER_ACTIONS = ['MemberRename', 'MemberSetlevel', 'MemberMove', 'MemberReset', 'MemberWarn', 'MemberMute', 'MemberLock', 'MemberKick'];
 
-const PREFIX = 'action_';
-/** Màu mặc định cho mọi nút không set màu (giống nút Sync của channel). */
-const DEFAULT_BUTTON_STYLE = ButtonStyle.Secondary;
-const STYLE_MAP = { Default: ButtonStyle.Primary, Green: ButtonStyle.Success, Red: ButtonStyle.Danger };
-
-function buildActionRow(scriptNames, contextId, styleOverrides = {}, labelOverrides = {}) {
-  const row = new ActionRowBuilder();
-  for (const scriptName of scriptNames) {
-    const label = labelOverrides[scriptName] ?? SCRIPT_TO_LABEL[scriptName] ?? scriptName;
-    const style = styleOverrides[scriptName] ?? DEFAULT_BUTTON_STYLE;
-    row.addComponents(
-      new ButtonBuilder()
-        .setCustomId(`${PREFIX}${scriptName}_${contextId}`)
-        .setLabel(String(label).slice(0, 80))
-        .setStyle(style)
+function buildSelectRow(scriptNames, contextId, { labels = {}, placeholder = 'Choose an action' } = {}) {
+  const select = new StringSelectMenuBuilder()
+    .setCustomId(`${ACTION_SELECT_PREFIX}${contextId}`)
+    .setPlaceholder(placeholder)
+    .setMinValues(1)
+    .setMaxValues(1)
+    .addOptions(
+      scriptNames.map((name) => ({
+        label: String(labels[name] ?? SCRIPT_TO_LABEL[name] ?? name).slice(0, 100),
+        value: name,
+      }))
     );
-  }
-  return row;
+  return new ActionRowBuilder().addComponents(select);
 }
 
-/** Nhãn nút Reset theo trạng thái member (Good / Unwarn / Unmute / Unlock). */
+function isPublicChannel(channel, guild) {
+  if (!channel || !guild) return true;
+  const overwrite = channel.permissionOverwrites?.cache?.get(guild.id);
+  return !overwrite || !overwrite.deny?.has(PermissionFlagsBits.ViewChannel);
+}
+
 function getMemberResetLabel(memberStatus) {
   switch (memberStatus) {
     case 'Warning': return 'Unwarn';
-    case 'Muted': return 'Unmute';
-    case 'Locked': return 'Unlock';
-    default: return 'Good';
+    case 'Muted':   return 'Unmute';
+    case 'Locked':  return 'Unlock';
+    default:        return 'Good';
   }
 }
 
+/** @returns {ActionRowBuilder[]} */
 export function buildServerInfoComponents() {
-  const row = buildActionRow(SERVER_INFO_ACTIONS, 'server');
-  return { row };
+  return [buildSelectRow(SERVER_ACTIONS, 'server', { placeholder: 'Server actions' })];
 }
 
-export function buildCategoryInfoComponents(categoryId, category, guild) {
-  const scripts = [...CATEGORY_INFO_ACTIONS_BASE];
-  if (category && guild) {
-    const overwrite = category.permissionOverwrites?.cache?.get(guild.id);
-    const isPublic = !overwrite || !overwrite.deny?.has(PermissionFlagsBits.ViewChannel);
-    scripts.push(isPublic ? 'CategoryPrivate' : 'CategoryPublic');
-  } else {
-    scripts.push('CategoryPrivate', 'CategoryPublic');
-  }
-  const row = buildActionRow(scripts, categoryId);
-  return { row };
+/** @returns {ActionRowBuilder[]} */
+export function buildCategoryInfoComponents(categoryId, category = null, guild = null) {
+  const toggleScript = isPublicChannel(category, guild) ? 'CategoryPrivate' : 'CategoryPublic';
+  return [buildSelectRow([...CATEGORY_BASE_ACTIONS, toggleScript], categoryId, { placeholder: 'Category actions' })];
 }
 
-export function buildChannelInfoComponents(channelId, channel, guild) {
-  const overwrite = channel.permissionOverwrites?.cache?.get(guild.id);
-  const isPublic = !overwrite || !overwrite.deny?.has(PermissionFlagsBits.ViewChannel);
-  const status = isPublic ? 'Public' : 'Private';
-  const toggleScript = status === 'Public' ? 'ChannelPrivate' : 'ChannelPublic';
-  const scripts = ['ChannelClone', toggleScript, 'ChannelSync', channel.nsfw ? 'ChannelNSFW' : 'ChannelSFW'];
-  const row = buildActionRow(scripts, channelId);
-  return { row };
+/** @returns {ActionRowBuilder[]} */
+export function buildChannelInfoComponents(channelId, channel = null, guild = null) {
+  const toggleScript = isPublicChannel(channel, guild) ? 'ChannelPrivate' : 'ChannelPublic';
+  const nsfwScript = channel?.nsfw ? 'ChannelSFW' : 'ChannelNSFW';
+  const slowScript = channel?.rateLimitPerUser ? 'ChannelUnslow' : 'ChannelSlow';
+  const scripts = ['ChannelClone', 'ChannelSync', toggleScript, nsfwScript, slowScript];
+
+  const isVoice = channel?.type === ChannelType.GuildVoice || channel?.type === ChannelType.GuildStageVoice;
+  if (isVoice) scripts.push('ChannelBitrate', 'ChannelLimit');
+
+  return [buildSelectRow(scripts, channelId, { placeholder: 'Channel actions' })];
 }
 
+/** @returns {ActionRowBuilder[]} */
 export function buildMemberInfoComponents(memberId, profile = null) {
-  const memberStatus = profile?.member_status ?? null;
-  const styleOverrides = {
-    MemberReset: ButtonStyle.Success,
-    MemberKick: ButtonStyle.Danger,
-  };
-  const labelOverrides = {
-    MemberReset: getMemberResetLabel(memberStatus),
-  };
-  const row1 = buildActionRow(MEMBER_INFO_ACTIONS_ROW1, memberId, styleOverrides, labelOverrides);
-  const row2 = buildActionRow(MEMBER_INFO_ACTIONS_ROW2, memberId, styleOverrides, labelOverrides);
-  return { row: row1, row2 };
+  const labels = { MemberReset: getMemberResetLabel(profile?.member_status) };
+  return [buildSelectRow(MEMBER_ACTIONS, memberId, { labels, placeholder: 'Member actions' })];
 }
 
-export { PREFIX as ACTION_PREFIX };
+/** @returns {ActionRowBuilder[]} */
+export function buildEmbedEditComponents(embedId) {
+  return [
+    buildSelectRow(
+      ['EmbedEditAuthor', 'EmbedEditFooter', 'EmbedEditImages', 'EmbedEditBasic', 'EmbedRename', 'EmbedApply', 'EmbedDelete'],
+      embedId,
+      { placeholder: 'Embed actions' }
+    ),
+  ];
+}

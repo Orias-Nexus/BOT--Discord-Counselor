@@ -1,0 +1,510 @@
+{
+    "placeholders": {
+        "user": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Ping người dùng gọi lệnh"
+        },
+        "user_tag": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Username + Tag (VD: User#1234)"
+        },
+        "user_name": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Tên người dùng (không có tag)"
+        },
+        "user_avatar": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Link ảnh đại diện của user"
+        },
+        "user_discrim": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Mã số tag (VD: 1234)"
+        },
+        "user_id": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "ID của người dùng"
+        },
+        "user_nick": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Biệt danh (Nickname) trong server"
+        },
+        "user_joindate": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Ngày tham gia server"
+        },
+        "user_createdate": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Ngày tạo tài khoản Discord"
+        },
+        "user_displaycolor": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Mã màu của user dựa trên role"
+        },
+        "user_boostsince": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Thời gian user bắt đầu boost server"
+        },
+        "user_balance": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Số dư tiền ảo của user"
+        },
+        "user_balance_locale": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Số dư tiền ảo (định dạng có dấu phẩy)"
+        },
+        "user_item": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Vật phẩm user đang có"
+        },
+        "user_item_count": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Số lượng vật phẩm"
+        },
+        "user_inventory": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Danh sách kho đồ của user"
+        },
+        "user_exp": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "EXP toàn cục (global) của user"
+        },
+        "user_rank": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Thứ hạng toàn cục (global) của user"
+        },
+        "member_exp": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "EXP cục bộ (local) của member trong server"
+        },
+        "member_level": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Level cục bộ (local) của member trong server"
+        },
+        "member_rank": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Thứ hạng cục bộ (local) của member trong server"
+        },
+        "blank_banner": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho Blank"
+        },
+        "imposter_banner": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho Imposter"
+        },
+        "manycat_banner": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho Manycat"
+        },
+        "nahihi_banner": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho Nahihi"
+        },
+        "whitepet_banner": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho Whitepet"
+        },
+        "paimom_icon": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho Paimom"
+        },
+        "march71_icon": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho March71"
+        },
+        "march72_icon": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho March72"
+        },
+        "server_prefix": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Prefix hiện tại của server"
+        },
+        "server_currency": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Đơn vị tiền tệ của server"
+        },
+        "server_name": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Tên server"
+        },
+        "server_id": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "ID của server"
+        },
+        "server_membercount": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Tổng số thành viên"
+        },
+        "server_membercount_ordinal": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Số thành viên (số thứ tự, VD: 1st, 2nd)"
+        },
+        "server_membercount_nobots": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Số thành viên (không tính bot)"
+        },
+        "server_membercount_nobots_ordinal": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Số thành viên không tính bot (số thứ tự)"
+        },
+        "server_botcount": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Tổng số lượng bot"
+        },
+        "server_botcount_ordinal": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Số lượng bot (số thứ tự)"
+        },
+        "server_icon": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Link icon của server"
+        },
+        "server_banner": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Link banner của server"
+        },
+        "server_rolecount": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Tổng số role trong server"
+        },
+        "server_channelcount": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Tổng số kênh trong server"
+        },
+        "server_randommember": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Chọn ngẫu nhiên 1 thành viên (ping)"
+        },
+        "server_randommember_tag": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Tên tag của thành viên ngẫu nhiên"
+        },
+        "server_randommember_nobots": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Thành viên ngẫu nhiên (không phải bot)"
+        },
+        "server_owner": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Ping chủ server"
+        },
+        "server_owner_id": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "ID của chủ server"
+        },
+        "server_createdate": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Ngày thành lập server"
+        },
+        "server_boostlevel": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Cấp độ Boost hiện tại (Level 1/2/3)"
+        },
+        "server_boostcount": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Số lượng Boost hiện tại"
+        },
+        "server_nextboostlevel": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Cấp độ Boost tiếp theo"
+        },
+        "server_nextboostlevel_required": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Số Boost cần để lên cấp tiếp theo"
+        },
+        "server_nextboostlevel_until_required": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Số Boost còn thiếu để lên cấp"
+        },
+        "channel": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Ping kênh hiện tại"
+        },
+        "channel_name": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Tên kênh hiện tại"
+        },
+        "channel_createdate": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Ngày tạo kênh"
+        },
+        "rule_channel": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Kênh Rules/Guidelines của server (Community)"
+        },
+        "message_link": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Link dẫn đến tin nhắn gọi lệnh"
+        },
+        "message_id": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "ID của tin nhắn gọi lệnh"
+        },
+        "message_content": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Nội dung gốc của tin nhắn"
+        },
+        "date": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Ngày giờ hiện tại"
+        },
+        "newline": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Xuống dòng (\\n)"
+        },
+        "embed_name": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "Tên embed (từ placeholderCache / meta khi resolve phản hồi)"
+        }
+    },
+    "advanced_logic": {
+        "range": {
+            "phase": 4,
+            "has_argument": true,
+            "desc": "Tạo số ngẫu nhiên. VD: {range: 1-100}"
+        },
+        "choose": {
+            "phase": 4,
+            "has_argument": true,
+            "desc": "Chọn ngẫu nhiên 1 mục. VD: {choose: táo; cam; lê}"
+        },
+        "lockedchoose": {
+            "phase": 4,
+            "has_argument": true,
+            "desc": "Chọn ngẫu nhiên nhưng kết quả cố định cho user đó"
+        },
+        "weightedchoose": {
+            "phase": 4,
+            "has_argument": true,
+            "desc": "Chọn ngẫu nhiên theo tỉ lệ phần trăm"
+        },
+        "choice": {
+            "phase": 4,
+            "has_argument": false,
+            "is_bracket_syntax": true,
+            "desc": "Lấy kết quả từ lệnh choose (Cú pháp [choice])"
+        },
+        "lockedchoice": {
+            "phase": 4,
+            "has_argument": false,
+            "is_bracket_syntax": true,
+            "desc": "Lấy kết quả từ lockedchoose (Cú pháp [lockedchoice])"
+        },
+        "$N": {
+            "phase": 4,
+            "has_argument": false,
+            "is_bracket_syntax": true,
+            "desc": "Lấy đối số thứ N người dùng nhập vào (VD: [$1], [$2])"
+        }
+    },
+    "modifiers": {
+        "dm": {
+            "phase": 2,
+            "has_argument": false,
+            "desc": "Gửi phản hồi vào tin nhắn riêng"
+        },
+        "sendto": {
+            "phase": 2,
+            "has_argument": true,
+            "desc": "Gửi phản hồi vào ID kênh cụ thể"
+        },
+        "embed": {
+            "phase": 2,
+            "has_argument": true,
+            "desc": "Gọi mẫu embed từ Database"
+        },
+        "silent": {
+            "phase": 2,
+            "has_argument": false,
+            "desc": "Gửi tin nhắn không hiện thông báo (Silent mode)"
+        },
+        "delete": {
+            "phase": 2,
+            "has_argument": false,
+            "desc": "Tự động xoá tin nhắn gọi lệnh của người dùng"
+        },
+        "delete_reply": {
+            "phase": 2,
+            "has_argument": true,
+            "desc": "Xoá phản hồi của bot sau X giây. VD: {delete_reply: 5}"
+        }
+    },
+    "guards": {
+        "requireuser": {
+            "phase": 1,
+            "has_argument": true,
+            "desc": "Chỉ ID user này mới dùng được lệnh"
+        },
+        "requireperm": {
+            "phase": 1,
+            "has_argument": true,
+            "desc": "Cần quyền cụ thể (VD: Admin, ManageMessages)"
+        },
+        "requirechannel": {
+            "phase": 1,
+            "has_argument": true,
+            "desc": "Chỉ dùng được trong ID kênh cụ thể"
+        },
+        "requirerole": {
+            "phase": 1,
+            "has_argument": true,
+            "desc": "Cần có Role ID cụ thể để dùng"
+        },
+        "requirebal": {
+            "phase": 1,
+            "has_argument": true,
+            "desc": "Cần có đủ X tiền ảo"
+        },
+        "requireitem": {
+            "phase": 1,
+            "has_argument": true,
+            "desc": "Cần có vật phẩm cụ thể"
+        },
+        "requirearg": {
+            "phase": 1,
+            "has_argument": true,
+            "desc": "Bắt buộc người dùng phải nhập đối số (argument) khi gọi lệnh"
+        },
+        "denyuser": {
+            "phase": 1,
+            "has_argument": true,
+            "desc": "Chặn ID user này dùng lệnh"
+        },
+        "denyperm": {
+            "phase": 1,
+            "has_argument": true,
+            "desc": "Chặn người có quyền này dùng lệnh"
+        },
+        "denychannel": {
+            "phase": 1,
+            "has_argument": true,
+            "desc": "Chặn dùng lệnh ở ID kênh này"
+        },
+        "denyrole": {
+            "phase": 1,
+            "has_argument": true,
+            "desc": "Chặn người có Role ID này dùng lệnh"
+        },
+        "denyitem": {
+            "phase": 1,
+            "has_argument": true,
+            "desc": "Chặn nếu user đang có vật phẩm này"
+        },
+        "cooldown": {
+            "phase": 1,
+            "has_argument": true,
+            "desc": "Thời gian chờ (giây) giữa các lần dùng lệnh"
+        }
+    },
+    "actions": {
+        "modifybal": {
+            "phase": 3,
+            "has_argument": true,
+            "desc": "Cộng/Trừ tiền ảo. VD: {modifybal: +100}"
+        },
+        "modifyinv": {
+            "phase": 3,
+            "has_argument": true,
+            "desc": "Thêm/Xoá vật phẩm trong kho đồ"
+        },
+        "addrole": {
+            "phase": 3,
+            "has_argument": true,
+            "desc": "Cấp Role ID cho user"
+        },
+        "removerole": {
+            "phase": 3,
+            "has_argument": true,
+            "desc": "Thu hồi Role ID của user"
+        },
+        "setnick": {
+            "phase": 3,
+            "has_argument": true,
+            "desc": "Đổi biệt danh của user"
+        },
+        "react": {
+            "phase": 3,
+            "has_argument": true,
+            "desc": "Bot tự động thả emoji vào tin nhắn gốc"
+        },
+        "reactreply": {
+            "phase": 3,
+            "has_argument": true,
+            "desc": "Bot tự động thả emoji vào tin nhắn phản hồi của chính nó"
+        },
+        "addbutton": {
+            "phase": 3,
+            "has_argument": true,
+            "desc": "Thêm nút bấm (Interactive Button) vào tin nhắn"
+        },
+        "addlinkbutton": {
+            "phase": 3,
+            "has_argument": true,
+            "desc": "Thêm nút bấm dẫn link web vào tin nhắn"
+        }
+    }
+}
