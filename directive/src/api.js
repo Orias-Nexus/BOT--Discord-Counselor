@@ -124,14 +124,6 @@ export async function deleteServerStatChannels(serverId) {
   return request(`/servers/${encodeURIComponent(serverId)}/channels/stats`, { method: 'DELETE' });
 }
 
-export async function getFunction(scriptName) {
-  return request(`/functions/script/${encodeURIComponent(scriptName)}`);
-}
-
-export async function getSlashList() {
-  return request('/functions/slash');
-}
-
 /** Discord API: interaction token expired or already used — do not call reply/editReply/followUp again. */
 export const UNKNOWN_INTERACTION_CODE = 10062;
 
