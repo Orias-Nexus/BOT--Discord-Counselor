@@ -105,6 +105,46 @@
             "has_argument": false,
             "desc": "Thứ hạng cục bộ (local) của member trong server"
         },
+        "blank_banner": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho Blank"
+        },
+        "imposter_banner": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho Imposter"
+        },
+        "manycat_banner": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho Manycat"
+        },
+        "nahihi_banner": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho Nahihi"
+        },
+        "whitepet_banner": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho Whitepet"
+        },
+        "paimom_icon": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho Paimom"
+        },
+        "march71_icon": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho March71"
+        },
+        "march72_icon": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho March72"
+        },
         "server_prefix": {
             "phase": 4,
             "has_argument": false,
