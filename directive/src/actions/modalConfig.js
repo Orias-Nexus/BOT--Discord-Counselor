@@ -208,14 +208,18 @@ export function getModalForScript(scriptName, contextPart, extra = {}) {
       }
     }
     const isParagraph = input.style === 'Paragraph';
+    const maxLen = isParagraph ? 4000 : 100;
     const builder = new TextInputBuilder()
       .setCustomId(input.id)
       .setLabel(input.label.slice(0, 45))
       .setStyle(isParagraph ? TextInputStyle.Paragraph : TextInputStyle.Short)
       .setRequired(Boolean(input.required))
       .setPlaceholder(placeholder)
-      .setMaxLength(isParagraph ? 4000 : 100);
-    if (value !== undefined) builder.setValue(value.slice(0, isParagraph ? 4000 : 100));
+      .setMaxLength(maxLen);
+    if (value !== undefined) {
+      const sliced = String(value).slice(0, maxLen);
+      if (sliced.length > 0) builder.setValue(sliced);
+    }
     modal.addComponents(new ActionRowBuilder().addComponents(builder));
   }
   return modal;

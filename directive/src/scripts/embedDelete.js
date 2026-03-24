@@ -1,5 +1,6 @@
 import { MessageFlags } from 'discord.js';
 import * as api from '../api.js';
+import { deleteEmbedEditCache } from '../utils/embedEditCache.js';
 
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction?.guild;
@@ -48,6 +49,7 @@ export async function run(interaction, client, actionContext = null) {
 
   try {
     await api.deleteEmbed(guild.id, embedId);
+    deleteEmbedEditCache(guild.id, embedId);
   } catch (err) {
     console.error('[EmbedDelete]', err);
     const payload = { content: api.formatEphemeralContent('Could not delete embed.'), flags: MessageFlags.Ephemeral };

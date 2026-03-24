@@ -1,6 +1,7 @@
 import * as api from '../api.js';
 import { getEmbedBuilder } from '../embedRoutes.js';
 import { buildEmbedEditComponents } from '../utils/components.js';
+import { setEmbedEditCache } from '../utils/embedEditCache.js';
 
 export const EMBED_APPLY_SELECT_PREFIX = 'embedapply_';
 
@@ -18,6 +19,12 @@ export async function updateEmbedAndResolve(guildId, embedId, mergeFn, meta) {
   const merged = mergeFn(typeof row.embed === 'object' ? { ...row.embed } : {});
   await api.updateEmbed(guildId, embedId, { embed: merged });
   const updated = await api.getEmbed(guildId, embedId);
+  if (updated) {
+    setEmbedEditCache(guildId, embedId, {
+      embed: updated.embed ?? merged,
+      embed_name: updated.embed_name ?? null,
+    });
+  }
   const buildEmbed = getEmbedBuilder('EmbedEdit');
   if (!buildEmbed) throw new Error('Embed builder not found');
   const resolved = await buildEmbed(updated?.embed ?? merged, meta);
