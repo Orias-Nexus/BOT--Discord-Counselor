@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { blank_banner } from './customs/handlers/placeholders/links.js';
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -16,11 +17,8 @@ const isLocalBackend =
   BACKEND_API_URL.includes('localhost') ||
   BACKEND_API_URL.includes('127.0.0.1');
 
-const GITHUB_RAW_WHITEPET =
-  'https://github.com/Orias1701/Resources--Discord-Bots/blob/main/assets/img/Banner-Blank.png?raw=true';
-
 const DEFAULT_MAIN_IMAGE_URL = isLocalBackend
-  ? GITHUB_RAW_WHITEPET
+  ? blank_banner()
   : `${BACKEND_API_URL.replace(/\/api$/, '')}/assets/images/Banner-Blank.png`;
 
 export const mainImageUrl =
