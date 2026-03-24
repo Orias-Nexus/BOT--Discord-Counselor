@@ -1,6 +1,6 @@
 import * as api from '../api.js';
 
-const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Locked until {Member Expires}.";
+const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Locked until {Member Expires} - UTC.";
 
 const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Locked until {Member Expires} - UTC.";
 
