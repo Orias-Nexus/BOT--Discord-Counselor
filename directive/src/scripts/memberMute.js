@@ -2,8 +2,6 @@ import * as api from '../api.js';
 
 const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Muted until {Member Expires} - UTC.";
 
-const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Muted until {Member Expires} - UTC.";
-
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
   if (!guild) {
@@ -38,15 +36,7 @@ export async function run(interaction, client, actionContext) {
   await api.ensureMember(guild.id, member.id, member.user?.username);
   await api.setMemberStatus(guild.id, member.id, 'Muted', expiresAt);
   const displayName = member.displayName ?? member.user?.username ?? 'User';
-<<<<<<< HEAD:directive/src/scripts/memberMute.js
-<<<<<<< HEAD:directive/src/scripts/memberMute.js
   const expiresStr = expiresAt ? expiresAt.toLocaleString('en-US') : 'permanent';
-=======
-  const expiresStr = expiresAt ? expiresAt.toLocaleString('vi-VN') : 'vĩnh viễn';
->>>>>>> 0e48cdd (Add new scripts for managing greeting and leaving channels and messages: Implement GreetingChannel, GreetingMessage, LeavingChannel, and LeavingMessage to enhance server interaction capabilities. Introduce embed handling for these messages, allowing for dynamic content resolution and improved user engagement.):directive/src/scripts/MemberMute.js
-=======
-  const expiresStr = expiresAt ? expiresAt.toLocaleString('en-US') : 'permanent';
->>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.):directive/src/scripts/MemberMute.js
   const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { 'Server Profile Name': displayName, 'Member Expires': expiresStr }));
   await api.replyOrEdit(interaction, content);
   const updatedProfile = await api.getMember(guild.id, member.id).catch(() => null);

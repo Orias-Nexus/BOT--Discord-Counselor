@@ -2,8 +2,6 @@ import * as api from '../api.js';
 
 const SUCCESS_MESSAGE = "{Server Profile Name} has been Kicked.";
 
-const SUCCESS_MESSAGE = "{Server Profile Name} has been Kicked.";
-
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
   if (!guild) {

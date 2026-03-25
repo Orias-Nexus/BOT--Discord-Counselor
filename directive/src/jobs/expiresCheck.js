@@ -58,7 +58,6 @@ async function updateMemberInfoEmbedIfExists(client, serverId, userId) {
 
 export function startExpiresCheck(client) {
   async function run() {
-<<<<<<< HEAD
     let lastErr;
     for (let attempt = 1; attempt <= RETRY_ATTEMPTS; attempt++) {
       try {
@@ -76,22 +75,6 @@ export function startExpiresCheck(client) {
           continue;
         }
         break;
-=======
-    try {
-      const { count, updated = [] } = await api.processExpires();
-      if (count === 0) return;
-      for (const { server_id, user_id } of updated) {
-        await applyGoodRoles(client, server_id, user_id);
-        await updateMemberInfoEmbedIfExists(client, server_id, user_id);
-      }
-    } catch (err) {
-      const code = err?.cause?.code ?? err?.code;
-      const msg = err?.message ?? String(err);
-      if (code === 'ECONNREFUSED' || msg === 'fetch failed') {
-        console.warn('[expiresCheck] Backend not responding (fetch failed). Check backend is running and BACKEND_API_URL in .env.');
-      } else {
-        console.warn('[expiresCheck]', msg, code ? `(${code})` : '');
->>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
       }
     }
     if (!lastErr) return;

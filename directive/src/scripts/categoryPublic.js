@@ -3,8 +3,6 @@ import * as api from '../api.js';
 
 const SUCCESS_MESSAGE = 'Published {Category Name}.';
 
-const SUCCESS_MESSAGE = 'Published {Category Name}.';
-
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
   if (!guild) {

@@ -49,13 +49,8 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
       b
-<<<<<<< HEAD
         .addRoleOption((o) => o.setName('mute').setDescription('Role to remove on Mute'))
         .addRoleOption((o) => o.setName('lock').setDescription('Role to remove on Lock')),
-=======
-        .addStringOption((o) => o.setName('mute').setDescription('Role ID to remove on Mute (numeric)'))
-        .addStringOption((o) => o.setName('lock').setDescription('Role ID to remove on Lock (numeric)')),
->>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
   },
   {
     name: 'categoryinfo',
@@ -148,7 +143,6 @@ const SLASH_LIST = [
     script: 'ChannelNSFW',
     defaultMemberPermissions: PermissionFlagsBits.ManageChannels,
     options: (b) => b.addChannelOption((o) => o.setName('target').setDescription('Channel')),
-<<<<<<< HEAD
   },
   {
     name: 'channelslow',
@@ -192,8 +186,6 @@ const SLASH_LIST = [
         .addIntegerOption((o) =>
           o.setName('limit').setDescription('User limit (0 = unlimited)').setMinValue(0).setMaxValue(99)
         ),
-=======
->>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
   },
   {
     name: 'memberinfo',

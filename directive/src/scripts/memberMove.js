@@ -3,8 +3,6 @@ import * as api from '../api.js';
 
 const SUCCESS_MESSAGE = 'Moved {Number of Member} to {Channel Name}.';
 
-const SUCCESS_MESSAGE = 'Moved {Number of Member} to {Channel Name}.';
-
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction.guild;
   if (!guild) {

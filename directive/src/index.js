@@ -60,15 +60,9 @@ for (const { discordEvent, scriptName, buildContext } of EVENT_HANDLERS) {
 }
 
 /** Slash commands with target option (embed_id). */
-<<<<<<< HEAD
 const EMBED_TARGET_COMMANDS = ['embededit', 'embedrename', 'embeddelete', 'messagesend'];
 /** Slash commands with embed option (embed_name for greeting/leaving/boosting). */
 const EMBED_OPTION_COMMANDS = ['greetingmessage', 'leavingmessage', 'boostingmessage', 'levelingmessage', 'loggingmessage'];
-=======
-const EMBED_TARGET_COMMANDS = ['embededit', 'embedrename', 'embeddelete'];
-/** Slash commands with embed option (embed_name for greeting/leaving/boosting). */
-const EMBED_OPTION_COMMANDS = ['greetingmessage', 'leavingmessage', 'boostingmessage'];
->>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
 
 client.on(Events.InteractionCreate, async (interaction) => {
   if (interaction.isAutocomplete()) {
@@ -135,7 +129,6 @@ client.on(Events.InteractionCreate, async (interaction) => {
         console.error('[InteractionCreate] ServerStats select:', err);
         if (!interaction.deferred) await interaction.reply({ content: 'Error.', flags: MessageFlags.Ephemeral }).catch(() => {});
         else await interaction.editReply({ content: 'Error.', components: [] }).catch(() => {});
-<<<<<<< HEAD
       }
       return;
     }
@@ -157,8 +150,6 @@ client.on(Events.InteractionCreate, async (interaction) => {
         await handleAction(interaction, client);
       } catch (err) {
         console.error('[InteractionCreate] Action select:', err);
-=======
->>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
       }
       return;
     }

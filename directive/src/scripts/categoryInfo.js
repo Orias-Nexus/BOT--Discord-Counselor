@@ -1,11 +1,7 @@
 import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
 import { buildCategoryInfoComponents } from '../utils/components.js';
-<<<<<<< HEAD:directive/src/scripts/categoryInfo.js
 import { mainImageUrl } from '../config.js';
-=======
-import { mainImageURL } from '../config.js';
->>>>>>> 0e48cdd (Add new scripts for managing greeting and leaving channels and messages: Implement GreetingChannel, GreetingMessage, LeavingChannel, and LeavingMessage to enhance server interaction capabilities. Introduce embed handling for these messages, allowing for dynamic content resolution and improved user engagement.):directive/src/scripts/CategoryInfo.js
 import { getEmbedBuilder } from '../embedRoutes.js';
 
 export async function run(interaction, client, actionContext = null) {
@@ -26,7 +22,6 @@ export async function run(interaction, client, actionContext = null) {
     return;
   }
   const buildEmbed = getEmbedBuilder('CategoryInfo');
-<<<<<<< HEAD:directive/src/scripts/categoryInfo.js
   const embed = buildEmbed ? await buildEmbed(category, guild, { imageURL: mainImageUrl }) : null;
   if (!embed) {
     await interaction.editReply({ content: api.formatEphemeralContent('Could not create embed.') }).catch(() => {});
@@ -34,13 +29,4 @@ export async function run(interaction, client, actionContext = null) {
   }
   const components = buildCategoryInfoComponents(category.id, category, guild);
   await interaction.editReply({ embeds: [embed], components });
-=======
-  const embed = buildEmbed ? await buildEmbed(category, guild, { imageURL: mainImageURL }) : null;
-  if (!embed) {
-    await interaction.editReply({ content: api.formatEphemeralContent('Could not create embed.') }).catch(() => {});
-    return;
-  }
-  const { row } = buildCategoryInfoComponents(category.id, category, guild);
-  await interaction.editReply({ embeds: [embed], components: row ? [row] : [] });
->>>>>>> 0e48cdd (Add new scripts for managing greeting and leaving channels and messages: Implement GreetingChannel, GreetingMessage, LeavingChannel, and LeavingMessage to enhance server interaction capabilities. Introduce embed handling for these messages, allowing for dynamic content resolution and improved user engagement.):directive/src/scripts/CategoryInfo.js
 }

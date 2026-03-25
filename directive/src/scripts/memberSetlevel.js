@@ -2,8 +2,6 @@ import * as api from '../api.js';
 
 const SUCCESS_MESSAGE = 'Completed Set Level {Server Profile Name}: {member_level}.';
 
-const SUCCESS_MESSAGE = 'Completed Set Level {Server Profile Name}: {member_level}.';
-
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction.guild;
   if (!guild) {

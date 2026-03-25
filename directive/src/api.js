@@ -124,17 +124,6 @@ export async function deleteServerStatChannels(serverId) {
   return request(`/servers/${encodeURIComponent(serverId)}/channels/stats`, { method: 'DELETE' });
 }
 
-<<<<<<< HEAD
-=======
-export async function getFunction(scriptName) {
-  return request(`/api/functions/script/${encodeURIComponent(scriptName)}`);
-}
-
-export async function getSlashList() {
-  return request('/api/functions/slash');
-}
-
->>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
 /** Discord API: interaction token expired or already used — do not call reply/editReply/followUp again. */
 export const UNKNOWN_INTERACTION_CODE = 10062;
 
@@ -305,88 +294,4 @@ export async function getLocalRank(serverId, userId) {
 /** Global rank of a user. */
 export async function getGlobalRank(userId) {
   return request(`/users/${userId}/rank`);
-}
-
-/** Backend: process expired members (set Good). Returns { count, updated: [{ server_id, user_id }] }. */
-export async function processExpires() {
-  return request('/api/members/process-expires', { method: 'POST' });
-}
-
-/** Server messages list (Greeting, Leaving, Boosting, ...). */
-export async function listMessages(serverId) {
-  try {
-    const data = await request(`/api/servers/${serverId}/messages`);
-    return Array.isArray(data) ? data : [];
-  } catch (err) {
-    if (err?.message?.includes('404') || err?.message?.includes('not found')) return [];
-    throw err;
-  }
-}
-
-/** Get message config by type (Greeting, Leaving, Boosting). Backend must mount message routes. */
-export async function getMessageByType(serverId, messagesType) {
-  try {
-    return await request(`/api/servers/${serverId}/messages/${messagesType}`);
-  } catch (err) {
-    if (err?.message?.includes('404') || err?.message?.includes('not found')) return null;
-    throw err;
-  }
-}
-
-export async function setMessageChannel(serverId, messagesType, channelId) {
-  return request(`/api/servers/${serverId}/messages/${messagesType}/channel`, {
-    method: 'PATCH',
-    body: JSON.stringify({ channel_id: channelId ?? null }),
-  });
-}
-
-export async function setMessageEmbed(serverId, messagesType, embedId) {
-  return request(`/api/servers/${serverId}/messages/${messagesType}/embed`, {
-    method: 'PATCH',
-    body: JSON.stringify({ embed_id: embedId ?? null }),
-  });
-}
-
-/** Server embed list. */
-export async function listEmbeds(serverId) {
-  try {
-    const data = await request(`/api/servers/${serverId}/embeds`);
-    return Array.isArray(data) ? data : [];
-  } catch (err) {
-    if (err?.message?.includes('404') || err?.message?.includes('not found')) return [];
-    throw err;
-  }
-}
-
-/** Get embed by id (server_id + embed_id). */
-export async function getEmbed(serverId, embedId) {
-  try {
-    return await request(`/api/servers/${serverId}/embeds/${embedId}`);
-  } catch (err) {
-    if (err?.message?.includes('404') || err?.message?.includes('not found')) return null;
-    throw err;
-  }
-}
-
-/** Create new embed. */
-export async function createEmbed(serverId, embedName, embedData) {
-  return request(`/api/servers/${serverId}/embeds`, {
-    method: 'POST',
-    body: JSON.stringify({ embed_name: embedName.trim(), embed: embedData ?? null }),
-  });
-}
-
-/** Update embed. */
-export async function updateEmbed(serverId, embedId, payload) {
-  return request(`/api/servers/${serverId}/embeds/${embedId}`, {
-    method: 'PATCH',
-    body: JSON.stringify(payload),
-  });
-}
-
-/** Delete embed. */
-export async function deleteEmbed(serverId, embedId) {
-  return request(`/api/servers/${serverId}/embeds/${embedId}`, {
-    method: 'DELETE',
-  });
 }
