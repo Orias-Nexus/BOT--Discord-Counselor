@@ -1,4 +1,4 @@
-import { ActionRowBuilder, StringSelectMenuBuilder, MessageFlags } from 'discord.js';
+import { ActionRowBuilder, StringSelectMenuBuilder, MessageFlags } from '../discord.js';
 import * as api from '../api.js';
 import { EMBED_APPLY_SELECT_PREFIX } from '../embeds/embedEdit.js';
 

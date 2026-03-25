@@ -1,4 +1,4 @@
-import { MessageFlags, PermissionFlagsBits } from 'discord.js';
+import { MessageFlags, PermissionFlagsBits } from '../discord.js';
 import * as api from '../api.js';
 
 const MAX_BULK_DELETE = 100;

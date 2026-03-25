@@ -1,4 +1,4 @@
-import { ChannelType, PermissionFlagsBits } from 'discord.js';
+import { ChannelType, PermissionFlagsBits } from '../discord.js';
 
 export function formatShortDate(date) {
   if (!date) return 'N/A';

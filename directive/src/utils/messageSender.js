@@ -1,4 +1,4 @@
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder } from '../discord.js';
 import { resolveEmbed } from '../embeds/.embedContext.js';
 
 const MAX_EMBED_DESCRIPTION = 4096;
