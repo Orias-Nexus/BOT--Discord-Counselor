@@ -1,11 +1,6 @@
 import { prisma } from '../config/prisma.js';
 import * as userRepo from './userRepository.js';
 
-<<<<<<< HEAD
-=======
-const TABLE = 'members';
-const COLS = 'user_id, server_id, member_exp, member_level, member_status, member_expires';
->>>>>>> 648061a (Add channel management routes and services: implement channelRoutes, channelController, and channelService for enhanced channel operations, including listing, upserting, and deleting channels by server ID.)
 const STATUS_API_TO_DB = { Good: 'Good', Warning: 'Warn', Muted: 'Mute', Locked: 'Lock', Newbie: 'Newbie', Leaved: 'Leaved' };
 const STATUS_DB_TO_API = { Good: 'Good', Warn: 'Warning', Mute: 'Muted', Lock: 'Locked', Kick: 'Kick', Leaved: 'Leaved', Newbie: 'Newbie' };
 
@@ -158,21 +153,4 @@ export async function getRank(serverId, userId) {
         where: { server_id: serverId, member_exp: { gt: member.member_exp } },
     });
     return count + 1;
-}
-
-/**
- * Đặt Good cho mọi member có member_expires <= now và member_status != 'Good'.
- * Trả về { count, updated: [{ server_id, user_id }, ...] } để directive áp dụng role.
- */
-export async function processExpiredMembers() {
-    const sb = getSupabase();
-    const now = new Date().toISOString();
-    const { data, error } = await sb.schema(getSchema()).from(TABLE).update({
-        member_status: 'Good',
-        member_expires: null,
-        updated_at: now,
-    }).not('member_expires', 'is', null).lte('member_expires', now).neq('member_status', 'Good').select('user_id, server_id');
-    if (error) throw error;
-    const updated = (data ?? []).map((r) => ({ server_id: r.server_id, user_id: r.user_id }));
-    return { count: updated.length, updated };
 }

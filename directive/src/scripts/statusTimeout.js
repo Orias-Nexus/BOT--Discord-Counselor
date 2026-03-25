@@ -2,11 +2,6 @@ import * as api from '../api.js';
 
 const SUCCESS_MESSAGE = 'Updated Status Timeout: \\n Warn: {time_warn} \\n Mute: {time_mute} \\n Lock: {time_lock} \\n Newbie: {time_new}.';
 
-<<<<<<< HEAD:directive/src/scripts/statusTimeout.js
-const SUCCESS_MESSAGE = 'Updated Status Timeout: \\n Warn: {time_warn} \\n Mute: {time_mute} \\n Lock: {time_lock} \\n Newbie: {time_new}.';
-
-=======
->>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.):directive/src/scripts/StatusTimeout.js
 /** Parse dd:hh:mm or hh:mm or minutes → total minutes (backend time_warn/time_mute/time_lock). */
 function parseToMinutes(str) {
   if (!str || typeof str !== 'string') return null;

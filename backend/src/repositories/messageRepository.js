@@ -80,11 +80,7 @@ export async function setEmbed(serverId, messagesType, embedId) {
 
 const MESSAGE_TYPES_FOR_NEW_SERVER = ['Greeting', 'Leaving', 'Boosting', 'Leveling', 'Logging'];
 
-<<<<<<< HEAD
 /** Create message records for new server if missing. */
-=======
-/** Create 3 message records (Greeting, Leaving, Boosting) for new server if missing. */
->>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
 export async function ensureMessagesForServer(serverId) {
     for (const messagesType of MESSAGE_TYPES_FOR_NEW_SERVER) {
         const existing = await getByServerAndType(serverId, messagesType);

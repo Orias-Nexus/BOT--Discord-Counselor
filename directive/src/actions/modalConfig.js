@@ -54,13 +54,8 @@ const MODALS = {
     inputs: [
       { id: 'title', label: 'Title', placeholder: 'Embed Title', required: false },
       { id: 'description', label: 'Description', placeholder: 'e.g. {user_name}, {user_avatar}', required: false, style: 'Paragraph' },
-<<<<<<< HEAD
       { id: 'color', label: 'Hex Color', placeholder: '#57F287', required: false },
       { id: 'fields', label: 'Fields', placeholder: '{"name":"name","value":"value","inline":true/false}', required: false, style: 'Paragraph' },
-=======
-      { id: 'color', label: 'Color (hex or decimal)', placeholder: 'e.g. 5763719 or 0x57F287', required: false },
-      { id: 'fields', label: 'Fields (content inside [ ] only)', placeholder: '{"name":"Name","value":"Value","inline":true}', required: false, style: 'Paragraph' },
->>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
     ],
   },
   EmbedEditAuthor: {

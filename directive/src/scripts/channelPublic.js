@@ -1,7 +1,4 @@
-import { ChannelType } from 'discord.js';
 import * as api from '../api.js';
-
-const SUCCESS_MESSAGE = 'Published {Channel Name}.';
 
 const SUCCESS_MESSAGE = 'Published {Channel Name}.';
 

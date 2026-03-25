@@ -45,22 +45,15 @@ app.get('/api/info', (_req, res) => {
   res.json({
     name: 'Discord Counselor API',
     version: '1.0.0',
-<<<<<<< HEAD
     endpoints: ['/health', '/api/info', '/api/servers', '/api/servers/:serverId/channels', '/api/servers/:serverId/embeds', '/api/servers/:serverId/messages', '/api/members', '/api/users', '/api/levels', '/api/auth/discord'],
-=======
-    endpoints: ['/health', '/api/info', '/api/servers', '/api/servers/:serverId/channels', '/api/members', '/api/functions', '/api/levels'],
->>>>>>> 648061a (Add channel management routes and services: implement channelRoutes, channelController, and channelService for enhanced channel operations, including listing, upserting, and deleting channels by server ID.)
   });
 });
 
 app.use('/api/auth', authRoutes);
 app.use('/api/servers', serverRoutes);
 app.use('/api/servers/:serverId/channels', channelRoutes);
-<<<<<<< HEAD
 app.use('/api/servers/:serverId/embeds', embedRoutes);
 app.use('/api/servers/:serverId/messages', messageRoutes);
-=======
->>>>>>> 648061a (Add channel management routes and services: implement channelRoutes, channelController, and channelService for enhanced channel operations, including listing, upserting, and deleting channels by server ID.)
 app.use('/api/members', memberRoutes);
 app.use('/api/levels', levelRoutes);
 app.use('/api/users', userRoutes);

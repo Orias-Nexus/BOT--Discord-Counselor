@@ -139,7 +139,6 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
   return null;
 }
 
-<<<<<<< HEAD
 /**
  * Reset only the components (select menu) on the parent message, without rebuilding the embed.
  * Used when the action doesn't change data displayed in the embed.
@@ -166,8 +165,6 @@ export function resetComponentsOnly(scriptName, interaction, actionContext) {
   return null;
 }
 
-=======
->>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
 /** Payload (embeds + components) for Member Info message; used when updating from expiresCheck. */
 export async function buildMemberInfoPayload(member, profile) {
   const buildEmbed = getEmbedBuilder('MemberInfo');

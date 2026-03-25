@@ -2,8 +2,6 @@ import * as api from '../api.js';
 
 const SUCCESS_MESSAGE = 'Completed Rename {Username} to {Server Profile Name}.';
 
-const SUCCESS_MESSAGE = 'Completed Rename {Username} to {Server Profile Name}.';
-
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction.guild;
   if (!guild) {

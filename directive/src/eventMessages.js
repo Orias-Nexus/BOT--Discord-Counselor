@@ -1,9 +1,5 @@
 /**
-<<<<<<< HEAD
  * Send event message (Greeting, Leaving, Boosting, Leveling, Logging) to configured channel.
-=======
- * Send event message (Greeting, Leaving, Boosting) to configured channel.
->>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
  * Only when channel_id and embed_id are set (user-defined embed).
  */
 import * as api from './api.js';
@@ -53,11 +49,7 @@ async function getEmbedData(guildId, embedId) {
 /**
  * Send embed to channel per Messages config (channel_id, embed_id). Requires embed_id in config (no default embed).
  * @param {import('discord.js').Guild} guild
-<<<<<<< HEAD
  * @param {'Greeting'|'Leaving'|'Boosting'|'Leveling'|'Logging'} messagesType
-=======
- * @param {'Greeting'|'Leaving'|'Boosting'} messagesType
->>>>>>> 81ec429 (Update error messages and documentation: Translate error messages and comments from Vietnamese to English for better clarity and accessibility. Enhance consistency in API documentation across various scripts and modules.)
  * @param {{ member?, guild?, channel? }} meta - member may be partial (Leaving)
  * @returns {Promise<boolean>} true if sent, false if skipped (no config / error)
  */
