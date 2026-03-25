@@ -2,13 +2,24 @@
   "name": "my-discord-system",
   "version": "1.0.0",
   "private": true,
-  "description": "Discord Assistant: Bot + Backend API + Web Dashboard",
+  "description": "Discord Assistant: Directive (Bot) + Backend API + Web Dashboard",
   "scripts": {
-    "dev:bot": "cd bot && npm run dev",
     "dev:backend": "cd backend && npm run dev",
+    "dev:directive": "cd directive && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
-    "deploy:bot": "cd bot && npm run deploy",
-    "install:all": "cd bot && npm ci && cd ../backend && npm ci && cd ../frontend && npm ci"
+    "start:backend": "cd backend && npm start",
+    "start:directive": "cd directive && npm start",
+    "build:backend": "cd backend && npm install",
+    "build:directive": "cd directive && npm install",
+    "deploy:directive": "cd directive && npm run deploy",
+    "prisma:pull:backend": "cd backend && npx prisma db pull",
+    "prisma:push:backend": "cd backend && npx prisma db push",
+    "prisma:validate:backend": "cd backend && npx prisma validate",
+    "prisma:generate:backend": "cd backend && npx prisma generate",
+    "prisma:migrate:dev:backend": "cd backend && npx prisma migrate dev",
+    "prisma:migrate:deploy:backend": "cd backend && npx prisma migrate deploy",
+    "prisma:studio:backend": "cd backend && npx prisma studio",
+    "install:all": "cd directive && npm ci && cd ../backend && npm ci && cd ../frontend && npm ci"
   },
   "engines": {
     "node": ">=18.0.0"

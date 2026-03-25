@@ -1,0 +1,75 @@
+# Render Blueprint — Deploy Backend + Directive (Discord bot)
+# Database: Supabase (cấu hình qua env, không deploy DB trên Render)
+# https://render.com/docs/blueprint-spec
+
+services:
+  # ── Backend API (Web Service) ─────────────────────────────────
+  - type: web
+    name: discord-counselor-backend
+    plan: free
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: "production"
+      - key: NODE_VERSION
+        value: "22"
+      - key: PORT
+        value: "10000"
+
+      # Discord OAuth
+      - key: DISCORD_CLIENT_ID
+        sync: false
+      - key: DISCORD_CLIENT_SECRET
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+
+      # URLs — cập nhật sau khi deploy lần đầu
+      - key: DISCORD_REDIRECT_URI
+        sync: false
+        # VD: https://orias-counselor.duckdns.org:4000/api/auth/discord/callback
+      - key: FRONTEND_ORIGIN
+        sync: false
+        # VD: https://your-frontend-domain.com
+
+      # Database (Supabase)
+      - key: POOLER_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+
+      # Redis (Render Redis hoặc Upstash)
+      - key: REDIS_URL
+        sync: false
+
+  # ── Directive / Discord Bot (Background Worker) ───────────────
+  - type: worker
+    name: discord-counselor-directive
+    runtime: node
+    rootDir: directive
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: "production"
+      - key: NODE_VERSION
+        value: "22"
+
+      # Discord Bot
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: APPLICATION_ID
+        sync: false
+
+      # Backend API — điền URL backend sau deploy
+      - key: BACKEND_API_URL
+        sync: false
+        # VD: https://orias-counselor.duckdns.org:4000/api
+
+      # Redis (cùng instance với backend)
+      - key: REDIS_URL
+        sync: false

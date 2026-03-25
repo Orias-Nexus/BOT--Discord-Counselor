@@ -9,7 +9,7 @@ function isGatewayOrHtmlError(message) {
 function normalizeError(err) {
     const msg = err?.message ?? String(err);
     if (isGatewayOrHtmlError(msg)) {
-        return { status: 503, message: 'Database tạm thời không khả dụng (502). Vui lòng thử lại sau.' };
+        return { status: 503, message: 'Database temporarily unavailable (502). Please try again later.' };
     }
     return { status: 500, message: msg };
 }
@@ -71,6 +71,67 @@ export async function getLevelRange(req, res) {
         const { status, message } = normalizeError(err);
         if (status === 503) console.warn('[memberController] getLevelRange: database 502/503');
         else console.error('[memberController] getLevelRange:', err);
+        res.status(status).json({ error: message });
+    }
+}
+
+/** PATCH /api/members/:serverId/:userId/exp: add EXP, check level-up. */
+export async function addExp(req, res) {
+    try {
+        const { serverId, userId } = req.params;
+        const { exp } = req.body || {};
+        if (!exp || exp <= 0) return res.status(400).json({ error: 'exp must be positive' });
+        await serverService.ensureServer(serverId);
+        await memberService.ensureMember(serverId, userId);
+        const result = await memberService.addMemberExp(serverId, userId, Number(exp));
+        if (!result) return res.status(400).json({ error: 'Failed to add exp' });
+        res.json(result);
+    } catch (err) {
+        const { status, message } = normalizeError(err);
+        if (status === 503) console.warn('[memberController] addExp: database 502/503');
+        else console.error('[memberController] addExp:', err);
+        res.status(status).json({ error: message });
+    }
+}
+
+/** GET /api/members/:serverId/leaderboard?limit=20 */
+export async function getLeaderboard(req, res) {
+    try {
+        const { serverId } = req.params;
+        const limit = Math.min(Number(req.query.limit) || 20, 100);
+        const data = await memberService.getMemberLeaderboard(serverId, limit);
+        res.json(data);
+    } catch (err) {
+        const { status, message } = normalizeError(err);
+        if (status === 503) console.warn('[memberController] getLeaderboard: database 502/503');
+        else console.error('[memberController] getLeaderboard:', err);
+        res.status(status).json({ error: message });
+    }
+}
+
+/** GET /api/members/:serverId/:userId/rank */
+export async function getRank(req, res) {
+    try {
+        const { serverId, userId } = req.params;
+        const rank = await memberService.getMemberRank(serverId, userId);
+        res.json({ rank });
+    } catch (err) {
+        const { status, message } = normalizeError(err);
+        if (status === 503) console.warn('[memberController] getRank: database 502/503');
+        else console.error('[memberController] getRank:', err);
+        res.status(status).json({ error: message });
+    }
+}
+
+/** POST /api/members/process-expires: set Good for expired members, return list for directive to apply roles. */
+export async function processExpires(req, res) {
+    try {
+        const result = await memberService.processExpiredMembers();
+        res.json(result);
+    } catch (err) {
+        const { status, message } = normalizeError(err);
+        if (status === 503) console.warn('[memberController] processExpires: database 502/503');
+        else console.error('[memberController] processExpires:', err);
         res.status(status).json({ error: message });
     }
 }

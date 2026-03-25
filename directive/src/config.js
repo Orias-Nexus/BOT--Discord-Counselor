@@ -1,12 +1,44 @@
-/**
- * Config from env. BACKEND_API_URL defaults to http://localhost:4000.
- * mainImageURL from Architecture resource (embed image); override via MAIN_IMAGE_URL.
- */
-const DEFAULT_MAIN_IMAGE_URL =
-  'https://github.com/Orias1701/Resources--Discord-Bots/blob/main/img/pet.png?raw=true';
+import 'dotenv/config';
+import { blank_banner } from './customs/handlers/placeholders/links.js';
+
+const isProd = process.env.NODE_ENV === 'production';
 
 export const BACKEND_API_URL =
-  process.env.BACKEND_API_URL ?? 'http://localhost:4000';
+  process.env.BACKEND_API_URL ??
+  (isProd
+    ? 'https://orias-counselor.duckdns.org:4000/api'
+    : 'http://localhost:4000/api');
 
-export const mainImageURL =
+export const REDIS_URL =
+  process.env.REDIS_URL ?? (isProd ? '' : 'redis://localhost:6379');
+
+const isLocalBackend =
+  !BACKEND_API_URL ||
+  BACKEND_API_URL.includes('localhost') ||
+  BACKEND_API_URL.includes('127.0.0.1');
+
+const DEFAULT_MAIN_IMAGE_URL = isLocalBackend
+  ? blank_banner()
+  : `${BACKEND_API_URL.replace(/\/api$/, '')}/assets/images/Banner-Blank.png`;
+
+export const mainImageUrl =
   process.env.MAIN_IMAGE_URL ?? DEFAULT_MAIN_IMAGE_URL;
+
+const env = {
+  isProd,
+  nodeEnv: process.env.NODE_ENV || 'development',
+  discordToken: process.env.DISCORD_TOKEN || '',
+  applicationId: process.env.APPLICATION_ID || '',
+  backendApiUrl: BACKEND_API_URL,
+  redisUrl: REDIS_URL,
+  mainImageUrl,
+};
+
+if (!isProd) {
+  console.log('[config] Environment:', env.nodeEnv);
+  console.log('[config] Backend API:', env.backendApiUrl);
+  console.log('[config] Redis:', env.redisUrl);
+  console.log('[config] Main Image:', env.mainImageUrl);
+}
+
+export default env;

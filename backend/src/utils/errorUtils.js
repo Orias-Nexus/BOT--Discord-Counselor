@@ -13,7 +13,7 @@ export function normalizeError(err) {
   if (isGatewayOrHtmlError(msg)) {
     return {
       status: 503,
-      message: 'Database tạm thời không khả dụng (502). Vui lòng thử lại sau.',
+      message: 'Database temporarily unavailable (502). Please try again later.',
     };
   }
   return { status: 500, message: msg };
