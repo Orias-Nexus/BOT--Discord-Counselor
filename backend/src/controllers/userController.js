@@ -25,7 +25,6 @@ export async function addExp(req, res) {
         const { userId } = req.params;
         const { exp } = req.body || {};
         if (!exp || exp <= 0) return res.status(400).json({ error: 'exp must be positive' });
-        await userService.ensureUser(userId);
         const result = await userService.addUserExp(userId, Number(exp));
         if (!result) return res.status(400).json({ error: 'Failed to add exp' });
         res.json(result);
