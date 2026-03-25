@@ -37,16 +37,16 @@ export function mergeBasic(embed, modalValues) {
 }
 
 export function mergeAuthor(embed, modalValues) {
-  const name = modalValues.author_name ?? embed.author?.name ?? null;
-  const icon_url = modalValues.author_icon_url ?? embed.author?.icon_url ?? null;
-  embed.author = (name || icon_url) ? { name: name || null, icon_url: icon_url || null } : null;
+  const name = modalValues.author_name != null ? modalValues.author_name : null;
+  const icon_url = modalValues.author_icon_url != null ? modalValues.author_icon_url : null;
+  embed.author = name || icon_url ? { name: name || null, icon_url: icon_url || null } : null;
   return embed;
 }
 
 export function mergeFooter(embed, modalValues) {
-  const text = modalValues.footer_text ?? embed.footer?.text ?? null;
-  const icon_url = modalValues.footer_icon_url ?? embed.footer?.icon_url ?? null;
-  embed.footer = (text || icon_url) ? { text: text || null, icon_url: icon_url || null } : null;
+  const text = modalValues.footer_text != null ? modalValues.footer_text : null;
+  const icon_url = modalValues.footer_icon_url != null ? modalValues.footer_icon_url : null;
+  embed.footer = text || icon_url ? { text: text || null, icon_url: icon_url || null } : null;
   return embed;
 }
 

@@ -5,6 +5,7 @@ import { runScript } from '../scripts/runScript.js';
 import { getVoiceRoomControlOwner } from '../scripts/channelCreate.js';
 import { SCRIPTS_NEED_MODAL, getModalForScript, buildModalContext } from './modalConfig.js';
 import { getEmbedUpdatePayload, resetComponentsOnly } from './embedUpdate.js';
+import { getEmbedEditCache, setEmbedEditCache } from '../utils/embedEditCache.js';
 
 function parseButtonCustomId(customId) {
   if (!customId || !customId.startsWith(ACTION_PREFIX)) return null;
@@ -76,10 +77,21 @@ export async function handleAction(interaction, client, timing = {}) {
     const contextPart = buildModalContext(guildId, contextId ?? null);
     let extra = {};
     if ((scriptName.startsWith('EmbedEdit') || scriptName === 'EmbedRename' || scriptName === 'EmbedDelete') && contextId && guildId) {
-      try {
-        const embedRow = await api.getEmbed(guildId, contextId);
-        if (embedRow) extra = { embed: embedRow.embed, embed_name: embedRow.embed_name };
-      } catch (_) {}
+      const cached = getEmbedEditCache(guildId, contextId);
+      if (cached) {
+        extra = { embed: cached.embed, embed_name: cached.embed_name };
+      } else {
+        try {
+          const embedRow = await api.getEmbed(guildId, contextId);
+          if (embedRow) {
+            extra = { embed: embedRow.embed, embed_name: embedRow.embed_name };
+            setEmbedEditCache(guildId, contextId, {
+              embed: embedRow.embed ?? {},
+              embed_name: embedRow.embed_name ?? null,
+            });
+          }
+        } catch (_) {}
+      }
     }
     if ((scriptName === 'StatusTimeout' || scriptName === 'StatusRole' || scriptName === 'StatusUnrole') && contextId === 'server' && guildId) {
       try {

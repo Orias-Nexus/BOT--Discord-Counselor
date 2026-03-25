@@ -2,6 +2,7 @@ import { MessageFlags } from 'discord.js';
 import * as api from '../api.js';
 import { getEmbedBuilder } from '../embedRoutes.js';
 import { buildEmbedEditComponents } from '../utils/components.js';
+import { setEmbedEditCache } from '../utils/embedEditCache.js';
 
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction?.guild;
@@ -28,6 +29,10 @@ export async function run(interaction, client, actionContext = null) {
           const buildEmbed = getEmbedBuilder('EmbedEdit');
           const resolved = buildEmbed ? await buildEmbed(updated.embed ?? {}, { member, guild, channel }) : null;
           if (resolved) {
+            setEmbedEditCache(guild.id, embedId, {
+              embed: updated.embed ?? {},
+              embed_name: updated.embed_name ?? newName,
+            });
             const components = buildEmbedEditComponents(embedId);
             await interaction.message.edit({ content: '', embeds: [resolved], components }).catch(() => {});
           }
