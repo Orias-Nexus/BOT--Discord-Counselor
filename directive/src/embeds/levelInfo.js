@@ -134,6 +134,7 @@ export function getLeaderboardEmbed(entries, type, guild, extra = {}) {
 
   if (extra.callerRank && extra.callerUserId) {
     const inList = entries.some((e) => e.user_id === extra.callerUserId);
+
     if (!inList && extra.callerRank <= 99) { 
       lines.push('...'); 
       lines.push(
@@ -162,3 +163,4 @@ export function getLeaderboardEmbed(entries, type, guild, extra = {}) {
     timestamp: new Date().toISOString(),
   };
 }
+
