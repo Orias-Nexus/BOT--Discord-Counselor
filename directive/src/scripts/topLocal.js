@@ -1,4 +1,4 @@
-import { MessageFlags } from 'discord.js';
+import { MessageFlags } from '../discord.js';
 import * as api from '../api.js';
 import { getLeaderboardEmbed } from '../embeds/levelInfo.js';
 

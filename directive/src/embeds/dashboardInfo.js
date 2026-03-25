@@ -1,4 +1,4 @@
-import { version } from 'discord.js';
+import { version } from '../discord.js';
 import { EMBED_COLORS } from './schema.js';
 import { getSlashCommands } from '../slashs/commands.js';
 import { blank_banner } from '../customs/handlers/placeholders/links.js';

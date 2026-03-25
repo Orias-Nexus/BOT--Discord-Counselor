@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Client, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
+import { Client, Events, GatewayIntentBits, MessageFlags } from './discord.js';
 import { logger } from './utils/logger.js'; // Init logger overrides console.log
 import { initWorker } from './utils/worker.js'; // Init Redis Queue Worker
 import { formatEphemeralContent, isUnknownInteraction } from './api.js';

@@ -2,7 +2,7 @@ import {
   SlashCommandBuilder,
   PermissionFlagsBits,
   ChannelType,
-} from 'discord.js';
+} from '../discord.js';
 
 /**
  * Slash command definitions from Architecture.json.

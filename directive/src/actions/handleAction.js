@@ -1,4 +1,4 @@
-import { MessageFlags } from 'discord.js';
+import { MessageFlags } from '../discord.js';
 import * as api from '../api.js';
 import { ACTION_PREFIX, ACTION_SELECT_PREFIX } from '../utils/components.js';
 import { runScript } from '../scripts/runScript.js';

@@ -1,4 +1,4 @@
-import { ChannelType } from 'discord.js';
+import { ChannelType } from '../discord.js';
 import * as api from '../api.js';
 import { buildCategoryInfoComponents } from '../utils/components.js';
 import { mainImageUrl } from '../config.js';

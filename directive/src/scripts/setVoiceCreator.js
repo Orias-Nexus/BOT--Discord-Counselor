@@ -1,4 +1,4 @@
-import { ChannelType, MessageFlags } from 'discord.js';
+import { ChannelType, MessageFlags } from '../discord.js';
 import * as api from '../api.js';
 
 const MAX_CREATOR = 1;

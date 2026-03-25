@@ -1,4 +1,4 @@
-import { ChannelType, MessageFlags, ActionRowBuilder, StringSelectMenuBuilder, PermissionFlagsBits } from 'discord.js';
+import { ChannelType, MessageFlags, ActionRowBuilder, StringSelectMenuBuilder, PermissionFlagsBits } from '../discord.js';
 import * as api from '../api.js';
 import { getStatLabelByIndex } from '../config/channelTypes.js';
 

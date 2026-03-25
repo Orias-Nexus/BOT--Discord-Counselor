@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ChannelType, PermissionFlagsBits, StringSelectMenuBuilder } from 'discord.js';
+import { ActionRowBuilder, ChannelType, PermissionFlagsBits, StringSelectMenuBuilder } from '../discord.js';
 
 export const ACTION_PREFIX = 'action_';
 export const ACTION_SELECT_PREFIX = 'actionsel_';

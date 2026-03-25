@@ -1,4 +1,4 @@
-import { MessageFlags } from 'discord.js';
+import { MessageFlags } from './discord.js';
 import { BACKEND_API_URL } from './config.js';
 
 const DEFAULT_TIMEOUT_MS = 15_000;

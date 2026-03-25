@@ -1,4 +1,4 @@
-import { ChannelType } from 'discord.js';
+import { ChannelType } from '../discord.js';
 import { EMBED_COLORS } from './schema.js';
 import { formatShortDate, getChannelTypeName, getChannelStatus } from './utils.js';
 import { resolveEmbed } from './.embedContext.js';

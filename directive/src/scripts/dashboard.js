@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from '../discord.js';
 import { getDashboardEmbed } from '../embeds/dashboardInfo.js';
 import { ACTION_PREFIX } from '../utils/components.js';
 

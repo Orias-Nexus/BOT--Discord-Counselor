@@ -1,4 +1,4 @@
-import { ChannelType } from 'discord.js';
+import { ChannelType } from '../discord.js';
 import * as api from '../api.js';
 
 const NSFW_ALLOWED_TYPES = [ChannelType.GuildText, ChannelType.GuildAnnouncement, ChannelType.GuildForum];

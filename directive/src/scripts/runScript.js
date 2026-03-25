@@ -1,7 +1,7 @@
 /**
  * Run script by name. Uses preloaded cache to avoid Unknown interaction (reply/defer within 3s).
  */
-import { MessageFlags } from 'discord.js';
+import { MessageFlags } from '../discord.js';
 import { formatEphemeralContent } from '../api.js';
 
 const SCRIPT_NAMES = [

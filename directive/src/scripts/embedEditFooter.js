@@ -1,4 +1,4 @@
-import { MessageFlags } from 'discord.js';
+import { MessageFlags } from '../discord.js';
 import * as api from '../api.js';
 import { updateEmbedAndResolve } from '../embeds/embedEdit.js';
 import { mergeFooter } from '../utils/embedFormatters.js';

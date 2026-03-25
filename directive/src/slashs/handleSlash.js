@@ -1,4 +1,4 @@
-import { MessageFlags } from 'discord.js';
+import { MessageFlags } from '../discord.js';
 import { formatEphemeralContent, isUnknownInteraction } from '../api.js';
 import { getScriptNameByCommand } from './commands.js';
 import { runScript } from '../scripts/runScript.js';
