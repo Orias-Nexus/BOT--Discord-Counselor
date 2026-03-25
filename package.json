@@ -9,6 +9,7 @@
     "dev:frontend": "cd frontend && npm run dev",
     "start:backend": "cd backend && npm start",
     "start:directive": "cd directive && npm start",
+    "build:frontend": "cd frontend && npm install",
     "build:backend": "cd backend && npm install",
     "build:directive": "cd directive && npm install",
     "deploy:directive": "cd directive && npm run deploy",
