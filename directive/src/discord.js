@@ -18,6 +18,7 @@ export const {
   ModalBuilder,
   PermissionFlagsBits,
   REST,
+  SlashCommandBuilder,
   Routes,
   StringSelectMenuBuilder,
   TextInputBuilder,
