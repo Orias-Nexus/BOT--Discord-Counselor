@@ -106,13 +106,6 @@ function resolveDisplayName(guild, userId) {
   return member?.displayName ?? member?.user?.username ?? userId;
 }
 
-/**
- * Build a leaderboard embed.
- * @param {Array<{ user_id: string, member_exp?: number, user_exp?: number, member_level?: number, user_level?: number }>} entries
- * @param {'local'|'global'} type
- * @param {import('discord.js').Guild|null} guild
- * @param {{ callerRank?: number, callerUserId?: string }} extra
- */
 export function getLeaderboardEmbed(entries, type, guild, extra = {}) {
   const isLocal = type === 'local';
   const title = isLocal
@@ -122,26 +115,43 @@ export function getLeaderboardEmbed(entries, type, guild, extra = {}) {
   const expKey = isLocal ? 'member_exp' : 'user_exp';
   const lvlKey = isLocal ? 'member_level' : 'user_level';
 
+  const NAME_WIDTH = 20;
+  const LVL_WIDTH = 4;
+  const EXP_WIDTH = 9;
+
+  const createRow = (rankNum, userId, lvlNum, expNum, isCaller) => {
+    const rankStr = String(rankNum).padStart(2, ' '); 
+    const nameStr = truncPad(resolveDisplayName(guild, userId), NAME_WIDTH).padEnd(NAME_WIDTH, ' '); 
+    const lvlStr = String(lvlNum ?? 0).padStart(LVL_WIDTH, ' '); 
+    const expStr = String(expNum ?? 0).padStart(EXP_WIDTH, ' '); 
+    const markStr = isCaller ? ' ◄' : '';
+    return `${rankStr} ${nameStr} ${lvlStr} ${expStr}${markStr}`;
+  };
+
   const lines = entries.map((e, i) => {
-    const rank = `#${String(i + 1).padStart(RANK_WIDTH - 1)}`;
-    const name = truncPad(resolveDisplayName(guild, e.user_id), NAME_WIDTH);
-    const lvl = String(e[lvlKey] ?? 0).padStart(LVL_WIDTH);
-    const exp = formatExp(e[expKey] ?? 0).padStart(10);
-    const mark = e.user_id === extra.callerUserId ? ' ◄' : '';
-    return `${rank} ${name} Lv.${lvl} ${exp} EXP${mark}`;
+    return createRow(i + 1, e.user_id, e[lvlKey], e[expKey], e.user_id === extra.callerUserId);
   });
 
   if (extra.callerRank && extra.callerUserId) {
     const inList = entries.some((e) => e.user_id === extra.callerUserId);
-    if (!inList) {
-      const rank = `#${String(extra.callerRank).padStart(RANK_WIDTH - 1)}`;
-      const name = truncPad(resolveDisplayName(guild, extra.callerUserId), NAME_WIDTH);
-      lines.push(`\n${rank} ${name}               ◄ You`);
+
+    if (!inList && extra.callerRank <= 99) { 
+      lines.push('...'); 
+      lines.push(
+        createRow(
+          extra.callerRank, 
+          extra.callerUserId, 
+          extra.callerLevel, 
+          extra.callerExp,   
+          true
+        )
+      );
     }
   }
+  
+  const header = ` # ${'NAME'.padEnd(NAME_WIDTH, ' ')} ${'LVL'.padStart(LVL_WIDTH, ' ')} ${'EXP'.padStart(EXP_WIDTH, ' ')}`;
+  const divider = '-'.repeat(38);
 
-  const header = `RANK ${'NAME'.padEnd(NAME_WIDTH)} LVL  ${'EXP'.padStart(10)} `;
-  const divider = '-'.repeat(header.length);
   const tableRows = [header, divider, ...lines];
   const body = lines.length > 0 ? `\`\`\`\n${tableRows.join('\n')}\n\`\`\`` : 'No data yet.';
 
@@ -153,3 +163,4 @@ export function getLeaderboardEmbed(entries, type, guild, extra = {}) {
     timestamp: new Date().toISOString(),
   };
 }
+
