@@ -7,7 +7,7 @@
 # rsync mã nguồn lên server lần đầu tiên!
 # ==========================================================================
 
-PROJECT_DIR="$HOME/BOT--Discord-Counselor"
+PROJECT_DIR="${PROJECT_DIR:-$HOME/BOT--Discord-Counselor}"
 
 echo "===================================================================="
 echo "BẮT ĐẦU CẤU HÌNH VPS (MÔ HÌNH PRE-BUILD / RSYNC)"
@@ -76,6 +76,8 @@ pm2 save
 
 # --- 9. THÊM PHÍM TẮT VÀO .BASHRC ---
 echo -e "\n=> Tạo phím tắt cho lệnh update tay..."
+# Alias truy cập nhanh bằng lệnh 'bot'
+echo "alias bot=\"cd $PROJECT_DIR\"" >> ~/.bashrc
 # Alias đơn giản để reset log, nạp lại PM2 (nếu bạn rsynce code mới lên)
 echo "alias jdcrs=\"pm2 flush && rm -rf $PROJECT_DIR/private/logs/* && pm2 restart all && sudo systemctl restart nginx && pm2 logs discord-bot\"" >> ~/.bashrc
 source ~/.bashrc

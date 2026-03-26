@@ -8,7 +8,7 @@
 # 1. Tùy chỉnh thông tin Server của bạn ở đây:
 SERVER_USER="long1"
 SERVER_IP="orias-counselor.duckdns.org" # Hoặc nhập IP trực tiếp XXX.XXX.XXX.XXX
-SERVER_DIR="/home/long1/BOT--Discord-Counselor"
+SERVER_DIR="${SERVER_DIR:-/home/long1/BOT--Discord-Counselor}"
 
 # Thay bằng đường dẫn file private key của bạn (nếu dùng rsa), có thể là ~/.ssh/id_rsa
 # Nếu dùng mật khẩu, hãy bỏ tham số `-i $SSH_KEY` bên dưới đi (hoặc dùng ssh-copy-id)
