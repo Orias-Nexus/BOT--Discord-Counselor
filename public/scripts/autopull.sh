@@ -1,8 +1,8 @@
 #!/bin/bash
 export TZ="Asia/Ho_Chi_Minh"
 
-PROJECT_DIR="/home/long1/JS--Discord-Counselor"
-AUTOPULL_LOG="$PROJECT_DIR/autopull.log"
+BOT_PROJ="~/JS--Discord-Counselor"
+AUTOPULL_LOG="$BOT_PROJ/autopull.log"
 LOCK_FILE="/tmp/autopull.lock"
 
 exec 200>"$LOCK_FILE"
@@ -11,7 +11,7 @@ if ! flock -n 200; then
     exit 0
 fi
 
-cd "$PROJECT_DIR"
+cd "$BOT_PROJ"
 
 if [ -s "$AUTOPULL_LOG" ]; then
     LAST_DATE=$(tail -n 1 "$AUTOPULL_LOG" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}')
@@ -40,15 +40,14 @@ while true; do
     cd frontend && npm run build
     sudo rm -rf /var/www/html/*
     sudo cp -r dist/* /var/www/html/
-    cd "$PROJECT_DIR"
+    cd "$BOT_PROJ"
     pm2 flush
-    rm -rf "$PROJECT_DIR/private/logs/"*
+    rm -rf "$BOT_PROJ/private/logs/"*
     pm2 restart all
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] UPDATED SUCCESSFULLY."
 done
 
 # tree -I 'node_modules'
-# tail -n 20 -f /home/long1/JS--Discord-Counselor/autopull.log
-# pm2 logs
 # crontab -e
-# */1 * * * * /home/long1/JS--Discord-Counselor/autopull.sh >> /home/long1/JS--Discord-Counselor/autopull.log 2>&1
+# pm2 logs
+# htop
