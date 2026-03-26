@@ -207,8 +207,8 @@ const SLASH_LIST = [
     defaultMemberPermissions: PermissionFlagsBits.ManageGuild,
     options: (b) =>
       b
-        .addIntegerOption((o) => o.setName('setlevel').setDescription('New level (within Levels range)').setRequired(true))
-        .addUserOption((o) => o.setName('target').setDescription('Member (default: self)')),
+        .addUserOption((o) => o.setName('target').setDescription('Member').setRequired(true))
+        .addIntegerOption((o) => o.setName('setlevel').setDescription('New level (within Levels range)').setRequired(true)),
   },
   {
     name: 'membermove',
