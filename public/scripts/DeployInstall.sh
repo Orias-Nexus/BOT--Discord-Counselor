@@ -5,14 +5,15 @@ cat << 'EOF' > ~/aptinstall.sh
 sudo apt update
 
 # 2. Cài đặt toàn bộ các công cụ đã dùng từ đầu đến giờ:
-# git: Tải code từ GitHub
+# git: Tải code từ GitHub (nếu cần thủ công)
+# rsync: Đồng bộ file mã nguồn từ máy tính cá nhân lên
 # redis-server: Cơ sở dữ liệu tạm thời cho Bot
 # nano: Trình chỉnh sửa file
 # dnsutils: Lệnh nslookup để check tên miền
 # nginx: Web Server chạy Frontend
-# cron: Lập lịch tự động chạy Autopull
+# cron: Lập lịch tự động quản lý (nếu có)
 # certbot & python3-certbot-nginx: Cấu hình HTTPS/SSL
-sudo apt install git redis-server nano dnsutils nginx cron certbot python3-certbot-nginx -y
+sudo apt install rsync git redis-server nano dnsutils nginx cron certbot python3-certbot-nginx -y
 
 # 3. Cài đặt Node.js và NPM (nếu máy mới hoàn toàn chưa có)
 # sudo apt install nodejs npm -y
