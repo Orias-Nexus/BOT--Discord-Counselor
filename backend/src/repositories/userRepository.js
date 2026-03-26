@@ -18,65 +18,33 @@ export async function getById(userId) {
 }
 
 export async function ensure(userId) {
-    try {
-        const created = await prisma.users.create({
-            data: {
-                user_id: userId,
-                user_exp: 0,
-                user_level: 0,
-            },
-        });
-        return rowToUser(created);
-    } catch (err) {
-        // Another concurrent request may have created the same user_id.
-        if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
-            const existing = await prisma.users.findUnique({ where: { user_id: userId } });
-            return rowToUser(existing);
+    const row = await prisma.users.upsert({
+        where: { user_id: userId },
+        update: {},
+        create: {
+            user_id: userId,
+            user_exp: 0,
+            user_level: 0,
         }
-        throw err;
-    }
+    });
+    return rowToUser(row);
 }
 
 export async function addExp(userId, expAmount) {
     const amount = BigInt(expAmount);
-    try {
-        const row = await prisma.users.update({
-            where: { user_id: userId },
-            data: {
-                user_exp: { increment: amount },
-                updated_at: new Date(),
-            },
-        });
-        return rowToUser(row);
-    } catch (err) {
-        // User does not exist yet: create with initial exp.
-        if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
-            try {
-                const created = await prisma.users.create({
-                    data: {
-                        user_id: userId,
-                        user_exp: amount,
-                        user_level: 0,
-                    },
-                });
-                return rowToUser(created);
-            } catch (createErr) {
-                // If concurrent create happened, retry update once.
-                if (createErr instanceof Prisma.PrismaClientKnownRequestError && createErr.code === 'P2002') {
-                    const retried = await prisma.users.update({
-                        where: { user_id: userId },
-                        data: {
-                            user_exp: { increment: amount },
-                            updated_at: new Date(),
-                        },
-                    });
-                    return rowToUser(retried);
-                }
-                throw createErr;
-            }
+    const row = await prisma.users.upsert({
+        where: { user_id: userId },
+        update: {
+            user_exp: { increment: amount },
+            updated_at: new Date(),
+        },
+        create: {
+            user_id: userId,
+            user_exp: amount,
+            user_level: 0,
         }
-        throw err;
-    }
+    });
+    return rowToUser(row);
 }
 
 export async function updateLevel(userId, level) {
