@@ -1,4 +1,13 @@
-cat << 'EOF' > ~/aptinstall.sh
+# Đọc biến toàn cục (nếu chưa có thì mặc định lấy đường dẫn này)
+PROJECT_DIR="${PROJECT_DIR:-$HOME/BOT--Discord-Counselor}"
+
+# Tự động gắn biến này thành biến môi trường toàn cục cho Server
+if ! grep -q "PROJECT_DIR=" ~/.bashrc; then
+    echo "export PROJECT_DIR=\"$PROJECT_DIR\"" >> ~/.bashrc
+fi
+
+mkdir -p $PROJECT_DIR/public/scripts
+cat << 'EOF' > $PROJECT_DIR/public/scripts/aptinstall.sh
 #!/bin/bash
 
 # 1. Cập nhật danh sách gói hệ thống
@@ -32,4 +41,7 @@ echo "-----------------------------------------------"
 EOF
 
 # Cấp quyền thực thi cho file
-chmod +x ~/aptinstall.sh
+chmod +x $PROJECT_DIR/public/scripts/aptinstall.sh
+echo "File cài đặt đã được tạo tại: $PROJECT_DIR/public/scripts/aptinstall.sh"
+echo "Bạn có thể chạy nó ngay bằng lệnh:"
+echo "bash $PROJECT_DIR/public/scripts/aptinstall.sh"
