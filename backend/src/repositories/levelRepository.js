@@ -38,6 +38,6 @@ export async function getMinMax() {
         prisma.levels.aggregate({ _max: { level: true } })
     ]);
 
-    if (!minLevel._min.level || !maxLevel._max.level) return { min: 0, max: 0 };
+    if (minLevel._min.level == null || maxLevel._max.level == null) return { min: 0, max: 0 };
     return { min: minLevel._min.level, max: maxLevel._max.level };
 }
