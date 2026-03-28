@@ -126,7 +126,7 @@ export class CommandParser {
         if (phase !== 4) toStrip.push(item.fullMatch);
       } catch (err) {
         if (phase === 1) return { output: raw, toStrip: [], failed: true, error: err.message };
-        throw err;
+        console.warn(`[CommandParser] Handler for tag "${item.tag}" threw an error:`, err.message);
       }
     }
 
