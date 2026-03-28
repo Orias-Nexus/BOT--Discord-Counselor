@@ -18,6 +18,10 @@ export function whitepet_banner() {
   return 'https://github.com/Orias-Store/RES--Discord-Resource/blob/main/assets/img/Banner-Whitepet.png?raw=true';
 }
 
+export function goodjob_banner() {
+  return 'https://github.com/Orias-Store/RES--Discord-Resource/blob/main/assets/img/Banner-Goodjob.png?raw=true';
+}
+
 export function paimom_icon() {
   return 'https://github.com/Orias-Store/RES--Discord-Resource/blob/main/assets/img/Icon-Paimom.png?raw=true';
 }
