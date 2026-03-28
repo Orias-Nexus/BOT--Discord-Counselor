@@ -130,6 +130,11 @@
             "has_argument": false,
             "desc": "URL ảnh mặc định cho Whitepet"
         },
+        "goodjob_banner": {
+            "phase": 4,
+            "has_argument": false,
+            "desc": "URL ảnh mặc định cho Goodjob"
+        },
         "paimom_icon": {
             "phase": 4,
             "has_argument": false,
