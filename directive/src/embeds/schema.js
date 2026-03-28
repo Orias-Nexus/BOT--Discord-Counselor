@@ -50,6 +50,21 @@ export function omitNull(obj) {
   for (const [k, v] of Object.entries(obj)) {
     if (v === null || v === undefined) continue;
     if (typeof v === 'string' && v.trim() === '') continue; // Bỏ qua chuỗi rỗng để tránh lỗi API
+    
+    // Bỏ qua các URL không hợp lệ (ví dụ: do chứa placeholder chưa định nghĩa sinh ra chuỗi '{key}')
+    if (typeof v === 'string' && (k === 'url' || k === 'icon_url' || k === 'proxy_icon_url')) {
+      if (!v.startsWith('http://') && !v.startsWith('https://') && !v.startsWith('attachment://')) {
+        continue; // URL không hợp lệ theo Discord API
+      }
+      if (v.startsWith('http')) {
+        try {
+          new URL(v);
+        } catch (e) {
+          continue; // URL không hợp lệ (invalid syntax)
+        }
+      }
+    }
+
     if (v && typeof v === 'object' && !Array.isArray(v) && (k === 'author' || k === 'thumbnail' || k === 'image' || k === 'footer')) {
       const sub = omitNull(v);
       if (Object.keys(sub).length > 0) out[k] = sub;
