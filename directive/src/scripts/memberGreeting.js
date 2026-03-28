@@ -11,8 +11,10 @@ export async function run(interaction, client, actionContext) {
   if (!guild || !member) return;
   await api.ensureServer(guild.id);
   await api.ensureMember(guild.id, member.id, member.user?.username ?? 'User');
-  await api.setMemberStatus(guild.id, member.id, 'Newbie', null);
   const server = await api.getServer(guild.id).catch(() => null);
+  const timeNew = server?.time_new > 0 ? server.time_new : null;
+  const expiresAt = timeNew ? new Date(Date.now() + timeNew * 60 * 1000) : null;
+  await api.setMemberStatus(guild.id, member.id, 'Newbie', expiresAt);
   if (server?.role_new) {
     const role = guild.roles.cache.get(server.role_new);
     if (role) await member.roles.add(role).catch(() => {});
