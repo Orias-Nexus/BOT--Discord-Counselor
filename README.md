@@ -143,7 +143,3 @@ Khuyến khích tách rời 3 thành phần Database, Redis và App Source code.
 - Môi trường chạy ít nhất Node.js >= 18
 - Máy cài đặt sẵn Docker & Docker Compose (nếu sử dụng docker-compose)
 
-## 9. Giấy phép (License)
-
-Dự án này được phân phối dưới giấy phép MIT. Xem tệp [LICENSE](LICENSE) để biết thêm chi tiết.
-
