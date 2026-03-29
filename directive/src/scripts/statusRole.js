@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { sendAuditLog } from '../utils/auditLogger.js';
 
 const SUCCESS_MESSAGE = 'Updated Status Role: \\n Warn: {role_warn} \\n Mute: {role_mute} \\n Lock: {role_lock} \\n Newbie: {role_new}.';
 
@@ -60,4 +61,16 @@ export async function run(interaction, client, actionContext = {}) {
     role_new: roleIdToDisplay(guild, updated?.role_new),
   }));
   await api.replyOrEdit(interaction, content);
+
+  await sendAuditLog(guild, {
+    action: 'Status Roles Configured',
+    executor: interaction.user,
+    color: '#3498db',
+    fields: [
+      { name: 'Warn', value: roleIdToDisplay(guild, updated?.role_warn) || 'None', inline: true },
+      { name: 'Mute', value: roleIdToDisplay(guild, updated?.role_mute) || 'None', inline: true },
+      { name: 'Lock', value: roleIdToDisplay(guild, updated?.role_lock) || 'None', inline: true },
+      { name: 'Newbie', value: roleIdToDisplay(guild, updated?.role_new) || 'None', inline: true }
+    ]
+  });
 }

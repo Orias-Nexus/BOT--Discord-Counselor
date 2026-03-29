@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { sendAuditLog } from '../utils/auditLogger.js';
 
 const SUCCESS_MESSAGE = 'Updated Status Unrole: \\n Mute: {unrole_mute} \\n Lock: {unrole_lock}.';
 
@@ -35,4 +36,14 @@ export async function run(interaction, client, actionContext = {}) {
     unrole_lock: roleIdToDisplay(guild, server?.unrole_lock),
   }));
   await api.replyOrEdit(interaction, content);
+
+  await sendAuditLog(guild, {
+    action: 'Status Unroles Configured',
+    executor: interaction.user,
+    color: '#3498db',
+    fields: [
+      { name: 'Mute Unrole', value: roleIdToDisplay(guild, server?.unrole_mute) || 'None', inline: true },
+      { name: 'Lock Unrole', value: roleIdToDisplay(guild, server?.unrole_lock) || 'None', inline: true }
+    ]
+  });
 }
