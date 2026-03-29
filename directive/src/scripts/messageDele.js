@@ -1,5 +1,6 @@
 import { MessageFlags, PermissionFlagsBits } from '../discord.js';
 import * as api from '../api.js';
+import { sendAuditLog } from '../utils/auditLogger.js';
 
 const MAX_BULK_DELETE = 100;
 const MAX_DELETE_ALL_TOTAL = 5000;
@@ -116,6 +117,19 @@ export async function run(interaction, client) {
       content: api.formatEphemeralContent(`Deleted ${deletedCount} message(s).`),
       flags: MessageFlags.Ephemeral,
     }).catch(() => {});
+
+    await sendAuditLog(guild, {
+      action: 'Messages Purged',
+      executor: interaction.user,
+      target: channel.name,
+      color: '#e74c3c',
+      fields: [
+        { name: 'Channel', value: channel.toString(), inline: true },
+        { name: 'Amount', value: deletedCount.toString(), inline: true },
+        { name: 'Filter Member', value: member ? member.toString() : 'None', inline: true },
+        { name: 'Filter Role', value: role ? role.toString() : 'None', inline: true }
+      ]
+    });
   } catch (err) {
     console.error('[MessageDele]', err);
     await interaction.editReply({
