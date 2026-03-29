@@ -1,13 +1,11 @@
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LayoutDashboard, MessageSquare, Settings, Users, Server, LogOut } from 'lucide-react';
 
 const SIDEBAR_ITEMS = [
-  { icon: LayoutDashboard, label: 'Overview', path: '/' },
-  { icon: Server, label: 'Servers', path: '/servers' },
-  { icon: MessageSquare, label: 'Messages', path: '/messages' },
-  { icon: Users, label: 'Members', path: '/members' },
-  { icon: Settings, label: 'Settings', path: '/settings' },
+  { icon: 'dashboard', label: 'Dashboard', path: '/' },
+  { icon: 'group', label: 'Member Manager', path: '/members' },
+  { icon: 'smart_toy', label: 'Bot Settings', path: '/settings' },
+  { icon: 'grid_view', label: 'Channel Management', path: '/channels' },
 ];
 
 export default function DashboardLayout() {
@@ -19,69 +17,98 @@ export default function DashboardLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex font-sans selection:bg-indigo-500/30">
-      {/* Sidebar */}
-      <aside className="w-64 border-r border-zinc-900 bg-zinc-950 flex flex-col sticky top-0 h-screen">
-        <div className="h-16 flex items-center px-6 border-b border-zinc-900">
-          <div className="w-8 h-8 bg-indigo-500 rounded-lg mr-3 flex items-center justify-center shadow-md shadow-indigo-500/20">
-            <Server className="w-4 h-4 text-white" />
+    <div className="bg-surface text-on-surface font-body selection:bg-primary/30 min-h-screen">
+      {/* SideNavBar Shell */}
+      <aside className="h-screen w-64 fixed left-0 top-0 flex flex-col bg-[#0b0e14] border-r border-white/5 z-[60] font-['Manrope'] font-medium">
+        <div className="p-8 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center shadow-[0_0_20px_rgba(218,185,255,0.3)]">
+            <span className="material-symbols-outlined text-on-primary text-2xl">shield_person</span>
           </div>
-          <span className="font-bold text-lg tracking-tight">Counselor</span>
+          <div>
+            <h1 className="text-2xl font-black font-['Space_Grotesk'] text-[#dab9ff] leading-none">Project Nexus</h1>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 mt-1">Elite Management</p>
+          </div>
         </div>
         
-        <nav className="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+        <nav className="flex-1 px-4 mt-4 space-y-2">
           {SIDEBAR_ITEMS.map((item) => {
             const isActive = location.pathname === item.path || 
                              (item.path !== '/' && location.pathname.startsWith(item.path));
+            
             return (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
+                className={
                   isActive 
-                  ? 'bg-zinc-900/80 text-white font-medium shadow-sm border border-zinc-800/50' 
-                  : 'text-zinc-400 hover:text-white hover:bg-zinc-900/50'
-                }`}
+                  ? "flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-[#dab9ff]/20 to-transparent border-l-4 border-[#dab9ff] text-[#dab9ff] hover:translate-x-1 duration-200 group"
+                  : "flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-200 hover:bg-[#32353c]/30 transition-all hover:translate-x-1 duration-200"
+                }
               >
-                <item.icon className={`w-5 h-5 ${isActive ? 'text-indigo-400' : ''}`} />
-                {item.label}
+                <span 
+                  className="material-symbols-outlined" 
+                  style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}
+                >
+                  {item.icon}
+                </span>
+                <span>{item.label}</span>
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t border-zinc-900">
-          <div className="flex items-center gap-3 px-3 py-2">
-            <div className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center border border-zinc-700">
-              <span className="text-sm font-medium">{user?.name?.charAt(0) || 'A'}</span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user?.name || 'Admin User'}</p>
-              <p className="text-xs text-zinc-500 truncate">Administrator</p>
-            </div>
-            <button 
-              onClick={logout}
-              className="p-1.5 text-zinc-400 hover:text-red-400 hover:bg-red-400/10 rounded-md transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
+        <div className="p-4 border-t border-white/5 space-y-1">
+          <a className="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-slate-200 transition-all text-sm cursor-pointer">
+            <span className="material-symbols-outlined text-lg">help</span>
+            <span>Support</span>
+          </a>
+          <a className="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-slate-200 transition-all text-sm cursor-pointer">
+            <span className="material-symbols-outlined text-lg">description</span>
+            <span>Docs</span>
+          </a>
+          <button 
+            onClick={logout}
+            className="w-full flex items-center gap-3 px-4 py-3 mt-4 text-error/80 hover:text-error hover:bg-error/10 rounded-lg transition-all"
+          >
+            <span className="material-symbols-outlined">logout</span>
+            <span>Log Out</span>
+          </button>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col min-h-screen overflow-hidden bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-zinc-900/40 via-zinc-950 to-zinc-950">
-        <header className="h-16 flex items-center justify-between px-8 border-b border-zinc-900/50 backdrop-blur-sm sticky top-0 z-10">
-          <h2 className="text-lg font-medium text-zinc-200 tracking-tight">
-            {SIDEBAR_ITEMS.find(item => location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path)))?.label || 'Dashboard'}
+      {/* TopNavBar Shell */}
+      <header className="fixed top-0 left-64 right-0 z-50 flex items-center justify-between px-8 py-4 bg-[#10131a]/40 backdrop-blur-xl shadow-[0_24px_48px_rgba(0,0,0,0.5)]">
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-bold bg-gradient-to-r from-[#dab9ff] to-[#6c37a9] bg-clip-text text-transparent font-['Space_Grotesk'] tracking-tight">
+            Discord Counselor System Admin - Project Nexus
           </h2>
-        </header>
-        
-        <div className="flex-1 overflow-y-auto p-8">
-          <div className="max-w-6xl mx-auto">
-            <Outlet />
+        </div>
+        <div className="flex items-center gap-6">
+          <div className="relative group hidden md:block">
+            <input
+              className="bg-surface-container-lowest border-none rounded-full px-6 py-2 w-64 text-sm focus:ring-1 focus:ring-primary transition-all placeholder:text-slate-600 outline-none text-white"
+              placeholder="Search data points..." 
+              type="text" 
+            />
+            <span className="material-symbols-outlined absolute right-4 top-2 text-slate-500 text-xl pointer-events-none">search</span>
+          </div>
+          <div className="flex items-center gap-4 text-slate-400">
+            <button className="hover:bg-white/5 p-2 rounded-full transition-all active:scale-90">
+              <span className="material-symbols-outlined">notifications</span>
+            </button>
+            <button className="hover:bg-white/5 p-2 rounded-full transition-all active:scale-90">
+              <span className="material-symbols-outlined">settings</span>
+            </button>
+            <div className="h-10 w-10 flex flex-col justify-center items-center rounded-full border border-primary/20 p-0.5 overflow-hidden bg-surface-container-highest">
+              <span className="text-white text-sm font-bold">{user?.name?.charAt(0) || 'A'}</span>
+            </div>
           </div>
         </div>
+      </header>
+
+      {/* Main Content Canvas */}
+      <main className="ml-64 pt-24 p-8 min-h-screen">
+        <Outlet />
       </main>
     </div>
   );
