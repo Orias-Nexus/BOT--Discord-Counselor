@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import * as embedController from '../controllers/embedController.js';
+import { requirePermission } from '../middleware/authMiddleware.js';
 
 const router = Router({ mergeParams: true });
+
+router.use('/', requirePermission('manage_server'));
 
 // Lấy danh sách embeds của server
 router.get('/', embedController.listByServer);

@@ -2,8 +2,12 @@ import { Router } from 'express';
 import * as ctrl from '../controllers/serverController.js';
 import * as messageCtrl from '../controllers/messageController.js';
 import * as embedCtrl from '../controllers/embedController.js';
+import { requirePermission } from '../middleware/authMiddleware.js';
 
 const router = Router();
+
+// Toàn bộ thao tác cấu hình server đều cần quyền manage_server
+router.use('/:serverId', requirePermission('manage_server'));
 
 router.get('/:serverId', ctrl.getServer);
 router.post('/:serverId/ensure', ctrl.ensureServer);

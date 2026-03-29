@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import * as messageController from '../controllers/messageController.js';
+import { requirePermission } from '../middleware/authMiddleware.js';
 
 const router = Router({ mergeParams: true });
+
+router.use('/', requirePermission('manage_server'));
 
 // Lấy danh sách messages của server
 router.get('/', messageController.listByServer);
