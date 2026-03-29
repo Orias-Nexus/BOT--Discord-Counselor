@@ -19,6 +19,7 @@ import authRoutes from './routes/authRoutes.js';
 import embedRoutes from './routes/embedRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import { verifyAuth } from './middleware/authMiddleware.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -50,6 +51,10 @@ app.get('/api/info', (_req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+
+// Áp dụng xác thực JWT cho tất cả các API phía dưới
+app.use('/api', verifyAuth);
+
 app.use('/api/servers', serverRoutes);
 app.use('/api/servers/:serverId/channels', channelRoutes);
 app.use('/api/servers/:serverId/embeds', embedRoutes);

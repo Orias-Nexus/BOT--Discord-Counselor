@@ -1,5 +1,5 @@
 import { MessageFlags } from './discord.js';
-import { BACKEND_API_URL } from './config.js';
+import env, { BACKEND_API_URL } from './config.js';
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 
@@ -14,6 +14,7 @@ async function request(path, options = {}) {
       signal: options.signal ?? controller.signal,
       headers: {
         'Content-Type': 'application/json',
+        'x-internal-key': env.internalSecretKey,
         ...options.headers,
       },
     });

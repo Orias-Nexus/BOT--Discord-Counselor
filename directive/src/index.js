@@ -13,6 +13,7 @@ import { runScript, runEvent, loadAllScripts } from './scripts/runScript.js';
 import { startExpiresCheck } from './jobs/expiresCheck.js';
 import { startStatsCheck } from './jobs/statsCheck.js';
 import { EVENT_HANDLERS } from './events/eventRegistry.js';
+import { startApiServer } from './apiServer.js';
 import { isServerStatsSelectId, doSetServerStats } from './scripts/setServerStats.js';
 import { EMBED_APPLY_SELECT_PREFIX } from './embeds/embedEdit.js';
 import { EMBED_BY_SCRIPT } from './embedRoutes.js';
@@ -43,6 +44,7 @@ client.once(Events.ClientReady, (c) => {
 
   startExpiresCheck(c);
   startStatsCheck(c);
+  startApiServer(c);
 });
 
 for (const { discordEvent, scriptName, buildContext } of EVENT_HANDLERS) {
