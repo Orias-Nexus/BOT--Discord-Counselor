@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { sendAuditLog } from '../utils/auditLogger.js';
 
 const SUCCESS_MESSAGE = 'Completed Rename {Username} to {Server Profile Name}.';
 
@@ -25,4 +26,12 @@ export async function run(interaction, client, actionContext = null) {
   const displayName = member.displayName ?? member.user.username;
   const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { Username: member.user.username, 'Server Profile Name': displayName }));
   await api.replyOrEdit(interaction, content);
+
+  await sendAuditLog(guild, {
+    action: 'Member Renamed',
+    executor: interaction.user,
+    target: member.user,
+    color: '#f1c40f',
+    fields: [{ name: 'New Name', value: name }]
+  });
 }
