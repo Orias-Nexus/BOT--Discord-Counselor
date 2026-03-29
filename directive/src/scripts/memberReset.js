@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { sendAuditLog } from '../utils/auditLogger.js';
 
 const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Good now.";
 
@@ -32,6 +33,14 @@ export async function run(interaction, client, actionContext) {
   const displayName = member.displayName ?? member.user?.username ?? 'User';
   const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { 'Server Profile Name': displayName }));
   await api.replyOrEdit(interaction, content);
+
+  await sendAuditLog(guild, {
+    action: 'Member Reset (Unmuted/Unlocked)',
+    executor: interaction.user,
+    target: member.user,
+    color: '#2ecc71'
+  });
+
   const updatedProfile = await api.getMember(guild.id, member.id).catch(() => null);
   return { updatedProfile, targetId: member.id };
 }
