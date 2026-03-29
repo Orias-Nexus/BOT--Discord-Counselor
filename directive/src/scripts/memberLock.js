@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { sendAuditLog } from '../utils/auditLogger.js';
 
 const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Locked until {Member Expires} - UTC.";
 
@@ -35,6 +36,15 @@ export async function run(interaction, client, actionContext) {
   const expiresStr = expiresAt ? expiresAt.toLocaleString('en-US') : 'permanent';
   const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { 'Server Profile Name': displayName, 'Member Expires': expiresStr }));
   await api.replyOrEdit(interaction, content);
+
+  await sendAuditLog(guild, {
+    action: 'Member Locked',
+    executor: interaction.user,
+    target: member.user,
+    color: '#e74c3c',
+    fields: [{ name: 'Expires', value: expiresStr }]
+  });
+
   const updatedProfile = await api.getMember(guild.id, member.id).catch(() => null);
   return { updatedProfile, targetId: member.id };
 }
