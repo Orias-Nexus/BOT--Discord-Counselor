@@ -1,8 +1,9 @@
 import * as api from '../api.js';
 import { buildMemberInfoPayload, findAndUpdateMemberInfoInGuild } from '../actions/embedUpdate.js';
 import { BACKEND_API_URL } from '../config.js';
+import { sendAuditLog } from '../utils/auditLogger.js';
 
-const INTERVAL_MS = 60 * 1000;
+const INTERVAL_MS = 6 * 60 * 1000;
 const RETRY_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 2_000;
 
@@ -66,6 +67,17 @@ export function startExpiresCheck(client) {
         for (const { server_id, user_id } of updated) {
           await applyGoodRoles(client, server_id, user_id);
           await updateMemberInfoEmbedIfExists(client, server_id, user_id);
+
+          const guild = client.guilds.cache.get(server_id);
+          if (guild) {
+             const targetUser = await client.users.fetch(user_id).catch(() => null);
+             await sendAuditLog(guild, {
+               action: 'Status Expired (Automated)',
+               target: targetUser || user_id,
+               reason: 'Mute/Lock duration finished',
+               color: '#2ecc71'
+             });
+          }
         }
         return;
       } catch (err) {

@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { sendAuditLog } from '../utils/auditLogger.js';
 
 const SUCCESS_MESSAGE = 'Completed Set Level {Server Profile Name}: {member_level}.';
 
@@ -34,4 +35,12 @@ export async function run(interaction, client, actionContext = null) {
   const displayName = member.displayName ?? member.user.username;
   const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { 'Server Profile Name': displayName, member_level: updated?.member_level ?? level }));
   await api.replyOrEdit(interaction, content);
+
+  await sendAuditLog(guild, {
+    action: 'Member Level Changed',
+    executor: interaction.user,
+    target: member.user,
+    color: '#3498db',
+    fields: [{ name: 'New Level', value: (updated?.member_level ?? level).toString() }]
+  });
 }

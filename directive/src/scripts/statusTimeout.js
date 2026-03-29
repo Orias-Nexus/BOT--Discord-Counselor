@@ -1,4 +1,5 @@
 import * as api from '../api.js';
+import { sendAuditLog } from '../utils/auditLogger.js';
 
 const SUCCESS_MESSAGE = 'Updated Status Timeout: \\n Warn: {time_warn} \\n Mute: {time_mute} \\n Lock: {time_lock} \\n Newbie: {time_new}.';
 
@@ -64,4 +65,13 @@ export async function run(interaction, client, actionContext = {}) {
   };
   const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, placeholders));
   await api.replyOrEdit(interaction, content);
+
+  if (Object.keys(body).length > 0) {
+    await sendAuditLog(guild, {
+      action: 'Status Timeouts Updated',
+      executor: interaction.user,
+      color: '#3498db',
+      fields: Object.entries(body).map(([k, v]) => ({ name: k, value: formatMinutesToDDHHMM(v), inline: true }))
+    });
+  }
 }

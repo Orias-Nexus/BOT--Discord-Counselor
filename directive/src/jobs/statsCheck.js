@@ -2,7 +2,7 @@ import { ChannelType } from '../discord.js';
 import * as api from '../api.js';
 import { digitsFromChannelsIdx, getStatLabelByIndex } from '../config/channelTypes.js';
 
-const INTERVAL_MS = 5 * 60 * 1000;
+const INTERVAL_MS = 6 * 60 * 1000;
 
 function getStatValue(guild, statIndex, botCount) {
   switch (statIndex) {

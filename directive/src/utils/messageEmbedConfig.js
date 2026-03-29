@@ -1,6 +1,7 @@
 import { MessageFlags } from '../discord.js';
 import * as api from '../api.js';
 import { resolveString } from '../embeds/.embedContext.js';
+import { sendAuditLog } from './auditLogger.js';
 
 /**
  * Shared handler for GreetingMessage/LeavingMessage/BoostingMessage scripts.
@@ -41,6 +42,13 @@ export async function setMessageEmbedByName(interaction, messageType) {
       placeholderCache: { embed_name: embedRow.embed_name },
     });
     await interaction.editReply({ content: text, flags: MessageFlags.Ephemeral }).catch(() => {});
+
+    await sendAuditLog(guild, {
+      action: `${messageType} Embed Message Configured`,
+      executor: interaction.user,
+      color: '#3498db',
+      fields: [{ name: 'Embed Template', value: embedRow.embed_name, inline: true }]
+    });
   } catch (err) {
     console.error(`[${messageType}Message]`, err);
     await interaction.editReply({

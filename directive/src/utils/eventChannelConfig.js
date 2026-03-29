@@ -1,6 +1,7 @@
 import { MessageFlags } from '../discord.js';
 import * as api from '../api.js';
 import { resolveString } from '../embeds/.embedContext.js';
+import { sendAuditLog } from './auditLogger.js';
 
 /**
  * Shared handler for *Channel scripts (GreetingChannel, LeavingChannel, BoostingChannel, LevelingChannel, LoggingChannel).
@@ -27,6 +28,13 @@ export async function setEventChannel(interaction, client, actionContext, messag
     await api.setMessageChannel(guild.id, messageType, channel.id);
     const text = await resolveString(`Completed Set {channel_name} as ${messageType} Channel`, { guild, channel });
     await interaction.editReply({ content: text, flags: MessageFlags.Ephemeral }).catch(() => {});
+
+    await sendAuditLog(guild, {
+      action: `${messageType} Channel Configured`,
+      executor: interaction.user,
+      color: '#3498db',
+      fields: [{ name: 'Channel', value: channel.toString(), inline: true }]
+    });
   } catch (err) {
     console.error(`[${messageType}Channel]`, err);
     await interaction.editReply({ content: api.formatEphemeralContent('Update failed.'), flags: MessageFlags.Ephemeral }).catch(() => {});
