@@ -12,6 +12,7 @@ function shouldIgnore(message) {
   const content = message.content?.trim();
   if (!content && message.attachments.size === 0) return true;
   if (content && COMMAND_PREFIXES.some((p) => content.startsWith(p))) return true;
+  if (content && /^m!/i.test(content)) return true;
   return false;
 }
 
