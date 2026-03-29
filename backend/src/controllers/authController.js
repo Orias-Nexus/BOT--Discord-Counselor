@@ -58,7 +58,7 @@ export const handleDiscordCallback = async (req, res) => {
         avatar: userData.avatar,
       },
       JWT_SECRET,
-      { expiresIn: '7d' } // Token sống 7 ngày
+      { expiresIn: '24h' } // Token sống 24 giờ
     );
 
     // Chuyển hướng người dùng về Frontend kèm Token

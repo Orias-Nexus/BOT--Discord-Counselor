@@ -17,6 +17,8 @@ const env = {
       : 'http://localhost:4000/api/auth/discord/callback'),
 
   jwtSecret: process.env.JWT_SECRET || 'super-secret-key-123',
+  internalSecretKey: process.env.INTERNAL_SECRET_KEY || 'default-internal-secret',
+  directiveApiUrl: process.env.DIRECTIVE_API_URL || (isProd ? 'http://directive:4001' : 'http://localhost:4001'),
 
   // Database (Prisma reads POOLER_URL / DIRECT_URL directly from env)
   poolerUrl: process.env.POOLER_URL || '',

@@ -32,6 +32,7 @@ const env = {
   backendApiUrl: BACKEND_API_URL,
   redisUrl: REDIS_URL,
   mainImageUrl,
+  internalSecretKey: process.env.INTERNAL_SECRET_KEY || 'default-internal-secret',
 };
 
 if (!isProd) {
