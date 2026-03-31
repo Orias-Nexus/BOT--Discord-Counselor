@@ -2,6 +2,7 @@ import * as api from '../api.js';
 import { sendAuditLog } from '../utils/auditLogger.js';
 
 const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Warning until {Member Expires} - UTC.";
+const FAIL_MESSAGE = "Cannot warn {Server Profile Name}. Make sure the bot's role is above theirs and you have permission.";
 
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
@@ -22,13 +23,22 @@ export async function run(interaction, client, actionContext) {
   const server = await api.getServer(guild.id);
   const timeWarn = server?.time_warn > 0 ? server.time_warn : null;
   const expiresAt = timeWarn ? new Date(Date.now() + timeWarn * 60 * 1000) : null;
+  const displayName = member.displayName ?? member.user?.username ?? 'User';
+  let actionFailed = false;
   for (const roleId of [server?.role_mute, server?.role_lock, server?.role_new].filter(Boolean)) {
     const role = guild.roles.cache.get(roleId);
     if (role) await member.roles.remove(role).catch(() => {});
   }
   if (server?.role_warn) {
     const role = guild.roles.cache.get(server.role_warn);
-    if (role) await member.roles.add(role).catch(() => {});
+    if (role) {
+      const err = await member.roles.add(role).then(() => null).catch((e) => e);
+      if (err) actionFailed = true;
+    }
+  }
+  if (actionFailed) {
+    await api.replyOrEdit(interaction, api.formatEphemeralContent(api.replacePlaceholders(FAIL_MESSAGE, { 'Server Profile Name': displayName })));
+    return;
   }
   for (const roleId of [server?.unrole_mute, server?.unrole_lock].filter(Boolean)) {
     const role = guild.roles.cache.get(roleId);
@@ -36,7 +46,6 @@ export async function run(interaction, client, actionContext) {
   }
   await api.ensureMember(guild.id, member.id, member.user?.username);
   await api.setMemberStatus(guild.id, member.id, 'Warning', expiresAt);
-  const displayName = member.displayName ?? member.user?.username ?? 'User';
   const expiresStr = expiresAt ? expiresAt.toLocaleString('en-US') : 'permanent';
   const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { 'Server Profile Name': displayName, 'Member Expires': expiresStr }));
   await api.replyOrEdit(interaction, content);
