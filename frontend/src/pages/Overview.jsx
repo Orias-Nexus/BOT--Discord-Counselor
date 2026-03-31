@@ -1,11 +1,4 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../utils/api';
-
 export default function Overview() {
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* Top Row: Stats Cards (Bento Style) */}
@@ -20,7 +13,7 @@ export default function Overview() {
             <p className="text-secondary text-xs font-label mt-1">+12% from last week</p>
           </div>
         </div>
-        
+
         <div className="glass-card p-6 rounded-2xl border border-white/5 flex flex-col justify-between hover:border-primary/20 transition-all group">
           <div className="flex justify-between items-start">
             <span className="text-slate-400 text-sm font-label uppercase tracking-widest group-hover:text-slate-300 transition-colors">Active Bots</span>
@@ -31,7 +24,7 @@ export default function Overview() {
             <p className="text-secondary text-xs font-label mt-1 neon-glow-secondary">System Stable</p>
           </div>
         </div>
-        
+
         <div className="glass-card p-6 rounded-2xl border border-white/5 flex flex-col justify-between hover:border-primary/20 transition-all group">
           <div className="flex justify-between items-start">
             <span className="text-slate-400 text-sm font-label uppercase tracking-widest group-hover:text-slate-300 transition-colors">Online Members</span>
@@ -44,7 +37,7 @@ export default function Overview() {
             </div>
           </div>
         </div>
-        
+
         <div className="glass-card p-6 rounded-2xl border border-white/5 flex flex-col justify-between hover:border-primary/20 transition-all group">
           <div className="flex justify-between items-start">
             <span className="text-slate-400 text-sm font-label uppercase tracking-widest group-hover:text-slate-300 transition-colors">Server Uptime</span>
@@ -64,15 +57,15 @@ export default function Overview() {
             <div className="p-6 flex justify-between items-center border-b border-white/5">
               <h4 className="font-headline text-xl font-bold text-white">Member Management Table</h4>
               <div className="flex gap-2">
-                <button className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-label transition-all cursor-pointer">
+                <button type="button" className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-label transition-all cursor-pointer">
                   Export CSV
                 </button>
-                <button className="px-4 py-2 bg-primary/20 text-primary hover:bg-primary/30 rounded-lg text-xs font-bold transition-all cursor-pointer">
+                <button type="button" className="px-4 py-2 bg-primary/20 text-primary hover:bg-primary/30 rounded-lg text-xs font-bold transition-all cursor-pointer">
                   Bulk Action
                 </button>
               </div>
             </div>
-            
+
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead className="bg-surface-container-low/50 text-slate-500 text-[10px] uppercase tracking-widest font-label">
@@ -86,7 +79,7 @@ export default function Overview() {
                 </thead>
                 <tbody className="divide-y divide-white/5 text-sm">
                   {/* Row 1 */}
-                  <tr className="hover:bg-white/[0.02] transition-colors group">
+                  <tr className="hover:bg-white/2 transition-colors group">
                     <td className="px-6 py-4 font-mono text-xs text-slate-500">#9921</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -99,15 +92,15 @@ export default function Overview() {
                     </td>
                     <td className="px-6 py-4 text-slate-400">Never</td>
                     <td className="px-6 py-4 text-right space-x-2">
-                      <button className="text-[10px] font-bold uppercase text-primary-fixed hover:text-primary transition-colors cursor-pointer">Adjust Status</button>
-                      <button className="p-1 text-slate-500 hover:text-error transition-colors cursor-pointer inline-flex items-center">
+                      <button type="button" className="text-[10px] font-bold uppercase text-primary-fixed hover:text-primary transition-colors cursor-pointer">Adjust Status</button>
+                      <button type="button" className="p-1 text-slate-500 hover:text-error transition-colors cursor-pointer inline-flex items-center">
                         <span className="material-symbols-outlined text-lg">gavel</span>
                       </button>
                     </td>
                   </tr>
 
                   {/* Row 2 */}
-                  <tr className="hover:bg-white/[0.02] transition-colors group">
+                  <tr className="hover:bg-white/2 transition-colors group">
                     <td className="px-6 py-4 font-mono text-xs text-slate-500">#8842</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -120,15 +113,15 @@ export default function Overview() {
                     </td>
                     <td className="px-6 py-4 text-slate-400">2d 4h left</td>
                     <td className="px-6 py-4 text-right space-x-2">
-                      <button className="text-[10px] font-bold uppercase text-primary-fixed hover:text-primary transition-colors cursor-pointer">Adjust Status</button>
-                      <button className="p-1 text-slate-500 hover:text-error transition-colors cursor-pointer inline-flex items-center">
+                      <button type="button" className="text-[10px] font-bold uppercase text-primary-fixed hover:text-primary transition-colors cursor-pointer">Adjust Status</button>
+                      <button type="button" className="p-1 text-slate-500 hover:text-error transition-colors cursor-pointer inline-flex items-center">
                         <span className="material-symbols-outlined text-lg">block</span>
                       </button>
                     </td>
                   </tr>
 
                   {/* Row 3 */}
-                  <tr className="hover:bg-white/[0.02] transition-colors group">
+                  <tr className="hover:bg-white/2 transition-colors group">
                     <td className="px-6 py-4 font-mono text-xs text-slate-500">#7731</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -141,15 +134,15 @@ export default function Overview() {
                     </td>
                     <td className="px-6 py-4 text-slate-400">12h left</td>
                     <td className="px-6 py-4 text-right space-x-2">
-                      <button className="text-[10px] font-bold uppercase text-primary-fixed hover:text-primary transition-colors cursor-pointer">Adjust Status</button>
-                      <button className="p-1 text-slate-500 hover:text-error transition-colors cursor-pointer inline-flex items-center">
+                      <button type="button" className="text-[10px] font-bold uppercase text-primary-fixed hover:text-primary transition-colors cursor-pointer">Adjust Status</button>
+                      <button type="button" className="p-1 text-slate-500 hover:text-error transition-colors cursor-pointer inline-flex items-center">
                         <span className="material-symbols-outlined text-lg">volume_off</span>
                       </button>
                     </td>
                   </tr>
 
                   {/* Row 4 */}
-                  <tr className="hover:bg-white/[0.02] transition-colors group">
+                  <tr className="hover:bg-white/2 transition-colors group">
                     <td className="px-6 py-4 font-mono text-xs text-slate-500">#4412</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -162,8 +155,8 @@ export default function Overview() {
                     </td>
                     <td className="px-6 py-4 text-slate-400">Never</td>
                     <td className="px-6 py-4 text-right space-x-2">
-                      <button className="text-[10px] font-bold uppercase text-primary-fixed hover:text-primary transition-colors cursor-pointer">Adjust Status</button>
-                      <button className="p-1 text-slate-500 hover:text-error transition-colors cursor-pointer inline-flex items-center">
+                      <button type="button" className="text-[10px] font-bold uppercase text-primary-fixed hover:text-primary transition-colors cursor-pointer">Adjust Status</button>
+                      <button type="button" className="p-1 text-slate-500 hover:text-error transition-colors cursor-pointer inline-flex items-center">
                         <span className="material-symbols-outlined text-lg">logout</span>
                       </button>
                     </td>
@@ -176,7 +169,7 @@ export default function Overview() {
 
         {/* Right Panel */}
         <div className="col-span-12 lg:col-span-4 space-y-8">
-          
+
           {/* Bot Configuration */}
           <div className="glass-card p-6 rounded-2xl border border-white/5">
             <h4 className="font-headline text-lg font-bold text-white mb-6 flex items-center gap-2">
@@ -214,15 +207,15 @@ export default function Overview() {
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5 group hover:border-primary/30 hover:bg-white/10 transition-all cursor-pointer">
                 <code className="text-xs text-secondary font-mono group-hover:neon-glow-secondary transition-all">/memberkick</code>
-                <button className="bg-primary/10 hover:bg-primary text-primary hover:text-on-primary px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer">Run</button>
+                <button type="button" className="bg-primary/10 hover:bg-primary text-primary hover:text-on-primary px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer">Run</button>
               </div>
               <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5 group hover:border-primary/30 hover:bg-white/10 transition-all cursor-pointer">
                 <code className="text-xs text-secondary font-mono group-hover:neon-glow-secondary transition-all">/channelprivate</code>
-                <button className="bg-primary/10 hover:bg-primary text-primary hover:text-on-primary px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer">Run</button>
+                <button type="button" className="bg-primary/10 hover:bg-primary text-primary hover:text-on-primary px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer">Run</button>
               </div>
               <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5 group hover:border-primary/30 hover:bg-white/10 transition-all cursor-pointer">
                 <code className="text-xs text-secondary font-mono group-hover:neon-glow-secondary transition-all">/categorypublic</code>
-                <button className="bg-primary/10 hover:bg-primary text-primary hover:text-on-primary px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer">Run</button>
+                <button type="button" className="bg-primary/10 hover:bg-primary text-primary hover:text-on-primary px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer">Run</button>
               </div>
             </div>
           </div>
@@ -233,7 +226,7 @@ export default function Overview() {
               <span className="material-symbols-outlined text-primary text-xl">query_stats</span>
               System Status
             </h4>
-            
+
             <div className="h-32 w-full flex items-end gap-1 relative">
               {/* Simulated Chart Lines */}
               <div className="absolute inset-0 flex flex-col justify-between opacity-10 pointer-events-none">
@@ -241,7 +234,7 @@ export default function Overview() {
                 <div className="border-t border-white w-full"></div>
                 <div className="border-t border-white w-full"></div>
               </div>
-              
+
               {/* Abstract Visual Bars */}
               <div className="flex-1 bg-primary/20 hover:bg-primary/40 h-[60%] rounded-t transition-all cursor-help hover:-translate-y-1" title="API Latency: 24ms"></div>
               <div className="flex-1 bg-secondary/20 hover:bg-secondary/40 h-[40%] rounded-t transition-all cursor-help hover:-translate-y-1" title="CPU: 12%"></div>
@@ -252,7 +245,7 @@ export default function Overview() {
               <div className="flex-1 bg-primary/20 hover:bg-primary/40 h-[45%] rounded-t transition-all cursor-help hover:-translate-y-1"></div>
               <div className="flex-1 bg-secondary/20 hover:bg-secondary/40 h-[80%] rounded-t transition-all cursor-help hover:-translate-y-1"></div>
             </div>
-            
+
             <div className="mt-4 flex justify-between text-[10px] font-label text-slate-500 uppercase tracking-widest">
               <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-primary shadow-[0_0_5px_rgba(218,185,255,0.8)]"></span> API Latency</span>
               <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-secondary shadow-[0_0_5px_rgba(70,245,224,0.8)]"></span> CPU Usage</span>
