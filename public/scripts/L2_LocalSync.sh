@@ -51,10 +51,53 @@ ssh -o StrictHostKeyChecking=no -i $SSH_KEY $SERVER_USER@$SERVER_IP << ENDSSH
   echo "=> Syncing Local Slash Commands to Discord API..."
   npm run deploy:directive
   
+  echo "=> Updating Nginx config with /api/ proxy..."
+  sudo bash -c "cat > /etc/nginx/sites-available/default << 'NGINXEOF'
+server {
+    root /var/www/html;
+    index index.html index.htm;
+    server_name orias-counselor.duckdns.org;
+
+    location / {
+        try_files \$uri \$uri/ /index.html;
+    }
+
+    location /api/ {
+        proxy_pass http://localhost:4000/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+
+    location /health {
+        proxy_pass http://localhost:4000/health;
+        proxy_set_header Host \$host;
+    }
+
+    listen [::]:443 ssl ipv6only=on;
+    listen 443 ssl;
+    ssl_certificate /etc/letsencrypt/live/orias-counselor.duckdns.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/orias-counselor.duckdns.org/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+}
+server {
+    if (\$host = orias-counselor.duckdns.org) {
+        return 301 https://\$host\$request_uri;
+    }
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name orias-counselor.duckdns.org;
+    return 404;
+}
+NGINXEOF"
+
   echo "=> Reloading Nginx cache..."
   sudo rm -rf /var/www/html/*
   sudo cp -r frontend/dist/* /var/www/html/
-  sudo systemctl restart nginx
+  sudo nginx -t && sudo systemctl reload nginx
   
   echo "=> Restarting PM2 processes..."
   pm2 flush
