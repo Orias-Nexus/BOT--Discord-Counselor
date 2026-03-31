@@ -61,11 +61,27 @@ export const handleDiscordCallback = async (req, res) => {
       { expiresIn: '24h' } // Token sống 24 giờ
     );
 
-    // Chuyển hướng người dùng về Frontend kèm Token
-    // Vd: res.redirect(`http://localhost:3000/login-success?token=${jwtToken}`);
-    res.json({ message: 'Login Success', token: jwtToken, user: userData });
+    const FRONTEND_URL = env.frontendOrigin;
+    // Chuyển hướng về Frontend kèm token trong query string
+    res.redirect(`${FRONTEND_URL}/login?token=${jwtToken}`);
   } catch (error) {
     console.error('Lỗi khi Discord OAuth2 Callback:', error.response?.data || error.message);
     res.status(500).json({ error: 'OAuth2 Authentication Failed' });
+  }
+};
+/**
+ * Trả thông tin user đã đăng nhập từ JWT
+ */
+export const getMe = (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    return res.json({ id: decoded.id, username: decoded.username, avatar: decoded.avatar });
+  } catch {
+    return res.status(401).json({ error: 'Invalid or expired token' });
   }
 };
