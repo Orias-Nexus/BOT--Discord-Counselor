@@ -2,6 +2,7 @@ import * as api from '../api.js';
 import { sendAuditLog } from '../utils/auditLogger.js';
 
 const SUCCESS_MESSAGE = 'Completed Rename {Username} to {Server Profile Name}.';
+const FAIL_MESSAGE = 'Cannot rename {Username}. Make sure the bot has Manage Nicknames permission and its role is above theirs.';
 
 export async function run(interaction, client, actionContext = null) {
   const guild = interaction.guild;
@@ -22,9 +23,13 @@ export async function run(interaction, client, actionContext = null) {
     return;
   }
   const name = String(setname).trim().slice(0, 32);
-  await member.setNickname(name).catch(() => {});
+  const renameError = await member.setNickname(name).then(() => null).catch((e) => e);
+  if (renameError) {
+    await api.replyOrEdit(interaction, api.formatEphemeralContent(api.replacePlaceholders(FAIL_MESSAGE, { Username: member.user.username })));
+    return;
+  }
   const displayName = member.displayName ?? member.user.username;
-  const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { Username: member.user.username, 'Server Profile Name': displayName }));
+  const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { Username: member.user.username, 'Server Profile Name': name }));
   await api.replyOrEdit(interaction, content);
 
   await sendAuditLog(guild, {

@@ -2,6 +2,7 @@ import * as api from '../api.js';
 import { sendAuditLog } from '../utils/auditLogger.js';
 
 const SUCCESS_MESSAGE = "{Server Profile Name}'s Status is Good now.";
+const FAIL_MESSAGE = "Cannot reset {Server Profile Name}'s status. Make sure the bot's role is above theirs and has Manage Roles permission.";
 
 export async function run(interaction, client, actionContext) {
   const guild = interaction.guild;
@@ -20,9 +21,18 @@ export async function run(interaction, client, actionContext) {
   }
   await api.ensureServer(guild.id);
   const server = await api.getServer(guild.id);
+  const displayName = member.displayName ?? member.user?.username ?? 'User';
+  let actionFailed = false;
   for (const roleId of [server?.role_warn, server?.role_mute, server?.role_lock, server?.role_new].filter(Boolean)) {
     const role = guild.roles.cache.get(roleId);
-    if (role) await member.roles.remove(role).catch(() => {});
+    if (role) {
+      const err = await member.roles.remove(role).then(() => null).catch((e) => e);
+      if (err) { actionFailed = true; break; }
+    }
+  }
+  if (actionFailed) {
+    await api.replyOrEdit(interaction, api.formatEphemeralContent(api.replacePlaceholders(FAIL_MESSAGE, { 'Server Profile Name': displayName })));
+    return;
   }
   for (const roleId of [server?.unrole_mute, server?.unrole_lock].filter(Boolean)) {
     const role = guild.roles.cache.get(roleId);
@@ -30,7 +40,6 @@ export async function run(interaction, client, actionContext) {
   }
   await api.ensureMember(guild.id, member.id, member.user?.username);
   await api.setMemberStatus(guild.id, member.id, 'Good', null);
-  const displayName = member.displayName ?? member.user?.username ?? 'User';
   const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { 'Server Profile Name': displayName }));
   await api.replyOrEdit(interaction, content);
 
