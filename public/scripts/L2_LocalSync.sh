@@ -1,15 +1,21 @@
 #!/bin/bash
+KEY_HOME="/tmp"
+KEY_TYPE="gcp_key"
+KEY_PATH="${KEY_HOME}/${KEY_TYPE}"
+
+PROJ_NAME="BOT--Discord-Counselor"
+LOCAL_USER="orias"
 SERVER_USER="long1"
-SERVER_IP="orias-counselor.duckdns.org"
-SERVER_DIR="${SERVER_DIR:-/home/long1/BOT--Discord-Counselor}"
+SERVER_IP="35.206.78.212" # orias-counselor.duckdns.org
+SERVER_DIR="${SERVER_DIR:-/home/${SERVER_USER}/${PROJ_NAME}}"
 
-KEY_SRC="/mnt/c/Users/long1/.ssh/id_rsa"
-if [ ! -f "$KEY_SRC" ]; then KEY_SRC="/c/Users/long1/.ssh/id_rsa"; fi
-if [ ! -f "$KEY_SRC" ]; then KEY_SRC="C:/Users/long1/.ssh/id_rsa"; fi
+KEY_SRC="$HOME/.ssh/${KEY_TYPE}"
+if [ ! -f "$KEY_SRC" ]; then KEY_SRC="/mnt/c/Users/${LOCAL_USER}/.ssh/${KEY_TYPE}"; fi
+if [ ! -f "$KEY_SRC" ]; then KEY_SRC="C:/Users/${LOCAL_USER}/.ssh/${KEY_TYPE}"; fi
 
-cp -f "$KEY_SRC" /tmp/bot_key_secure 2>/dev/null
-chmod 600 /tmp/bot_key_secure 2>/dev/null
-SSH_KEY="/tmp/bot_key_secure"
+cp -f "$KEY_SRC" "$KEY_PATH" 2>/dev/null
+chmod 600 "$KEY_PATH" 2>/dev/null
+SSH_KEY="$KEY_PATH"
 
 echo "===================================================="
 echo "Starting Source Code Synchronization"
