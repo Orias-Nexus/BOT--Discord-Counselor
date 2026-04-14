@@ -1,145 +1,64 @@
 # Discord Counselor System
 
-Hệ thống Discord Counselor với kiến trúc Enterprise-ready:
+Hệ thống Discord Counselor với kiến trúc Enterprise-ready. Dự án bao gồm một Bot Discord, một API Backend chia sẻ qua REST và Socket.io, cùng một Web Dashboard đang được phát triển.
 
-- **Bot (Directive):** Xử lý lệnh Discord, kết nối với Backend API.
-- **Backend API:** Express.js, thao tác cơ sở dữ liệu qua Prisma ORM, cung cấp tính năng Real-time qua Socket.io và xử lý nền qua BullMQ.
-- **Frontend Dashboard:** Giao diện Web.
+Đặc điểm Hệ thống & Các Công nghệ Chính
 
-## 1. Công nghệ sử dụng
+Hệ thống được thiết kế theo kiến trúc Microservices-lite phân tách rõ ràng trách nhiệm để có thể hoạt động bền bỉ, hỗ trợ quản lý công việc ngầm bằng Queue và Real-time cập nhật.
 
-- **Database:** PostgreSQL (trên Supabase), tương tác bằng **Prisma ORM**.
-- **Caching & Queue:** Redis + BullMQ (quản lý công việc ngầm và giảm tải Rate Limit Discord API).
-- **Real-time:** Socket.io truyền tải cập nhật trạng thái lập tức về giao diện trực tuyến.
-- **Logging:** Winston + Daily Rotate File (lưu log tập trung).
-- **Authentication:** Discord OAuth2 + JWT (Đăng nhập bảo mật cho web dashboard).
+1. **Backend API (Express.js):** Quản lý kết nối cơ sở dữ liệu qua **Prisma ORM** với **PostgreSQL** (Supabase), xử lý Real-time bằng **Socket.io** và giao việc qua **BullMQ**.
+1. **Bot Directive (Discord.js):** Nhiệm vụ tương tác trực tiếp với người dùng và server qua Discord, đóng vai trò là một Worker của **BullMQ** để xử lý các tác vụ nền. Yêu cầu **Redis** để đồng bộ.
+1. **Frontend Dashboard (React/Vite):** Cung cấp giao diện quản lý trên trình duyệt.
+1. **Architecture Tools:** Hệ thống dùng **Winston** để logging, cấu trúc chia Component và Docker để đồng nhất môi trường cho việc mở rộng quy mô.
 
-## 2. Cấu trúc thư mục
+## Cấu trúc Thư mục
 
-```
-/JS--Discord-Counselor
+Dự án được phân rã thành các gói chức năng chính sau:
+
+```text
+/BOT--Discord-Counselor
 ├── backend/          # API Server (Express, Prisma, Socket.io, BullMQ, Winston)
-├── directive/        # Bot Client (Discord.js, BullMQ Worker, Winston)
-├── frontend/         # Web Dashboard (Tương lai)
-├── docs/             # Tài liệu dự án
-├── docker-compose.yml # Chạy toàn bộ stack (Redis, Backend, Directive) cục bộ
-└── README.md
+├── directive/        # Bot Client (Discord.js, BullMQ Worker)
+├── frontend/         # Web Dashboard (React, Vite, Tailwind CSS)
+├── docs/             # Tài liệu chi tiết dự án (Kiến trúc, Phát triển, Triển khai)
+├── infrastructure/   # Hệ thống hạ tầng mạng & cloud scripts
+├── shared/           # Mã nguồn chia sẻ chung (DB Config, Types)
+├── docker-compose.yml# Cho phép khởi chạy các thành phần bằng Docker
+└── variables.json    # Các biến cấu hình chung
 ```
 
-## 3. Biến môi trường (Environment Variables)
+## Chạy nhanh cục bộ (Quick Start)
 
-Hệ thống yêu cầu các biến môi trường sau để có thể hoạt động.
+Nếu bạn có Docker, có thể nhanh chóng khởi động cả Redis, Backend và Bot Node như sau:
 
-Copy và đổi tên `.env.example` trong `/backend`, `/directive`, `/frontend` thành `.env`. Sau đó điền các trường thông tin còn thiếu.
-
-## 4. Hướng dẫn chạy cục bộ toàn bộ hệ thống:
-
-```bash
-docker compose up redis -d    # Khởi động Redis bằng Docker
-
-npm run install:all           # Lần đầu: cài dependency cho directive, backend, frontend
-
-# npm run prisma:pull:backend  # Kéo schema từ database nếu chưa có schema.prisma
-npm run prisma:generate:backend   # Tạo schema client trên server
-# npm run prisma:push:backend  # Đẩy schema lên database nếu database chưa có schema
-npm run dev:backend           # Chạy process backend server
-
-npm run deploy:directive      # Đăng ký Slash Commands lên Discord
-npm run dev:directive         # Chạy process lắng nghe Discord
-
-npm run dev:frontend          # Chạy Vite dev server port 3000
-```
-
-## 4. Hoặc chạy thủ công theo thứ tự các bước bên dưới:
-
-### Bước 1: Khởi động Redis bằng Docker
-
-Hệ thống sẽ lỗi nếu thiếu Redis chạy ngầm:
+1. Thiết lập các tệp `.env` dựa theo mẫu `.env.example` trong các thư mục `backend/`, `directive/`.
+2. Tại thư mục gốc của dự án, chạy lệnh:
 
 ```bash
-docker compose up redis -d    # Khởi động Redis bằng Docker 
-```
-
-### Bước 2: Chạy Backend API (Port 4000)
-
-Mở một terminal chuyên biệt và chạy:
-
-```bash
-cd backend                    # Di chuyển vào backend
-npm install                   # Cài đặt dependencies
-# npx prisma db pull          # Kéo schema từ database nếu chưa có schema.prisma
-npx prisma generate           # Tạo schema client trên server
-# npx prisma db push          # Đẩy schema lên database nếu database chưa có schema
-npm run dev                   # Chạy process backend server
-
-```
-
-### Bước 3: Chạy Bot Directive
-
-Mở một terminal chuyên biệt và chạy:
-
-```bash
-cd directive                  # Di chuyển vào directive
-npm install                   # Cài đặt dependencies
-npm run deploy                # Đăng ký Slash Commands lên Discord
-npm run dev                   # Chạy process lắng nghe Discord
-```
-
-### Bước 4: Chạy Frontend Dashboard
-
-Mở một terminal chuyên biệt và chạy:
-
-```bash
-cd frontend                   # Di chuyển vào frontend
-npm install                   # Cài đặt dependencies
-npm run dev                   # Chạy Vite dev server port 3000
-```
-
-## 5. Hướng dẫn Deploy bằng Docker Compose (VPS / Server)
-
-Hình thức tự động khởi chạy Production môi trường Staging/Production lên các máy ảo cá nhân (VPS AWS, DO, Linode...).
-
-1. Chỉnh sửa cấu hình `.env` cho `backend` và `directive`. Lưu ý dùng URL nội bộ của Docker thay vì `localhost`:
-  - `backend/.env`: Cấu hình `REDIS_URL=redis://redis:6379`
-  - `directive/.env`: Cấu hình `REDIS_URL=redis://redis:6379` và `BACKEND_API_URL=http://backend:4000/api`
-2. Tại root thư mục, build và khởi chạy hệ thống:
-
-```bash
-docker compose build
 docker compose up -d
 ```
 
-Xem log của toàn bộ cụm: `docker compose logs -f`
+Lệnh này sẽ cài đặt NPM, tải Schema tự động, và chạy cả hệ thống ngầm. Bạn có thể xem log tổng qua lệnh `docker compose logs -f`.
 
-## 6. Hướng dẫn Deploy lên Nền tảng Cloud (Render, Railway...)
+3. Đối với Frontend Dashboard, cần chạy riêng thủ công với:
 
-Khuyến khích tách rời 3 thành phần Database, Redis và App Source code.
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-**A. Cơ sở dữ liệu Postgres & Redis**
+_(Chi tiết xem thêm tại [Hướng dẫn Phát triển](docs/development.md))_
 
-- **Supabase**: Lấy thông tin `POOLER_URL` (cho API Server) và `DIRECT_URL` (cho Prisma migrations) gắn vào Backend.
-- **Upstash**: Thiết lập database Redis miễn phí và sao chép chuỗi TLS `REDIS_URL` (ví dụ `rediss://...`) cấp cho cả Backend và Directive.
+## Tài liệu Dự án
 
-**B. Môi trường Backend (Web Service trên Render)**
+Chúng tôi đã chia nhỏ các tài liệu để bạn có cái nhìn chi tiết nhất về từng phần trong hệ thống:
 
-1. Chọn Repository. Tạo Node **Web Service** với `Root Directory` là `backend/`.
-2. **Build Command**: `npm install && npx prisma generate`
-3. **Start Command**: `node src/index.js`
-4. Cấp phát toàn bộ `Environment Variables` cần thiết cho Backend như đã mô tả ở trên.
+- 🏗️ **[Kiến trúc Hệ thống](docs/architecture.md):** Luồng dữ liệu, cách hoạt động của Redis, BullMQ và mô hình database.
+- 💻 **[Hướng dẫn Phát triển](docs/development.md):** Hướng dẫn setup, cấu hình `.env`, lệnh Prisma và cách chạy từng service thủ công.
+- 🚀 **[Hướng dẫn Triển khai (Deployment)](docs/deployment.md):** Cẩm nang cho việc deploy docker-compose lên VPS hay ứng dụng cloud như Render/Railway/Supabase.
+- 🧰 **[Hạ tầng (Infrastructure)](infrastructure/README.md):** Cấu hình hạ tầng Terraform, K8s và Server Scripts.
 
-**C. Môi trường Directive (Background Worker trên Render)**
+---
 
-1. Chọn Repository. Tạo Node **Background Worker** (không cần host port) với `Root Directory` là `directive/`.
-2. **Build Command**: `npm install`
-3. **Start Command**: `node src/index.js`
-4. Khai báo `Environment Variables` (*Lưu ý: Chỉ định `BACKEND_API_URL` bằng URL của Web Service Node Backend bạn vừa tạo ở bước B.*). Điền `REDIS_URL` bằng URL của Redis.
-
-## 7. Tài liệu nội bộ
-
-- [Kiến trúc & cài đặt](docs/README.md)
-
-## 8. Trình độ yêu cầu
-
-- Môi trường chạy ít nhất Node.js >= 18
-- Máy cài đặt sẵn Docker & Docker Compose (nếu sử dụng docker-compose)
-
+**Yêu cầu hệ thống tối thiểu**: Node.js >= 18 và Docker (dành cho Redis).
