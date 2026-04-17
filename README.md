@@ -1,64 +1,40 @@
-# Discord Counselor System
+<h1 style="color: #2b78e4;">Discord Counselor System</h1>
 
-Hệ thống Discord Counselor với kiến trúc Enterprise-ready. Dự án bao gồm một Bot Discord, một API Backend chia sẻ qua REST và Socket.io, cùng một Web Dashboard đang được phát triển.
+The Discord Counselor System is a robust, enterprise-ready infrastructure designed to bridge the gap between Discord communities and web-based management. This project comprises a modular Microservices-lite architecture to run background tasks reliably, synchronize real-time data, and provide comprehensive community management.
 
-Đặc điểm Hệ thống & Các Công nghệ Chính
+<h2 style="color: #4CAF50;">Core Features</h2>
 
-Hệ thống được thiết kế theo kiến trúc Microservices-lite phân tách rõ ràng trách nhiệm để có thể hoạt động bền bỉ, hỗ trợ quản lý công việc ngầm bằng Queue và Real-time cập nhật.
+* **Real-time Web Dashboard Synchronization:** Seamless data streaming via Socket.io to a web interface for live monitoring and administration.
+* **Asynchronous Queue Management:** High-volume operational background tasks are safely scheduled and consumed using BullMQ and Redis to bypass Discord API rate constraints.
+* **Persistent Database Integration:** Unified data structures utilizing PostgreSQL (Supabase) and Prisma ORM to guarantee data concurrency across all microservices.
+* **Slash Command Architecture:** Fully dynamic Discord Application Commands implementation for rapid user interaction.
+* **Containerized Deployment:** Docker-ready building contexts for isolated, platform-agnostic environments in Production.
 
-1. **Backend API (Express.js):** Quản lý kết nối cơ sở dữ liệu qua **Prisma ORM** với **PostgreSQL** (Supabase), xử lý Real-time bằng **Socket.io** và giao việc qua **BullMQ**.
-1. **Bot Directive (Discord.js):** Nhiệm vụ tương tác trực tiếp với người dùng và server qua Discord, đóng vai trò là một Worker của **BullMQ** để xử lý các tác vụ nền. Yêu cầu **Redis** để đồng bộ.
-1. **Frontend Dashboard (React/Vite):** Cung cấp giao diện quản lý trên trình duyệt.
-1. **Architecture Tools:** Hệ thống dùng **Winston** để logging, cấu trúc chia Component và Docker để đồng nhất môi trường cho việc mở rộng quy mô.
-
-## Cấu trúc Thư mục
-
-Dự án được phân rã thành các gói chức năng chính sau:
+<h2 style="color: #ff9800;">Directory Structure</h2>
 
 ```text
 /BOT--Discord-Counselor
-├── backend/          # API Server (Express, Prisma, Socket.io, BullMQ, Winston)
-├── directive/        # Bot Client (Discord.js, BullMQ Worker)
-├── frontend/         # Web Dashboard (React, Vite, Tailwind CSS)
-├── docs/             # Tài liệu chi tiết dự án (Kiến trúc, Phát triển, Triển khai)
-├── infrastructure/   # Hệ thống hạ tầng mạng & cloud scripts
-├── shared/           # Mã nguồn chia sẻ chung (DB Config, Types)
-├── docker-compose.yml# Cho phép khởi chạy các thành phần bằng Docker
-└── variables.json    # Các biến cấu hình chung
+|-- assets/                 # Configuration assets (features.json, variables.json)
+|-- backend/                # API Server (Express.js, Prisma ORM, Socket.io)
+|-- directive/              # Bot Client Worker (Discord.js, BullMQ Node)
+|-- frontend/               # Web Dashboard Client (React, Vite, Tailwind CSS)
+|-- docs/                   # Detailed Technical Documentation Repository
+|-- infrastructure/         # Automated Shell Scripts and Cloud Architecture Guides
+|-- docker-compose.yml      # Orchestration instructions for Docker environments
+|-- render.yaml             # Blueprint Configuration for Render.com Auto-deployment
 ```
 
-## Chạy nhanh cục bộ (Quick Start)
+<h2 style="color: #e91e63;">Documentation Index</h2>
 
-Nếu bạn có Docker, có thể nhanh chóng khởi động cả Redis, Backend và Bot Node như sau:
+To dive deeper into the technical segments of the system, please refer to the following English documentation:
 
-1. Thiết lập các tệp `.env` dựa theo mẫu `.env.example` trong các thư mục `backend/`, `directive/`.
-2. Tại thư mục gốc của dự án, chạy lệnh:
+* [System Architecture](docs/architecture.md): Data workflow, Redis topology, and Queue state management.
+* [Local Development Guide](docs/development.md): Detailed local setup tutorials for `.env` configuration, Prisma workflows, and direct Node execution.
+* [Deployment Setup](docs/deployment.md): Blueprints for hosting on Cloud platforms (Render) or Virtual Private Servers (Docker Compose).
+* [Infrastructure Commands](infrastructure/README.md): Fast, actionable CLI commands for Server operators.
 
-```bash
-docker compose up -d
-```
+<h2 style="color: #607d8b;">System Requirements</h2>
 
-Lệnh này sẽ cài đặt NPM, tải Schema tự động, và chạy cả hệ thống ngầm. Bạn có thể xem log tổng qua lệnh `docker compose logs -f`.
-
-3. Đối với Frontend Dashboard, cần chạy riêng thủ công với:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-_(Chi tiết xem thêm tại [Hướng dẫn Phát triển](docs/development.md))_
-
-## Tài liệu Dự án
-
-Chúng tôi đã chia nhỏ các tài liệu để bạn có cái nhìn chi tiết nhất về từng phần trong hệ thống:
-
-- 🏗️ **[Kiến trúc Hệ thống](docs/architecture.md):** Luồng dữ liệu, cách hoạt động của Redis, BullMQ và mô hình database.
-- 💻 **[Hướng dẫn Phát triển](docs/development.md):** Hướng dẫn setup, cấu hình `.env`, lệnh Prisma và cách chạy từng service thủ công.
-- 🚀 **[Hướng dẫn Triển khai (Deployment)](docs/deployment.md):** Cẩm nang cho việc deploy docker-compose lên VPS hay ứng dụng cloud như Render/Railway/Supabase.
-- 🧰 **[Hạ tầng (Infrastructure)](infrastructure/README.md):** Cấu hình hạ tầng Terraform, K8s và Server Scripts.
-
----
-
-**Yêu cầu hệ thống tối thiểu**: Node.js >= 18 và Docker (dành cho Redis).
+* Runtime: Node.js (Version 18.0.0 or higher)
+* Cache: Docker Desktop (Required for Redis emulator)
+* Database: PostgreSQL connection (e.g., Supabase)
