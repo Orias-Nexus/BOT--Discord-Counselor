@@ -12,5 +12,3 @@ private
 # Logs
 logs/
 *.log
-
-# **/supabase/*
