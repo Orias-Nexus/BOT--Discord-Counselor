@@ -1,18 +1,74 @@
-# Infrastructure (Hạ tầng Dự án)
+# Development & Infrastructure Guide
 
-Thư mục này đóng vai trò như một hòm lưu trữ (Vault) chứa tất cả cấu hình cần thiết để xây dựng và duy trì hạ tầng vận hành của Discord Counselor.
+This guide provides the essential commands required to develop locally and deploy the Discord Counselor infrastructure.
 
-## Vai trò của Thư mục
+## 1. Local Development (Windows/macOS)
 
-Trong một hệ thống được thiết kế hoàn thiện (Production-ready), mã nguồn ứng dụng (App Source) và cấu hình máy chủ/đám mây nên được tách biệt.
-`infrastructure/` phục vụ cho mô hình **IaaS** (Infrastructure as Code) hoặc chứa các lệnh khởi tạo hạ tầng tĩnh để chuẩn bị môi trường chạy các App Node. Không chứa logic xử lý nghiệp vụ hay Discord API.
+### Prerequisites Setup
+Ensure Docker Desktop is running to spin up the local Redis instance.
+```bash
+docker compose up redis -d
+```
 
-## Cấu trúc (Dự kiến mở rộng)
+### Backend (API & Real-time)
+Setup the backend API server on port 4000:
+```bash
+cd backend
+npm install
+npx prisma generate    # Required on first initialization
+npm run dev
+```
 
-- `terraform/`: Chứa các script `*.tf` dùng để gọi AWS/GCP/Render API khởi tạo tự động các cụm Database, Redis, Node mà không cần thiết lập thủ công bằng giao diện.
-- `k8s/`: Chứa `*.yaml` nếu dự án được scale out ngang và chạy trên cụm Kubernetes Cluster phân tán.
-- `scripts/`: Điển hình là các file `.sh` (Bash Scripts) để thiết lập quyền (Permissions), khởi động pm2, hay cấu hình SSL/Nginx khi tự duy trì Server (Self-Hosting trên VPS Ubuntu/Debian).
+### Directive (Discord Bot)
+Setup the background bot worker:
+```bash
+cd directive
+npm install
+npm run deploy         # Register Discord Slash Commands
+npm run dev
+```
 
-## Lưu ý cho DevOps / Người vận hành
+### Frontend (Web Dashboard)
+Setup the React frontend on port 3000:
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-Bất cứ thay đổi nào liên quan đến Port mạng nội bộ, tài nguyên RAM giới hạn cho Node hoặc thay hình thức quản lý phiên bản nên được cập nhật tại thư mục này để đảm bảo rằng các kỹ sư khác có thể tái tạo hoàn chỉnh môi trường của bạn.
+---
+
+## 2. Server Deployment (Linux/VPS)
+
+To deploy the full stack on a Linux Server (Ubuntu/Debian) using Docker Compose.
+
+**Step 1: Clone Repository**
+```bash
+git clone <repository_url> ~/BOT--Discord-Counselor
+cd ~/BOT--Discord-Counselor
+```
+
+**Step 2: Environment Configuration**
+Copy configuration templates and fill in your Cloud Database (Supabase) and Discord tokens.
+```bash
+cp backend/.env.example backend/.env
+cp directive/.env.example directive/.env
+```
+*(Ensure `REDIS_URL=redis://redis:6379` is set in `.env` files for Docker networking)*
+
+**Step 3: Docker Orchestration**
+Build and start all containers in detached mode:
+```bash
+docker compose build
+docker compose up -d
+```
+
+**Step 4: Maintenance Commands**
+Monitor logs across all microservices:
+```bash
+docker compose logs -f
+```
+To stop the entire system:
+```bash
+docker compose down
+```
