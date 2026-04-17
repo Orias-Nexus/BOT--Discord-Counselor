@@ -1,71 +1,71 @@
-# Hướng dẫn Phát triển (Local Development)
+# Local Development Guide
 
-Tài liệu này cung cấp các phân đoạn cài đặt từ A đến Z cho những lập trình viên hoặc người vận hành muốn chạy thử toàn bộ mã nguồn của dự án trên máy tính cá nhân (localhost).
+This document provides end-to-end installation segments for software engineers or operators who want to test the entire project source code on a personal computer (localhost).
 
-## Yêu cầu Hệ thống
+## System Requirements
 
-Để tham gia dự án, máy tính của bạn phải chuẩn bị sẵn:
-- **Node.js** >= `18.x.x` (Quản lý các Package NPM)
-- **Docker** và **Docker Compose** (Dành cho việc giả lập môi trường Redis Queue hay Database)
-- Một DB Postgres (Sử dụng Postgres local hoặc Cloud Database như Supabase).
-
----
-
-## 1. Biến môi trường
-
-Trước khi cài đặt bất kỳ công cụ nào, hãy đảm bảo rằng các ứng dụng biết và liên kết với nhau bằng cách tạo và nạp tệp `.env`.
-Hãy nhân bản tệp `.env.example` thành `.env` ở các thư mục sau đó điền trường thông tin tương ứng.
-
-### Đối với thư mục `backend/`
-- Chứa URL kết nối tới CSDL. (Ví dụ: `DATABASE_URL` dùng Prisma, `DIRECT_URL`).
-- Chứa `REDIS_URL` bằng `redis://localhost:6379` hoặc host Redis của docker.
-
-### Đối với thư mục `directive/`
-- Gắn Token xác nhận thông qua khóa của Discord Developer Portal.
-- Tương tự như backend, chứa `REDIS_URL` để gọi/nghe Job phân công qua BullMQ.
-
-### Đối với thư mục `frontend/`
-- Thêm đường dẫn `VITE_API_URL` để connect React Web Client đến API server.
+To contribute to the project, your machine must be provisioned with:
+- **Node.js** >= `18.x.x` (To manage NPM Packages)
+- **Docker** and **Docker Compose** (Required to emulate the Redis Queue or Database environments locally)
+- A Postgres DB (Using local Postgres or a Cloud Database like Supabase).
 
 ---
 
-## 2. Cài đặt Dependency và Khởi chạy Cục bộ (Trực tiếp)
+## 1. Environment Variables
 
-Thay vì chạy hết tất cả bằng Docker (cho mục đích nhanh), việc chạy thủ công giúp các lập trình viên dễ dàng theo dõi lỗi, xem Console logs để code dễ dàng.
+Before installing any tools, ensure that the applications are aware of and linked to each other by creating and loading the `.env` files.
+Clone the `.env.example` file to `.env` in the respective directories, then fill in the corresponding information fields.
 
-### Bước 2.1: Chạy nền Redis (Bắt buộc)
-Hệ thống Queue và Rate Limit dựa hoàn toàn vào Redis. Vui lòng mở Docker và chạy:
+### For the `backend/` directory
+- Contains the Database connection URL. (Example: `DATABASE_URL` via Prisma, `DIRECT_URL`).
+- Contains the `REDIS_URL` set to `redis://127.0.0.1:6379` or the Docker Redis host.
+
+### For the `directive/` directory
+- Attach the verification Token through the Discord Developer Portal key.
+- Similar to the backend, it contains the `REDIS_URL` to dispatch/listen to assigned Jobs via BullMQ.
+
+### For the `frontend/` directory
+- Add the `VITE_API_URL` path to connect the React Web Client to the backend API server.
+
+---
+
+## 2. Dependency Installation and Local Startup (Direct Execution)
+
+Instead of bootstrapping everything through Docker (for fast deployment), manual execution allows developers to easily track bugs and monitor Console logs for seamless coding.
+
+### Step 2.1: Background Redis Initialization (Required)
+The Queue and Rate Limit system operate entirely on Redis. Please open Docker and execute:
 ```bash
 docker compose up redis -d
 ```
 
-### Bước 2.2: Setup Backend Server
-Tại *Terminal số 1*:
+### Step 2.2: Backend Server Setup
+In *Terminal 1*:
 ```bash
 cd backend
 npm install
 npm run dev
 ```
 
-> **Lưu ý Prisma**: Ở lần chạy đầu, nếu Backend báo thiếu Prisma Client, bạn cần generate hoặc apply DB:
-> - `npx prisma db push` (Đẩy schema vào DB mẫu)
-> - `npx prisma generate` (Khởi tạo class cho Backend)
+> **Prisma Note**: On the first run, if the Backend reports a missing Prisma Client, you need to generate or apply the DB:
+> - `npx prisma db push` (Push the schema to the sample DB)
+> - `npx prisma generate` (Initialize the ORM classes for the Backend)
 
-### Bước 2.3: Setup Bot/Directive Worker
-Tại *Terminal số 2*:
+### Step 2.3: Bot/Directive Worker Setup
+In *Terminal 2*:
 ```bash
 cd directive
 npm install
-npm run deploy    # Đăng ký danh sách các Slash Commands (//... ) lên Bot trên nền tảng Discord
-npm run dev       # Bắt đầu bot trực tuyến, lúc này Bot trên kênh chat sẽ xanh (Online)
+npm run deploy    # Register the list of Slash Commands (//... ) to the Bot on the Discord platform
+npm run dev       # Start the bot online, the Bot in the chat channel should now display the Green indicator (Online)
 ```
 
-### Bước 2.4: Setup Dashboard Frontend
-Tại *Terminal số 3*:
+### Step 2.4: Dashboard Frontend Setup
+In *Terminal 3*:
 ```bash
 cd frontend
 npm install
-npm run dev       # Server Vite sẽ khởi chạy cung cấp port localhost:3000 (Ví dụ) cho UI Dashboard
+npm run dev       # The Vite Server will launch, providing a localhost port (e.g., 3000) for the Dashboard UI
 ```
 
-Khi Terminal 2 hoạt động và Node Express khởi động hoàn tất ở Terminal 1, các tính năng thông báo Real-time sẽ bắt đầu truyền trực tiếp dữ liệu từ Discord vào giao diện React của bạn.
+Once Terminal 2 is active and Node Express startup completes in Terminal 1, Real-time notification features will transmit live data from Discord directly to your React interface.
