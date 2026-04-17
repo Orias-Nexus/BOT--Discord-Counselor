@@ -11,7 +11,7 @@ on:
     branches: [main, master]
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: "20"
 
 jobs:
   # ─── Stage 1: Install & Lint ────────────────────────────────
@@ -25,7 +25,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: |
             backend/package-lock.json
             directive/package-lock.json
@@ -51,15 +51,15 @@ jobs:
           POOLER_URL: ${{ secrets.POOLER_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+          APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
           DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
 
           # --- NHÓM 2: Cấu hình môi trường Backend ---
           PORT: 4000
-          REDIS_URL: "redis://redis:6379" 
-          
+          REDIS_URL: "redis://redis:6379"
+
           # --- NHÓM 3: Cấu hình môi trường Frontend ---
-          FRONTEND_ORIGIN: "https://discord-counselor.onrender.com" 
+          FRONTEND_ORIGIN: "https://discord-counselor.onrender.com"
           DISCORD_REDIRECT_URI: "https://discord-counselor.onrender.com/api/auth/discord/callback"
 
       - name: Check Backend syntax (Node --check)
@@ -78,7 +78,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
