@@ -38,7 +38,7 @@ export async function getServerInfoEmbed(guild, options = {}) {
       { name: '\u200B', value: '\u200B', inline: true },
       { name: 'Channel', value: `Chat: ${chatCount} | Voice: ${voiceCount}`, inline: true },
       { name: 'Category', value: String(categoryCount), inline: true },
-      { name: '\u200B', value: '\u200B', inline: true },
+      { name: 'Class', value: '{server_status}', inline: true },
       { name: 'Member', value: '{server_membercount}', inline: true },
       { name: 'Role', value: '{server_rolecount}', inline: true },
       { name: 'Boost', value: '{server_boostcount}', inline: true },
@@ -50,5 +50,5 @@ export async function getServerInfoEmbed(guild, options = {}) {
   if (description) embed.footer = { text: description };
   if (options.imageURL) embed.image = { url: options.imageURL };
 
-  return resolveEmbed(embed, { guild });
+  return resolveEmbed(embed, { guild, serverRecord: options.serverRecord });
 }
