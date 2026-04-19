@@ -64,17 +64,20 @@ export function startExpiresCheck(client) {
       try {
         const { count, updated = [] } = await api.processExpires();
         if (count === 0) return;
-        for (const { server_id, user_id } of updated) {
+        for (const { server_id, user_id, previous_status } of updated) {
           await applyGoodRoles(client, server_id, user_id);
           await updateMemberInfoEmbedIfExists(client, server_id, user_id);
 
           const guild = client.guilds.cache.get(server_id);
           if (guild) {
              const targetUser = await client.users.fetch(user_id).catch(() => null);
+             
+             let reasonMsg = previous_status ? `${previous_status} duration finished` : 'Mute/Lock duration finished';
+
              await sendAuditLog(guild, {
                action: 'Status Expired (Automated)',
                target: targetUser || user_id,
-               reason: 'Mute/Lock duration finished',
+               reason: reasonMsg,
                color: '#2ecc71'
              });
           }
