@@ -14,19 +14,29 @@ export const EMBED_APPLY_SELECT_PREFIX = 'embedapply_';
  * @returns {Promise<{ resolved: object, row: ActionRowBuilder[] }>}
  */
 export async function updateEmbedAndResolve(guildId, embedId, mergeFn, meta) {
-  const row = await api.getEmbed(guildId, embedId);
-  if (!row?.embed) throw new Error('Embed not found');
-  const merged = mergeFn(typeof row.embed === 'object' ? { ...row.embed } : {});
-  await api.updateEmbed(guildId, embedId, { embed: merged });
-  const updated = await api.getEmbed(guildId, embedId);
-  if (updated) {
-    setEmbedEditCache(guildId, embedId, {
-      embed: updated.embed ?? merged,
-      embed_name: updated.embed_name ?? null,
-    });
+  let currentEmbed = {};
+  const cached = getEmbedEditCache(guildId, embedId);
+  if (cached && cached.embed) {
+    currentEmbed = cached.embed;
+  } else {
+    const row = await api.getEmbed(guildId, embedId);
+    if (!row?.embed) throw new Error('Embed not found');
+    currentEmbed = row.embed;
   }
+
+  const merged = mergeFn(typeof currentEmbed === 'object' ? { ...currentEmbed } : {});
+
+  // Fast UI response: update cache locally and return immediately
+  setEmbedEditCache(guildId, embedId, {
+    embed: merged,
+    embed_name: cached?.embed_name ?? null,
+  });
+
+  // Background update directly to API
+  api.updateEmbed(guildId, embedId, { embed: merged }).catch((err) => console.error('[EmbedUpdateBackground]', err));
+
   const buildEmbed = getEmbedBuilder('EmbedEdit');
   if (!buildEmbed) throw new Error('Embed builder not found');
-  const resolved = await buildEmbed(updated?.embed ?? merged, meta);
+  const resolved = await buildEmbed(merged, meta);
   return { resolved, components: buildEmbedEditComponents(embedId) };
 }
