@@ -73,4 +73,6 @@ export async function run(interaction, client, actionContext = {}) {
       { name: 'Newbie', value: roleIdToDisplay(guild, updated?.role_new) || 'None', inline: true }
     ]
   });
+
+  return { server: updated };
 }

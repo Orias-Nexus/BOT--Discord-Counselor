@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { EMBED_COLORS } from '../embeds/schema.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const CONFIG_PATH = resolve(__dirname, '../../../variables.json');
+const CONFIG_PATH = resolve(__dirname, '../../../assets/configs/variables.json');
 
 const CATEGORY_LABELS = {
   placeholders: '📋 Placeholders',
@@ -14,7 +14,13 @@ const CATEGORY_LABELS = {
   actions: '⚡ Actions',
 };
 
+let cachedFields = null;
+let lastLoadVars = 0;
+
 function loadVariables() {
+  const now = Date.now();
+  if (cachedFields && now - lastLoadVars < 60000) return cachedFields;
+
   const raw = JSON.parse(readFileSync(CONFIG_PATH, 'utf8'));
   const fields = [];
 
@@ -43,6 +49,8 @@ function loadVariables() {
     }
   }
 
+  cachedFields = fields;
+  lastLoadVars = now;
   return fields;
 }
 
