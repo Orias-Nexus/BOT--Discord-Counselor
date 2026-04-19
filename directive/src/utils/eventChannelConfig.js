@@ -36,6 +36,11 @@ export async function setEventChannel(interaction, client, actionContext, messag
       fields: [{ name: 'Channel', value: channel.toString(), inline: true }]
     });
   } catch (err) {
+    if (err.message && err.message.startsWith('LIMIT_REACHED')) {
+      const msg = '⚠️ This feature limit has been reached for your server tier. Please upgrade to unlock more!';
+      await interaction.editReply({ content: api.formatEphemeralContent(msg), flags: MessageFlags.Ephemeral }).catch(() => {});
+      return;
+    }
     console.error(`[${messageType}Channel]`, err);
     await interaction.editReply({ content: api.formatEphemeralContent('Update failed.'), flags: MessageFlags.Ephemeral }).catch(() => {});
   }
