@@ -115,7 +115,12 @@ export async function handleAction(interaction, client, timing = {}) {
     }
     const modal = getModalForScript(scriptName, contextPart, extra);
     try {
-      if (modal) await interaction.showModal(modal);
+      if (modal) {
+        await interaction.showModal(modal);
+        if (interaction.isStringSelectMenu() && interaction.message) {
+          await interaction.message.edit({ components: interaction.message.components }).catch(() => {});
+        }
+      }
     } catch (err) {
       if (api.isUnknownInteraction(err)) {
         console.warn('[handleAction] showModal 10062 - token expired before opening form, click again.');
@@ -150,6 +155,8 @@ export async function handleAction(interaction, client, timing = {}) {
         const componentsOnly = resetComponentsOnly(scriptName, interaction, actionContext);
         if (componentsOnly) {
           await interaction.message.edit({ components: componentsOnly }).catch(() => {});
+        } else if (interaction.isStringSelectMenu()) {
+          await interaction.message.edit({ components: interaction.message.components }).catch(() => {});
         }
       }
     }
