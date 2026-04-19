@@ -192,3 +192,11 @@ export function server_nextboostlevel_until_required(ctx, argument) {
   const need = Math.max(0, nextRequired - count);
   return String(need);
 }
+
+export function server_status(ctx, argument) {
+  return String(ctx.meta?.serverRecord?.status ?? 'Standard');
+}
+
+export function server_class(ctx, argument) {
+  return server_status(ctx, argument);
+}

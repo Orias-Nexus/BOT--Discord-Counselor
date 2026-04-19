@@ -92,6 +92,7 @@ export function createContextFromMeta(meta = {}) {
     placeholderCache: { ...meta.placeholderCache },
     userArgs: [],
     meta: {
+      ...meta,
       author: user,
       guild,
       channel,
