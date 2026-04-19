@@ -8,7 +8,7 @@ const env = {
   port: parseInt(process.env.PORT, 10) || 4000,
 
   // Discord OAuth
-  discordClientId: process.env.DISCORD_CLIENT_ID || '',
+  discordClientId: process.env.APPLICATION_ID || '',
   discordClientSecret: process.env.DISCORD_CLIENT_SECRET || '',
   discordRedirectUri:
     process.env.DISCORD_REDIRECT_URI ||
