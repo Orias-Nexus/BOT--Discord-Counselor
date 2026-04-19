@@ -78,9 +78,9 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
   const targetId = actionContext?.targetId ?? scriptResult?.targetId ?? null;
 
   if (SERVER_SCRIPTS.has(scriptName)) {
-    const guildFetched = await guild.fetch().catch(() => guild);
+    const serverRecord = scriptResult?.server || await api.getServer(guild.id).catch(() => null);
     const buildEmbed = getEmbedBuilder('ServerInfo');
-    const embed = buildEmbed ? await buildEmbed(guildFetched, { imageURL: mainImageUrl }) : null;
+    const embed = buildEmbed ? await buildEmbed(guild, { imageURL: mainImageUrl, serverRecord }) : null;
     if (!embed) return null;
     const components = buildServerInfoComponents();
     return {
@@ -91,7 +91,8 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
   }
 
   if (CHANNEL_SCRIPTS.has(scriptName) && targetId) {
-    const channel = await guild.channels.fetch(targetId).catch(() => null);
+    let channel = guild.channels.cache.get(targetId);
+    if (!channel) channel = await guild.channels.fetch(targetId).catch(() => null);
     if (!channel || channel.type === ChannelType.GuildCategory) return null;
     const buildEmbed = getEmbedBuilder('ChannelInfo');
     const embed = buildEmbed ? await buildEmbed(channel, guild, { imageURL: mainImageUrl }) : null;
@@ -105,7 +106,8 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
   }
 
   if (CATEGORY_SCRIPTS.has(scriptName) && targetId) {
-    const category = await guild.channels.fetch(targetId).catch(() => null);
+    let category = guild.channels.cache.get(targetId);
+    if (!category) category = await guild.channels.fetch(targetId).catch(() => null);
     if (!category || category.type !== ChannelType.GuildCategory) return null;
     const buildEmbed = getEmbedBuilder('CategoryInfo');
     const embed = buildEmbed ? await buildEmbed(category, guild, { imageURL: mainImageUrl }) : null;
@@ -119,7 +121,8 @@ export async function getEmbedUpdatePayload(scriptName, interaction, actionConte
   }
 
   if (MEMBER_SCRIPTS.has(scriptName) && targetId) {
-    const member = await guild.members.fetch(targetId).catch(() => null);
+    let member = guild.members.cache.get(targetId);
+    if (!member) member = await guild.members.fetch(targetId).catch(() => null);
     if (!member) return null;
     const profile =
       scriptResult?.updatedProfile && String(scriptResult.targetId || scriptResult.updatedProfile?.user_id) === String(member.id)
