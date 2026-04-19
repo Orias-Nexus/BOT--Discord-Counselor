@@ -46,4 +46,6 @@ export async function run(interaction, client, actionContext = {}) {
       { name: 'Lock Unrole', value: roleIdToDisplay(guild, server?.unrole_lock) || 'None', inline: true }
     ]
   });
+  
+  return { server };
 }

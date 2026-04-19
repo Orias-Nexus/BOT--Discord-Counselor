@@ -74,4 +74,7 @@ export async function run(interaction, client, actionContext = {}) {
       fields: Object.entries(body).map(([k, v]) => ({ name: k, value: formatMinutesToDDHHMM(v), inline: true }))
     });
   }
+
+  const updatedServer = await api.getServer(guild.id).catch(() => null);
+  return { server: updatedServer };
 }

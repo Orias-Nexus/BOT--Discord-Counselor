@@ -40,6 +40,15 @@ export async function loadAllScripts() {
   }
 }
 
+function toSnakeCaseLimit(str) {
+  let sk = str.replace(/[A-Z]/g, (match, offset) => (offset > 0 ? '_' : '') + match.toLowerCase()) + '_limit';
+  if (sk === 'channel_s_f_w_limit') return 'channel_sfw_limit';
+  if (sk === 'channel_n_s_f_w_limit') return 'channel_nsfw_limit';
+  return sk;
+}
+
+import * as api from '../api.js';
+
 export async function runScript(scriptName, interaction, client) {
   if (!scriptName || typeof scriptName !== 'string') {
     await replyError(interaction, 'Invalid script name.');
@@ -58,7 +67,22 @@ export async function runScript(scriptName, interaction, client) {
     return;
   }
 
-  const actionContext = arguments[3] ?? null;
+  const guild = interaction?.guild;
+  const actionContext = arguments[3] ?? {};
+  // Avoid re-fetching server by passing down what we checked for limits
+  if (guild && !actionContext.server) {
+    try {
+      actionContext.server = await api.getServer(guild.id);
+      if (actionContext.server?.limits) {
+        const limitKey = toSnakeCaseLimit(scriptName);
+        if (actionContext.server.limits[limitKey] === 0) {
+          await replyError(interaction, '⚠️ This feature is locked for your server\'s current package. Please upgrade to use it.');
+          return;
+        }
+      }
+    } catch (err) {}
+  }
+
   const result = await run(interaction, client, actionContext);
   return result;
 }
@@ -72,6 +96,20 @@ export async function runEvent(scriptName, client, eventContext) {
   if (!module) return;
   const run = module.run ?? module.default?.run ?? module.default;
   if (typeof run !== 'function') return;
+
+  const guild = eventContext?.guild;
+  if (guild) {
+    try {
+      const server = await api.getServer(guild.id);
+      if (server && server.limits) {
+        const limitKey = toSnakeCaseLimit(scriptName);
+        if (server.limits[limitKey] === 0) {
+          return; // Block event execution
+        }
+      }
+    } catch (err) {}
+  }
+
   await run(null, client, eventContext);
 }
 

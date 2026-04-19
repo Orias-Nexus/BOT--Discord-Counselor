@@ -50,13 +50,12 @@ export async function run(_interaction, client, eventContext) {
     (creatorRows ?? []).map((r) => getFirstVoiceChannelInCategory(guild, r.category_id)).filter(Boolean).map((c) => c.id)
   );
 
-  if (newState.channelId && creatorTriggerChannelIds.has(newState.channelId)) {
-    await handleJoinCreator(newState, creatorTriggerChannelIds);
-    return;
+  if (oldState.channelId && oldState.channelId !== newState.channelId) {
+    await handleLeaveChannel(guild, oldState, creatorTriggerChannelIds, creatorCategoryIds);
   }
 
-  if (oldState.channelId) {
-    await handleLeaveChannel(guild, oldState, creatorTriggerChannelIds, creatorCategoryIds);
+  if (newState.channelId && creatorTriggerChannelIds.has(newState.channelId)) {
+    await handleJoinCreator(newState, creatorTriggerChannelIds);
   }
 }
 

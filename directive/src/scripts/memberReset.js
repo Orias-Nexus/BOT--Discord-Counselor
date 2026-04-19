@@ -39,14 +39,18 @@ export async function run(interaction, client, actionContext) {
     if (role) await member.roles.add(role).catch(() => {});
   }
   await api.ensureMember(guild.id, member.id, member.user?.username);
+  const profile = await api.getMember(guild.id, member.id).catch(() => null);
+  const previous_status = profile?.member_status;
+
   await api.setMemberStatus(guild.id, member.id, 'Good', null);
   const content = api.formatEphemeralContent(api.replacePlaceholders(SUCCESS_MESSAGE, { 'Server Profile Name': displayName }));
   await api.replyOrEdit(interaction, content);
 
   await sendAuditLog(guild, {
-    action: 'Member Reset (Unmuted/Unlocked)',
+    action: 'Member Reset',
     executor: interaction.user,
     target: member.user,
+    reason: previous_status ? `Reset from ${previous_status} to Good` : 'Reset to Good',
     color: '#2ecc71'
   });
 

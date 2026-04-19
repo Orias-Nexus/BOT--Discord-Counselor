@@ -11,8 +11,9 @@ export async function run(interaction, client, _actionContext) {
   }
   if (!interaction.deferred) await interaction.deferReply();
   await guild.fetch().catch(() => {});
+  const serverRecord = await api.getServer(guild.id).catch(() => null);
   const buildEmbed = getEmbedBuilder('ServerInfo');
-  const embed = buildEmbed ? await buildEmbed(guild, { imageURL: mainImageUrl }) : null;
+  const embed = buildEmbed ? await buildEmbed(guild, { imageURL: mainImageUrl, serverRecord }) : null;
   if (!embed) {
     await interaction.editReply({ content: api.formatEphemeralContent('Could not create embed.') }).catch(() => {});
     return;

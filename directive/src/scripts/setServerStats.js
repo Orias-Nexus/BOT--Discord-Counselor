@@ -127,11 +127,23 @@ export async function doSetServerStats(interaction, channelsIdx) {
       }).catch((err) => console.warn('[SetServerStats] create channel:', err?.message));
     }
     await category.setPosition(0).catch(() => {});
-    await api.upsertChannel(guild.id, category.id, 'Stats', channelsIdx);
-    await interaction.editReply({
-      content: api.formatEphemeralContent(`Created **server stats** category with ${count} channel(s). Stats will update every minute.`),
-      components: [],
-    }).catch(() => {});
+    
+    try {
+      await api.upsertChannel(guild.id, category.id, 'Stats', channelsIdx);
+      await interaction.editReply({
+        content: api.formatEphemeralContent(`Created **server stats** category with ${count} channel(s). Stats will update every minute.`),
+        components: [],
+      }).catch(() => {});
+    } catch (err) {
+      if (err.message && err.message.startsWith('LIMIT_REACHED')) {
+        const msg = '⚠️ Feature limit reached for your server tier. Channels will be revoked.';
+        await interaction.editReply({ content: api.formatEphemeralContent(msg), components: [] }).catch(() => {});
+        // clean up
+        await category.delete().catch(()=>null);
+        return;
+      }
+      console.warn('[SetServerStats] upsertChannel error:', err);
+    }
     return;
   }
 

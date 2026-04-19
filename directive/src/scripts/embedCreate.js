@@ -51,6 +51,12 @@ export async function run(interaction, client) {
       return interaction.followUp({ content: api.formatEphemeralContent('Could not display embed: ' + err.message), flags: MessageFlags.Ephemeral }).catch(() => {});
     });
   } catch (err) {
+    if (err.message && err.message.startsWith('LIMIT_REACHED')) {
+      const msg = '⚠️ This feature limit has been reached for your server tier. Please upgrade to unlock more!';
+      await interaction.followUp({ content: api.formatEphemeralContent(msg), flags: MessageFlags.Ephemeral }).catch(() => {});
+      await interaction.editReply({ content: '', embeds: [], components: [] }).catch(() => {});
+      return;
+    }
     console.error('[EmbedCreate]', err);
     await interaction.followUp({ content: api.formatEphemeralContent('Could not create embed.'), flags: MessageFlags.Ephemeral }).catch(() => {});
     await interaction.editReply({ content: '', embeds: [], components: [] }).catch(() => {});
