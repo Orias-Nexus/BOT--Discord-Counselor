@@ -20,7 +20,12 @@ async function request(path, options = {}) {
     });
     if (!res.ok) {
       const text = await res.text();
-      throw new Error(text || `HTTP ${res.status}`);
+      let errStr = text || `HTTP ${res.status}`;
+      try {
+        const parsed = JSON.parse(text);
+        if (parsed.error) errStr = parsed.error;
+      } catch (e) {}
+      throw new Error(errStr);
     }
     const contentType = res.headers.get('content-type');
     if (contentType && contentType.includes('application/json')) {
