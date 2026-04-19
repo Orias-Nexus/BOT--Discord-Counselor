@@ -29,7 +29,7 @@ import { registerAll } from './handlers/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 /** variables.json at repo root; resolve by module location so it works from directive/ or repo root. */
-const DEFAULT_CONFIG_PATH = resolve(__dirname, '../../../variables.json');
+const DEFAULT_CONFIG_PATH = resolve(__dirname, '../../../assets/configs/variables.json');
 
 /**
  * Build a handler registry and optionally register all handlers from placeholders, advanced_logic, modifiers, guards, actions.
