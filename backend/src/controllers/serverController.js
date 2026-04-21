@@ -1,5 +1,6 @@
 import * as serverService from '../services/serverService.js';
 import { normalizeError } from '../utils/errorUtils.js';
+import { getLimitsForTier } from '../utils/features.js';
 
 function handleError(prefix, err, res) {
   const { status, message } = normalizeError(err);
@@ -16,6 +17,7 @@ export async function getServer(req, res) {
     const { serverId } = req.params;
     const server = await serverService.getServer(serverId);
     if (!server) return res.status(404).json({ error: 'Server not found' });
+    server.limits = getLimitsForTier(server.status);
     res.json(server);
   } catch (err) {
     handleError('getServer', err, res);
@@ -26,6 +28,7 @@ export async function ensureServer(req, res) {
   try {
     const { serverId } = req.params;
     const server = await serverService.ensureServer(serverId);
+    server.limits = getLimitsForTier(server.status);
     res.json(server);
   } catch (err) {
     handleError('ensureServer', err, res);
@@ -57,6 +60,7 @@ export async function updateServer(req, res) {
       await serverService.setUnroles(serverId, { unrole_mute: body.unrole_mute, unrole_lock: body.unrole_lock });
     }
     const updated = await serverService.getServer(serverId);
+    if (updated) updated.limits = getLimitsForTier(updated.status);
     res.json(updated);
   } catch (err) {
     handleError('updateServer', err, res);
