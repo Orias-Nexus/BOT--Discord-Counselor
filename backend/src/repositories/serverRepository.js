@@ -4,6 +4,7 @@ function rowToServer(row) {
     if (!row) return null;
     return {
         server_id: row.server_id,
+        status: row.status,
         time_warn: Number(row.time_warn) ?? 0,
         time_mute: Number(row.time_mute) ?? 0,
         time_lock: Number(row.time_lock) ?? 0,
