@@ -2,7 +2,7 @@ import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import env from '../config/env.js';
 
-const DISCORD_CLIENT_ID = env.discordClientId;
+const APPLICATION_ID = env.discordClientId;
 const DISCORD_CLIENT_SECRET = env.discordClientSecret;
 const DISCORD_REDIRECT_URI = env.discordRedirectUri;
 const JWT_SECRET = env.jwtSecret;
@@ -11,7 +11,7 @@ const JWT_SECRET = env.jwtSecret;
  * Tạo link đăng nhập qua Discord
  */
 export const getDiscordLoginUrl = (req, res) => {
-  const url = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URI)}&response_type=code&scope=identify%20guilds`;
+  const url = `https://discord.com/api/oauth2/authorize?client_id=${APPLICATION_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URI)}&response_type=code&scope=identify%20guilds`;
   res.redirect(url);
 };
 
@@ -28,7 +28,7 @@ export const handleDiscordCallback = async (req, res) => {
   try {
     // 1. Đổi authorization_code lấy access_token
     const params = new URLSearchParams({
-      client_id: DISCORD_CLIENT_ID,
+      client_id: APPLICATION_ID,
       client_secret: DISCORD_CLIENT_SECRET,
       grant_type: 'authorization_code',
       code,
