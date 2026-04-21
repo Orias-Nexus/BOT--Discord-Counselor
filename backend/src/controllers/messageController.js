@@ -37,6 +37,7 @@ export async function setChannel(req, res) {
     try {
         const { serverId, messagesType } = req.params;
         const { channel_id } = req.body;
+        
         const row = await messageRepo.setChannel(serverId, messagesType, channel_id ?? null);
         res.json(row);
     } catch (err) {
