@@ -34,6 +34,8 @@ export async function getById(req, res) {
     }
 }
 
+import { checkFeatureLimit } from '../utils/features.js';
+
 export async function create(req, res) {
     try {
         const { serverId } = req.params;
@@ -41,10 +43,14 @@ export async function create(req, res) {
         if (!embed_name || typeof embed_name !== 'string') {
             return res.status(400).json({ error: 'embed_name is required' });
         }
+        
+        await checkFeatureLimit(serverId, 'embed_create_limit');
+
         const row = await embedRepo.create(serverId, embed_name.trim(), embed ?? null);
         await cacheDel(listKey(serverId));
         res.status(201).json(row);
     } catch (err) {
+        if (err.status === 403) return res.status(403).json({ error: err.message });
         console.error('[embedController] create:', err);
         res.status(500).json({ error: err.message });
     }
