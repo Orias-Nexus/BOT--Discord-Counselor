@@ -77,7 +77,7 @@ export async function updateStatus(serverId, userId, status, expiresAt = null) {
 
 /**
  * Đặt Good cho mọi member có member_expires <= now và member_status != 'Good'.
- * Trả về { count, updated: [{ server_id, user_id }, ...] } để directive áp dụng role.
+ * Trả về { count, updated: [{ server_id, user_id, previous_status }, ...] } để directive áp dụng role.
  */
 export async function processExpiredMembers() {
     const now = new Date();
@@ -88,7 +88,7 @@ export async function processExpiredMembers() {
             member_expires: { lte: now, not: null },
             member_status: { not: 'Good' }
         },
-        select: { server_id: true, user_id: true }
+        select: { server_id: true, user_id: true, member_status: true }
     });
 
     if (expiredMembers.length === 0) return { count: 0, updated: [] };
@@ -106,7 +106,13 @@ export async function processExpiredMembers() {
         }
     });
 
-    return { count: result.count, updated: expiredMembers };
+    const mappedExpiredMembers = expiredMembers.map(m => ({
+        server_id: m.server_id,
+        user_id: m.user_id,
+        previous_status: STATUS_DB_TO_API[m.member_status] ?? m.member_status
+    }));
+
+    return { count: result.count, updated: mappedExpiredMembers };
 }
 
 /**
