@@ -50,7 +50,7 @@ jobs:
           # --- NHÓM 1: Lấy từ GitHub Secrets ---
           POOLER_URL: ${{ secrets.POOLER_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          AUTH_JWT_SECRET: ${{ secrets.AUTH_JWT_SECRET }}
           APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
           DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
 
