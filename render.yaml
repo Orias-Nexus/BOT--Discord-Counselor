@@ -31,7 +31,7 @@ services:
       # URLs — cập nhật sau khi deploy lần đầu
       - key: DISCORD_REDIRECT_URI
         sync: false
-        # VD: https://orias-counselor.duckdns.org:4000/api/auth/discord/callback
+        # VD: https://orias-counselor.duckdns.org/api/auth/discord/callback
       - key: FRONTEND_ORIGIN
         sync: false
         # VD: https://your-frontend-domain.com
@@ -68,7 +68,7 @@ services:
       # Backend API — điền URL backend sau deploy
       - key: BACKEND_API_URL
         sync: false
-        # VD: https://orias-counselor.duckdns.org:4000/api
+        # VD: https://orias-counselor.duckdns.org/api
 
       # Redis (cùng instance với backend)
       - key: REDIS_URL
