@@ -21,6 +21,19 @@ echo "===================================================="
 echo "Starting Source Code Synchronization"
 echo "===================================================="
 
+echo "[0/4] Switching to Production Environment Variables..."
+for dir in backend frontend directive; do
+  if [ -f "$dir/.env.prod" ]; then
+    if [ -f "$dir/.env.test" ]; then
+      rm -f "$dir/.env"
+    elif [ -f "$dir/.env" ]; then
+      mv "$dir/.env" "$dir/.env.test"
+    fi
+    cp "$dir/.env.prod" "$dir/.env"
+    echo "  -> Applied .env.prod for $dir"
+  fi
+done
+
 echo "[1/4] Building Frontend..."
 cd frontend
 npm install
