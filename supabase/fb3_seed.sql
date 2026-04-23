@@ -1,9 +1,8 @@
+-- Active: 1776947138491@@aws-1-ap-southeast-2.pooler.supabase.com@5432@postgres@discordtesting
 -- =============================================================================
 -- Seed Supabase — Levels + Functions (script, slash, action, event)
 -- Chạy sau schema.sql. Nội dung embed của từng lệnh hardcode trong directive (embedDefaults.js).
 -- =============================================================================
-
-TRUNCATE TABLE "DiscordCounselor".functions, "DiscordCounselor".levels, "DiscordCounselor".servers, "DiscordCounselor".users CASCADE;
 
 -- -----------------------------------------------------------------------------
 -- Levels: 1000 levels từ 0 đến 999
