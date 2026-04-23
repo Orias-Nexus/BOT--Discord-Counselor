@@ -13,6 +13,8 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
+    env_file:
+      - ./backend/.env
     ports:
       - "4000:4000"
     environment:
