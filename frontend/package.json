@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.2",
     "axios": "^1.13.6",
     "clsx": "^2.1.1",
     "lucide-react": "^0.577.0",
@@ -16,6 +17,7 @@
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.1",
     "socket.io-client": "^4.8.3",
+    "sonner": "^1.7.4",
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
