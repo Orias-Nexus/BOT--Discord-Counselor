@@ -25,6 +25,17 @@ export async function getById(serverId) {
     return rowToServer(row);
 }
 
+export async function getStats(serverId) {
+    const [memberCount, channelCount] = await Promise.all([
+        prisma.members.count({ where: { server_id: serverId } }),
+        prisma.channels.count({ where: { server_id: serverId } })
+    ]);
+    return {
+        total_members: memberCount,
+        configured_channels: channelCount
+    };
+}
+
 export async function ensure(serverId) {
     const row = await prisma.servers.upsert({
         where: { server_id: serverId },

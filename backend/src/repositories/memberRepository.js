@@ -1,8 +1,12 @@
 import { prisma } from '../config/prisma.js';
 import * as userRepo from './userRepository.js';
 
-const STATUS_API_TO_DB = { Good: 'Good', Warning: 'Warn', Muted: 'Mute', Locked: 'Lock', Newbie: 'Newbie', Leaved: 'Leaved' };
-const STATUS_DB_TO_API = { Good: 'Good', Warn: 'Warning', Mute: 'Muted', Lock: 'Locked', Kick: 'Kick', Leaved: 'Leaved', Newbie: 'Newbie' };
+const VALID_STATUS = new Set(['Newbie', 'Good', 'Warn', 'Mute', 'Lock', 'Kick', 'Leaved']);
+
+function normalizeStatus(status) {
+    if (VALID_STATUS.has(status)) return status;
+    throw new Error(`Invalid member status: "${status}". Must be one of: ${[...VALID_STATUS].join(', ')}`);
+}
 
 function rowToMember(row) {
     if (!row) return null;
@@ -11,7 +15,7 @@ function rowToMember(row) {
         server_id: row.server_id,
         member_exp: row.member_exp ? Number(row.member_exp) : 0,
         member_level: row.member_level ?? 0,
-        member_status: STATUS_DB_TO_API[row.member_status] ?? row.member_status,
+        member_status: row.member_status,
         member_expires: row.member_expires ?? null,
     };
 }
@@ -61,8 +65,8 @@ export async function updateLevel(serverId, userId, memberLevel, memberExp = nul
 }
 
 export async function updateStatus(serverId, userId, status, expiresAt = null) {
-    const dbStatus = STATUS_API_TO_DB[status] ?? status;
-    
+    const dbStatus = normalizeStatus(status);
+
     const row = await prisma.members.update({
         where: { server_id_user_id: { server_id: serverId, user_id: userId } },
         data: {
@@ -109,7 +113,7 @@ export async function processExpiredMembers() {
     const mappedExpiredMembers = expiredMembers.map(m => ({
         server_id: m.server_id,
         user_id: m.user_id,
-        previous_status: STATUS_DB_TO_API[m.member_status] ?? m.member_status
+        previous_status: m.member_status
     }));
 
     return { count: result.count, updated: mappedExpiredMembers };
@@ -137,12 +141,13 @@ export async function getLeaderboard(serverId, limit = 20) {
         where: { server_id: serverId },
         orderBy: { member_exp: 'desc' },
         take: limit,
-        select: { user_id: true, member_exp: true, member_level: true },
+        select: { user_id: true, member_exp: true, member_level: true, member_status: true },
     });
     return rows.map((r) => ({
         user_id: r.user_id,
         member_exp: r.member_exp ? Number(r.member_exp) : 0,
         member_level: r.member_level ?? 0,
+        member_status: r.member_status,
     }));
 }
 
