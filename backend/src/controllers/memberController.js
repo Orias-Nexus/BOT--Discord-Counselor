@@ -1,137 +1,175 @@
 import * as memberService from '../services/memberService.js';
 import * as serverService from '../services/serverService.js';
+import axios from 'axios';
+import env from '../config/env.js';
+import { normalizeError } from '../utils/errorUtils.js';
+import { dispatchAction, DISCORD_ACTION_JOBS } from '../utils/queue.js';
 
-function isGatewayOrHtmlError(message) {
-    if (!message || typeof message !== 'string') return false;
-    return message.includes('<!DOCTYPE') || message.includes('502') || message.includes('Bad gateway') || message.includes('503');
+function handleError(prefix, err, res) {
+  const { status, message } = normalizeError(err);
+  if (status === 503) console.warn(`[memberController] ${prefix}: DB 503`);
+  else console.error(`[memberController] ${prefix}:`, err);
+  res.status(status).json({ error: message });
 }
 
-function normalizeError(err) {
-    const msg = err?.message ?? String(err);
-    if (isGatewayOrHtmlError(msg)) {
-        return { status: 503, message: 'Database temporarily unavailable (502). Please try again later.' };
-    }
-    return { status: 500, message: msg };
+async function fetchDiscordMemberMap(serverId, limit = 100) {
+  try {
+    const { data } = await axios.get(`${env.directiveApiUrl}/internal/guild/${serverId}/members`, {
+      params: { limit: Math.min(limit, 100) },
+      headers: { 'x-internal-key': env.internalSecretKey },
+      timeout: 5000,
+    });
+    const members = Array.isArray(data?.members) ? data.members : [];
+    return new Map(members.map((m) => [m.id, m]));
+  } catch (err) {
+    console.warn('[memberController] fetchDiscordMemberMap failed:', err.message);
+    return new Map();
+  }
+}
+
+function enrichMember(member, memberMap) {
+  if (!member) return member;
+  const discord = memberMap.get(member.user_id);
+  if (!discord) return member;
+  return {
+    ...member,
+    username: discord.username ?? null,
+    display_name: discord.displayName ?? null,
+    avatar: discord.avatar ?? null,
+    bot: discord.bot === true,
+  };
 }
 
 export async function getMember(req, res) {
-    try {
-        const { serverId, userId } = req.params;
-        await serverService.ensureServer(serverId);
-        let member = await memberService.getMember(serverId, userId);
-        if (!member) member = await memberService.ensureMember(serverId, userId);
-        res.json(member);
-    } catch (err) {
-        const { status, message } = normalizeError(err);
-        if (status === 503) {
-            console.warn('[memberController] getMember: database 502/503', err?.message?.slice(0, 80));
-        } else {
-            console.error('[memberController] getMember:', err);
-        }
-        res.status(status).json({ error: message });
-    }
+  try {
+    const { serverId, userId } = req.params;
+    await serverService.ensureServer(serverId);
+    let member = await memberService.getMember(serverId, userId);
+    if (!member) member = await memberService.ensureMember(serverId, userId);
+    const memberMap = await fetchDiscordMemberMap(serverId, 100);
+    res.json(enrichMember(member, memberMap));
+  } catch (err) { handleError('getMember', err, res); }
 }
 
 export async function setLevel(req, res) {
-    try {
-        const { serverId, userId } = req.params;
-        const { level } = req.body || {};
-        await serverService.ensureServer(serverId);
-        const member = await memberService.setMemberLevel(serverId, userId, Number(level));
-        if (!member) return res.status(400).json({ error: 'Invalid level' });
-        res.json(member);
-    } catch (err) {
-        const { status, message } = normalizeError(err);
-        if (status === 503) console.warn('[memberController] setLevel: database 502/503');
-        else console.error('[memberController] setLevel:', err);
-        res.status(status).json({ error: message });
-    }
+  try {
+    const { serverId, userId } = req.params;
+    const { level } = req.body || {};
+    await serverService.ensureServer(serverId);
+    const member = await memberService.setMemberLevel(serverId, userId, Number(level));
+    if (!member) return res.status(400).json({ error: 'Invalid level' });
+    res.json(member);
+  } catch (err) { handleError('setLevel', err, res); }
 }
 
+/**
+ * PATCH /members/:serverId/:userId/status body { status, expiresAt, dispatch? }
+ * Mặc định dispatch = true -> enqueue Discord action tương ứng.
+ */
 export async function setStatus(req, res) {
-    try {
-        const { serverId, userId } = req.params;
-        const { status, expiresAt } = req.body || {};
-        await serverService.ensureServer(serverId);
-        const member = await memberService.setMemberStatus(serverId, userId, status, expiresAt);
-        res.json(member);
-    } catch (err) {
-        const { status, message } = normalizeError(err);
-        if (status === 503) console.warn('[memberController] setStatus: database 502/503');
-        else console.error('[memberController] setStatus:', err);
-        res.status(status).json({ error: message });
+  try {
+    const { serverId, userId } = req.params;
+    const { status, expiresAt, dispatch = true } = req.body || {};
+    await serverService.ensureServer(serverId);
+
+    let job = null;
+    if (dispatch) {
+      const jobName = {
+        Good: DISCORD_ACTION_JOBS.MEMBER_RESET,
+        Warn: DISCORD_ACTION_JOBS.MEMBER_WARN,
+        Mute: DISCORD_ACTION_JOBS.MEMBER_MUTE,
+        Lock: DISCORD_ACTION_JOBS.MEMBER_LOCK,
+        Kick: DISCORD_ACTION_JOBS.MEMBER_KICK,
+      }[status];
+      if (jobName) {
+        const durationMs = expiresAt ? Math.max(0, new Date(expiresAt).getTime() - Date.now()) : null;
+        job = await dispatchAction(jobName, {
+          serverId,
+          actorId: req.user?.id ?? null,
+          targetId: userId,
+          meta: durationMs != null ? { durationMs } : {},
+        });
+      }
     }
+
+    const member = await memberService.setMemberStatus(serverId, userId, status, expiresAt);
+    res.json({ member, job });
+  } catch (err) { handleError('setStatus', err, res); }
 }
 
-export async function getLevelRange(req, res) {
-    try {
-        const range = await memberService.getLevelRange();
-        res.json(range);
-    } catch (err) {
-        const { status, message } = normalizeError(err);
-        if (status === 503) console.warn('[memberController] getLevelRange: database 502/503');
-        else console.error('[memberController] getLevelRange:', err);
-        res.status(status).json({ error: message });
-    }
+export async function getLevelRange(_req, res) {
+  try {
+    const range = await memberService.getLevelRange();
+    res.json(range);
+  } catch (err) { handleError('getLevelRange', err, res); }
 }
 
-/** PATCH /api/members/:serverId/:userId/exp: add EXP, check level-up. */
 export async function addExp(req, res) {
-    try {
-        const { serverId, userId } = req.params;
-        const { exp } = req.body || {};
-        if (!exp || exp <= 0) return res.status(400).json({ error: 'exp must be positive' });
-        await serverService.ensureServer(serverId);
-        await memberService.ensureMember(serverId, userId);
-        const result = await memberService.addMemberExp(serverId, userId, Number(exp));
-        if (!result) return res.status(400).json({ error: 'Failed to add exp' });
-        res.json(result);
-    } catch (err) {
-        const { status, message } = normalizeError(err);
-        if (status === 503) console.warn('[memberController] addExp: database 502/503');
-        else console.error('[memberController] addExp:', err);
-        res.status(status).json({ error: message });
-    }
+  try {
+    const { serverId, userId } = req.params;
+    const { exp } = req.body || {};
+    if (!exp || exp <= 0) return res.status(400).json({ error: 'exp must be positive' });
+    await serverService.ensureServer(serverId);
+    await memberService.ensureMember(serverId, userId);
+    const result = await memberService.addMemberExp(serverId, userId, Number(exp));
+    if (!result) return res.status(400).json({ error: 'Failed to add exp' });
+    res.json(result);
+  } catch (err) { handleError('addExp', err, res); }
 }
 
-/** GET /api/members/:serverId/leaderboard?limit=20 */
 export async function getLeaderboard(req, res) {
-    try {
-        const { serverId } = req.params;
-        const limit = Math.min(Number(req.query.limit) || 20, 100);
-        const data = await memberService.getMemberLeaderboard(serverId, limit);
-        res.json(data);
-    } catch (err) {
-        const { status, message } = normalizeError(err);
-        if (status === 503) console.warn('[memberController] getLeaderboard: database 502/503');
-        else console.error('[memberController] getLeaderboard:', err);
-        res.status(status).json({ error: message });
-    }
+  try {
+    const { serverId } = req.params;
+    const limit = Math.min(Number(req.query.limit) || 20, 100);
+    const data = await memberService.getMemberLeaderboard(serverId, limit);
+    const memberMap = await fetchDiscordMemberMap(serverId, limit);
+    res.json(data.map((row) => enrichMember(row, memberMap)));
+  } catch (err) { handleError('getLeaderboard', err, res); }
 }
 
-/** GET /api/members/:serverId/:userId/rank */
 export async function getRank(req, res) {
-    try {
-        const { serverId, userId } = req.params;
-        const rank = await memberService.getMemberRank(serverId, userId);
-        res.json({ rank });
-    } catch (err) {
-        const { status, message } = normalizeError(err);
-        if (status === 503) console.warn('[memberController] getRank: database 502/503');
-        else console.error('[memberController] getRank:', err);
-        res.status(status).json({ error: message });
-    }
+  try {
+    const { serverId, userId } = req.params;
+    const rank = await memberService.getMemberRank(serverId, userId);
+    res.json({ rank });
+  } catch (err) { handleError('getRank', err, res); }
 }
 
-/** POST /api/members/process-expires: set Good for expired members, return list for directive to apply roles. */
-export async function processExpires(req, res) {
-    try {
-        const result = await memberService.processExpiredMembers();
-        res.json(result);
-    } catch (err) {
-        const { status, message } = normalizeError(err);
-        if (status === 503) console.warn('[memberController] processExpires: database 502/503');
-        else console.error('[memberController] processExpires:', err);
-        res.status(status).json({ error: message });
-    }
+export async function processExpires(_req, res) {
+  try {
+    const result = await memberService.processExpiredMembers();
+    res.json(result);
+  } catch (err) { handleError('processExpires', err, res); }
+}
+
+/**
+ * POST /members/:serverId/:userId/action body { action, meta }
+ * action: kick|mute|warn|lock|move|reset|timeout|role_apply|role_remove
+ */
+export async function dispatchMemberAction(req, res) {
+  try {
+    const { serverId, userId } = req.params;
+    const { action, meta = {} } = req.body || {};
+    const MAP = {
+      kick: DISCORD_ACTION_JOBS.MEMBER_KICK,
+      mute: DISCORD_ACTION_JOBS.MEMBER_MUTE,
+      warn: DISCORD_ACTION_JOBS.MEMBER_WARN,
+      lock: DISCORD_ACTION_JOBS.MEMBER_LOCK,
+      move: DISCORD_ACTION_JOBS.MEMBER_MOVE,
+      reset: DISCORD_ACTION_JOBS.MEMBER_RESET,
+      timeout: DISCORD_ACTION_JOBS.MEMBER_TIMEOUT,
+      role_apply: DISCORD_ACTION_JOBS.MEMBER_ROLE_APPLY,
+      role_remove: DISCORD_ACTION_JOBS.MEMBER_ROLE_REMOVE,
+    };
+    const jobName = MAP[action];
+    if (!jobName) return res.status(400).json({ error: `Invalid action: ${action}` });
+
+    const job = await dispatchAction(jobName, {
+      serverId,
+      actorId: req.user?.id ?? null,
+      targetId: userId,
+      meta,
+    });
+    res.status(202).json(job);
+  } catch (err) { handleError('dispatchMemberAction', err, res); }
 }
