@@ -9,5 +9,6 @@ router.use('/', requirePermission('manage_server'));
 router.get('/', ctrl.getChannels);
 router.post('/', ctrl.upsertChannel);
 router.delete('/stats', ctrl.deleteStatChannels);
+router.delete('/:categoryId', ctrl.deleteChannel);
 
 export default router;
