@@ -24,6 +24,21 @@ export async function getServer(req, res) {
   }
 }
 
+export async function getStats(req, res) {
+  try {
+    const { serverId } = req.params;
+    const server = await serverService.getServer(serverId);
+    if (!server) return res.status(404).json({ error: 'Server not found' });
+    const stats = await serverService.getStats(serverId);
+    res.json({
+      ...stats,
+      status: server.status,
+    });
+  } catch (err) {
+    handleError('getStats', err, res);
+  }
+}
+
 export async function ensureServer(req, res) {
   try {
     const { serverId } = req.params;
