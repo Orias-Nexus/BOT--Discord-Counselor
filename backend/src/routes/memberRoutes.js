@@ -14,5 +14,6 @@ router.get('/:serverId/:userId/rank', requirePermission('manage_server'), ctrl.g
 router.patch('/:serverId/:userId/level', requirePermission('moderate_member'), ctrl.setLevel);
 router.patch('/:serverId/:userId/status', requirePermission('moderate_member'), ctrl.setStatus);
 router.patch('/:serverId/:userId/exp', requirePermission('moderate_member'), ctrl.addExp);
+router.post('/:serverId/:userId/action', requirePermission('moderate_member'), ctrl.dispatchMemberAction);
 
 export default router;
