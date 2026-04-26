@@ -2,15 +2,15 @@ import 'dotenv/config';
 import { blank_banner } from './customs/handlers/placeholders/links.js';
 
 const isProd = process.env.NODE_ENV === 'production';
+const domainUrl = 'https://orias-counselor.duckdns.org/api';
+const localUrl = 'http://127.0.0.1:4000/api';
+const redisUrl = 'redis://127.0.0.1:6379';
 
 export const BACKEND_API_URL =
-  process.env.BACKEND_API_URL ??
-  (isProd
-    ? 'https://orias-counselor.duckdns.org:4000/api'
-    : 'http://localhost:4000/api');
+  process.env.BACKEND_API_URL ?? (isProd ? domainUrl : localUrl);
 
 export const REDIS_URL =
-  process.env.REDIS_URL ?? (isProd ? '' : 'redis://localhost:6379');
+  process.env.REDIS_URL ?? redisUrl;
 
 const isLocalBackend =
   !BACKEND_API_URL ||
