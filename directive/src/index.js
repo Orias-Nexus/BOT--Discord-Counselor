@@ -14,6 +14,7 @@ import { startExpiresCheck } from './jobs/expiresCheck.js';
 import { startStatsCheck } from './jobs/statsCheck.js';
 import { EVENT_HANDLERS } from './events/eventRegistry.js';
 import { startApiServer } from './apiServer.js';
+import { initDiscordActionsWorker } from './workers/discordActionsWorker.js';
 import { isServerStatsSelectId, doSetServerStats } from './scripts/setServerStats.js';
 import { EMBED_APPLY_SELECT_PREFIX } from './embeds/embedEdit.js';
 import { EMBED_BY_SCRIPT } from './embedRoutes.js';
@@ -41,6 +42,7 @@ client.once(Events.ClientReady, (c) => {
   
   // Khởi chạy Worker lắng nghe các Task từ Redis
   initWorker(c);
+  initDiscordActionsWorker(c);
 
   startExpiresCheck(c);
   startStatsCheck(c);
