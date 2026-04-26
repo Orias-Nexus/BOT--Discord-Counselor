@@ -76,10 +76,10 @@ function isPublicChannel(channel, guild) {
 
 function getMemberResetLabel(memberStatus) {
   switch (memberStatus) {
-    case 'Warning': return 'Unwarn';
-    case 'Muted':   return 'Unmute';
-    case 'Locked':  return 'Unlock';
-    default:        return 'Good';
+    case 'Warn': return 'Unwarn';
+    case 'Mute': return 'Unmute';
+    case 'Lock': return 'Unlock';
+    default:     return 'Good';
   }
 }
 
