@@ -85,10 +85,9 @@ export const EMBED_COLORS = {
     Newbie: 0x5865f2,
     Good: 0x57f287,
     Warn: 0xfee75c,
-    Warning: 0xfee75c,
     Mute: 0xed4245,
     Lock: 0x992d22,
-    Locked: 0x992d22,
+    Kick: 0xff0000,
     Leaved: 0x747f8d,
   },
 };
