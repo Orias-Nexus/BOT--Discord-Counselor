@@ -18,7 +18,7 @@ function shouldIgnore(message) {
 
 /**
  * Send level-up notification with member profile data for embed placeholders.
- * Priority: configured channel (from messages table) -> fallback to interaction channel.
+ * Priority: configured Leveling channel/embed → fallback plain text in original channel.
  */
 async function notifyLevelUp(message, result) {
   const guild = message.guild;
@@ -37,11 +37,25 @@ async function notifyLevelUp(message, result) {
     memberRank: rankData?.rank ?? '?',
   };
 
-  const sent = await sendEventMessage(guild, 'Leveling', meta).catch(() => false);
-  if (sent) return;
+  let sent = false;
+  try {
+    sent = await sendEventMessage(guild, 'Leveling', meta);
+  } catch (err) {
+    console.error('[Leveling] sendEventMessage threw:', err?.message ?? err);
+  }
 
+  if (sent) {
+    console.debug(`[Leveling] Level-up notification sent for ${member.id} → Level ${result.new_level}`);
+    return;
+  }
+
+  // Fallback: plain text in the channel where the user typed.
   const fallbackContent = `**${displayName}** reached **Level ${result.new_level}**!`;
-  await message.channel.send(fallbackContent).catch(() => {});
+  try {
+    await message.channel.send(fallbackContent);
+  } catch (err) {
+    console.warn('[Leveling] Fallback send failed:', err?.message ?? err);
+  }
 }
 
 async function processLocal(guildId, userId, exp, message) {
@@ -49,8 +63,9 @@ async function processLocal(guildId, userId, exp, message) {
   if (!result) return;
 
   if (result.leveled_up) {
-    // Fire-and-forget to avoid blocking the main leveling flow.
-    notifyLevelUp(message, result).catch(() => {});
+    notifyLevelUp(message, result).catch((err) => {
+      console.error('[Leveling] notifyLevelUp uncaught error:', err?.message ?? err);
+    });
   }
 }
 
