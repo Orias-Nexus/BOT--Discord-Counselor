@@ -104,7 +104,8 @@ export async function setMemberLevel(serverId, userId, level) {
 export async function setMemberStatus(serverId, userId, status, expiresAt) {
   return request(`/members/${serverId}/${userId}/status`, {
     method: 'PATCH',
-    body: JSON.stringify({ status, expiresAt: expiresAt ?? null }),
+    // Worker sync trạng thái từ Discord về DB: không được dispatch ngược lại queue để tránh loop.
+    body: JSON.stringify({ status, expiresAt: expiresAt ?? null, dispatch: false }),
   });
 }
 
