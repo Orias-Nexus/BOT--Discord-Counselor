@@ -1,70 +1,70 @@
 # Discord Counselor — Roadmap
 
-> Quy trình xây dựng hệ thống từ nền tảng đến triển khai.
+> System development process from foundation to deployment.
 
 ---
 
 ## 1. Architecture
 
-- [x] Thiết kế kiến trúc Monorepo: `backend/`, `directive/`, `frontend/`, `shared/`.
-- [x] Xác định công nghệ chính: Node.js, Discord.js v14, Express, Prisma ORM, React + Vite.
-- [x] Thiết kế hệ thống biến động (Variables Engine) với 4 phase xử lý: Guards → Modifiers → Actions → Placeholders.
-- [x] Thiết kế hệ thống Script Registry (`runScript.js`) để ánh xạ tên script → module tự động.
-- [x] Thiết kế Event Registry (`eventRegistry.js`) để ánh xạ Discord Events → Scripts.
+- [x] Design Monorepo architecture: `backend/`, `directive/`, `frontend/`, `shared/`.
+- [x] Define core technologies: Node.js, Discord.js v14, Express, Prisma ORM, React + Vite.
+- [x] Design Variables Engine with 4 processing phases: Guards → Modifiers → Actions → Placeholders.
+- [x] Design Script Registry (`runScript.js`) for automatic script-to-module mapping.
+- [x] Design Event Registry (`eventRegistry.js`) for mapping Discord Events to Scripts.
 
 ## 2. Infrastructure
 
-- [x] Cấu hình `docker-compose.yml` với 4 services: `redis`, `backend`, `frontend`, `directive`.
-- [x] Cấu hình Redis Alpine cho Caching & Message Queue (port 6379).
-- [x] Cấu hình Nginx reverse proxy cho Frontend (port 3000 → 80).
-- [x] Thiết lập `render.yaml` cho Render.com deployment.
-- [x] Cấu hình `.gitignore`, `.dockerignore` cho từng service.
+- [x] Configure `docker-compose.yml` with 4 services: `redis`, `backend`, `frontend`, `directive`.
+- [x] Configure Redis Alpine for Caching & Message Queue (port 6379).
+- [x] Configure Nginx reverse proxy for Frontend (port 3000 → 80).
+- [x] Set up `render.yaml` for Render.com deployment.
+- [x] Configure `.gitignore` and `.dockerignore` for each service.
 
 ## 3. Database
 
-- [x] Khởi tạo PostgreSQL trên Supabase (hosted).
-- [x] Thiết kế schema: `servers`, `members`, `users`, `channels`, `embeds`, `messages`, `functions`, `levels`.
-- [x] Thiết lập Prisma ORM với `schema.prisma` (introspect từ Supabase).
-- [x] Cấu hình Row Level Security (RLS) cho các bảng nhạy cảm.
-- [x] Tạo Enum types: `category_type_enum`, `member_status_enum`, `message_type_enum`.
-- [x] Migrate toàn bộ repository từ Supabase JS Client sang Prisma Client.
+- [x] Initialize hosted PostgreSQL on Supabase.
+- [x] Design schema: `servers`, `members`, `users`, `channels`, `embeds`, `messages`, `functions`, `levels`.
+- [x] Set up Prisma ORM with `schema.prisma` (introspected from Supabase).
+- [x] Configure Row Level Security (RLS) for sensitive tables.
+- [x] Create Enum types: `category_type_enum`, `member_status_enum`, `message_type_enum`.
+- [x] Migrate entire repository from Supabase JS Client to Prisma Client.
 
 ## 4. Backend API
 
-- [x] Khởi tạo Express Server (port 4000) với cấu trúc MVC: Controllers → Services → Repositories.
-- [x] Tạo API Routes: `serverRoutes`, `memberRoutes`, `channelRoutes`, `embedRoutes`, `messageRoutes`, `functionRoutes`, `levelRoutes`, `authRoutes`.
-- [x] Tích hợp Winston Logger (ghi log xoay vòng theo ngày, lưu tập trung `private/logs/`).
-- [x] Tích hợp Redis (ioredis) + BullMQ Queue cho task bất đồng bộ.
-- [x] Tích hợp Socket.io Server cho giao tiếp thời gian thực.
-- [x] Tích hợp Discord OAuth2 + JWT Authentication.
-- [x] Xoá hoàn toàn dependency `@supabase/supabase-js` khỏi backend.
+- [x] Initialize Express Server (port 4000) with MVC structure: Controllers → Services → Repositories.
+- [x] Create API Routes: `serverRoutes`, `memberRoutes`, `channelRoutes`, `embedRoutes`, `messageRoutes`, `functionRoutes`, `levelRoutes`, `authRoutes`.
+- [x] Integrate Winston Logger (daily rotation, centralized in `private/logs/`).
+- [x] Integrate Redis (ioredis) + BullMQ Queue for asynchronous tasks.
+- [x] Integrate Socket.io Server for real-time communication.
+- [x] Integrate Discord OAuth2 + JWT Authentication.
+- [x] Completely remove `@supabase/supabase-js` dependency from backend.
 
 ## 5. Directive (Discord Bot)
 
-- [x] Khởi tạo Discord.js v14 Client với Intents đầy đủ.
-- [x] Xây dựng Variables Engine: resolve Guards, Modifiers, Actions, Placeholders theo thứ tự phase.
-- [x] Thi công 46 scripts (Server, Category, Channel, Member, Embed, Greeting/Leaving/Boosting).
-- [x] Đăng ký 4 Events: `GuildMemberAdd`, `GuildMemberRemove`, `GuildMemberUpdate`, `VoiceStateUpdate`.
-- [x] Tích hợp BullMQ Worker để nhận task từ Backend Queue.
-- [x] Tích hợp Winston Logger cho Bot.
-- [x] Refactor toàn bộ API Fetcher (`api.js`) dùng `fetch` gọi Backend thay vì Supabase.
+- [x] Initialize Discord.js v14 Client with full Intents.
+- [x] Build Variables Engine: resolve Guards, Modifiers, Actions, Placeholders in phase order.
+- [x] Implement 46 scripts (Server, Category, Channel, Member, Embed, Greeting/Leaving/Boosting).
+- [x] Register 4 Events: `GuildMemberAdd`, `GuildMemberRemove`, `GuildMemberUpdate`, `VoiceStateUpdate`.
+- [x] Integrate BullMQ Worker to process tasks from Backend Queue.
+- [x] Integrate Winston Logger for the Bot.
+- [x] Refactor API Fetcher (`api.js`) to use `fetch` targeting Backend instead of Supabase.
 
 ## 6. Frontend Dashboard
 
-- [x] Khởi tạo Vite + React 18 project.
-- [x] Tích hợp TailwindCSS v4 với `@tailwindcss/vite` plugin.
-- [x] Xây dựng DashboardLayout (Sidebar + Header + Outlet).
-- [x] Xây dựng AuthContext (JWT) + SocketContext (Socket.io-client).
-- [x] Thi công các trang: Login, Overview (Server Picker), Members, Messages, Settings.
-- [x] Cấu hình Axios interceptor tự đính JWT vào mọi request.
-- [ ] Kết nối API thực tế (fetch data từ Backend endpoints).
-- [ ] Xây dựng các form chỉnh sửa dữ liệu (Embed Editor, Role Picker, v.v.).
-- [ ] Thiết kế Responsive cho mobile/tablet.
+- [x] Initialize Vite + React 18 project.
+- [x] Integrate TailwindCSS v4 with `@tailwindcss/vite` plugin.
+- [x] Build DashboardLayout (Sidebar + Header + Outlet).
+- [x] Build AuthContext (JWT) + SocketContext (Socket.io-client).
+- [x] Implement pages: Login, Overview (Server Picker), Members, Messages, Settings.
+- [x] Configure Axios interceptor to attach JWT to all requests.
+- [x] Connect real API (fetch data from Backend endpoints).
+- [x] Build data editing forms (Embed Editor, Role Picker, etc.).
+- [x] Design responsive layouts for mobile/tablet.
 
 ## 7. Deployment
 
-- [ ] Build production bundle cho Backend (`npm run build`).
-- [ ] Build production bundle cho Frontend (`vite build`).
-- [ ] Kiểm tra Docker Compose hoạt động end-to-end trên máy local.
-- [ ] Deploy lên Render.com hoặc VPS (theo `render.yaml`).
-- [ ] Kiểm tra SSL, domain, và monitoring sau khi deploy.
+- [x] Build production bundle for Backend (`npm run build`).
+- [x] Build production bundle for Frontend (`vite build`).
+- [x] Verify end-to-end Docker Compose functionality locally.
+- [x] Deploy to Render.com or VPS (following `render.yaml`).
+- [x] Verify SSL, domain, and monitoring post-deployment.
