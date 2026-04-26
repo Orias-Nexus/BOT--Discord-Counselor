@@ -4,11 +4,11 @@ The Discord Counselor System is a robust, enterprise-ready infrastructure design
 
 <h2 style="color: #4CAF50;">Core Features</h2>
 
-* **Real-time Web Dashboard Synchronization:** Seamless data streaming via Socket.io to a web interface for live monitoring and administration.
-* **Asynchronous Queue Management:** High-volume operational background tasks are safely scheduled and consumed using BullMQ and Redis to bypass Discord API rate constraints.
-* **Persistent Database Integration:** Unified data structures utilizing PostgreSQL (Supabase) and Prisma ORM to guarantee data concurrency across all microservices.
-* **Slash Command Architecture:** Fully dynamic Discord Application Commands implementation for rapid user interaction.
-* **Containerized Deployment:** Docker-ready building contexts for isolated, platform-agnostic environments in Production.
+- **Real-time Web Dashboard Synchronization:** Seamless data streaming via Socket.io to a web interface for live monitoring and administration.
+- **Asynchronous Queue Management:** High-volume operational background tasks are safely scheduled and consumed using BullMQ and Redis to bypass Discord API rate constraints.
+- **Persistent Database Integration:** Unified data structures utilizing PostgreSQL (Supabase) and Prisma ORM to guarantee data concurrency across all microservices.
+- **Slash Command Architecture:** Fully dynamic Discord Application Commands implementation for rapid user interaction.
+- **Containerized Deployment:** Docker-ready building contexts for isolated, platform-agnostic environments in Production.
 
 <h2 style="color: #ff9800;">Directory Structure</h2>
 
@@ -28,13 +28,13 @@ The Discord Counselor System is a robust, enterprise-ready infrastructure design
 
 To dive deeper into the technical segments of the system, please refer to the following English documentation:
 
-* [System Architecture](docs/architecture.md): Data workflow, Redis topology, and Queue state management.
-* [Local Development Guide](docs/development.md): Detailed local setup tutorials for `.env` configuration, Prisma workflows, and direct Node execution.
-* [Deployment Setup](docs/deployment.md): Blueprints for hosting on Cloud platforms (Render) or Virtual Private Servers (Docker Compose).
-* [Infrastructure Commands](infrastructure/README.md): Fast, actionable CLI commands for Server operators.
+- [System Architecture](public/docs/ARCHITECTURE.md): Data workflow, Redis topology, and Queue state management.
+- [Local Development Guide](public/docs/DEVELOPMENT.md): Detailed local setup tutorials for `.env` configuration, Prisma workflows, and direct Node execution.
+- [Deployment Setup](public/docs/DEPLOYMENT.md): Blueprints for hosting on Cloud platforms (Render) or Virtual Private Servers (Docker Compose).
+- [Infrastructure Commands](infrastructure/README.md): Fast, actionable CLI commands for Server operators.
 
 <h2 style="color: #607d8b;">System Requirements</h2>
 
-* Runtime: Node.js (Version 18.0.0 or higher)
-* Cache: Docker Desktop (Required for Redis emulator)
-* Database: PostgreSQL connection (e.g., Supabase)
+- Runtime: Node.js (Version 18.0.0 or higher)
+- Cache: Docker Desktop (Required for Redis emulator)
+- Database: PostgreSQL connection (e.g., Supabase)
