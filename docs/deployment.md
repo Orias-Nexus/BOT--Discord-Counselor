@@ -25,7 +25,7 @@ This method is highly developer-friendly and optimizes costs (can run entirely o
 3. Specify the runtime commands as follows:
    - Build Command: `npm install && npx prisma generate`
    - Start Command: `node src/index.js`
-4. Copy all Environment Variables from the `.env` file into the Environment config of this Render Service so the server can read them during runtime. (Critical: Ensure the latest `DATABASE_URL` from Supabase and `REDIS_URL` from Upstash are provided).
+4. Copy all Environment Variables from the `.env` file into the Environment config of this Render Service so the server can read them during runtime. (Critical: Ensure the latest `DATABASE_URL` from Supabase and `REDIS_STORAGE_URL` from Upstash are provided).
 
 ### Step 2: Directive Bot/Worker Setup
 
@@ -41,7 +41,7 @@ The Bot Worker does not require web port binding to listen to HTTP interactions;
 
 Unlike the Web Server, the Discord Bot application needs to register its Slash Commands. You can use the SSH or Exec Terminal feature on Render's Directive Node Worker and run: `npm run deploy` exactly once in the Terminal to provision the CLI control UI to the Discord Server.
 
-*(Future updates will build the Static Dashboard as SPA/SSG directly to Vercel or Netlify CDN for lightning-fast loads instead of utilizing a Render Service).*
+_(Future updates will build the Static Dashboard as SPA/SSG directly to Vercel or Netlify CDN for lightning-fast loads instead of utilizing a Render Service)._
 
 ---
 
@@ -50,7 +50,7 @@ Unlike the Web Server, the Discord Bot application needs to register its Slash C
 For administrators prioritizing self-hosting on a dedicated Virtual Machine equipped with Docker, the `docker-compose.yml` file is provided.
 
 1. Pull the project code to your Virtual Machine or Cloud VPS.
-2. Edit the `.env` files to utilize internal URLs within the Docker Network namespace. (e.g., `REDIS_URL=redis://redis:6379`).
+2. Edit the `.env` files to utilize internal URLs within the Docker Network namespace. (e.g., `REDIS_STORAGE_URL=redis://redis:6379`).
 3. Execute the command to build the entire container suite:
 
 ```bash
