@@ -21,7 +21,7 @@ services:
         value: "10000"
 
       # Discord OAuth
-      - key: APPLICATION_ID
+      - key: DISCORD_APPLICATION_ID
         sync: false
       - key: DISCORD_CLIENT_SECRET
         sync: false
@@ -29,21 +29,21 @@ services:
         sync: false
 
       # URLs — cập nhật sau khi deploy lần đầu
-      - key: DISCORD_REDIRECT_URI
+      - key: DISCORD_REDIRECT_URL
         sync: false
         # VD: https://orias-counselor.duckdns.org/api/auth/discord/callback
-      - key: FRONTEND_ORIGIN
+      - key: FRONTEND_HOME_URL
         sync: false
         # VD: https://your-frontend-domain.com
 
       # Database (Supabase)
-      - key: POOLER_URL
+      - key: DATABASE_POOLER_URL
         sync: false
-      - key: DIRECT_URL
+      - key: DATABASE_DIRECT_URL
         sync: false
 
       # Redis (Render Redis hoặc Upstash)
-      - key: REDIS_URL
+      - key: REDIS_STORAGE_URL
         sync: false
 
   # ── Directive / Discord Bot (Background Worker) ───────────────
@@ -60,9 +60,9 @@ services:
         value: "22"
 
       # Discord Bot
-      - key: DISCORD_TOKEN
+      - key: DISCORD_BOT_TOKEN
         sync: false
-      - key: APPLICATION_ID
+      - key: DISCORD_APPLICATION_ID
         sync: false
 
       # Backend API — điền URL backend sau deploy
@@ -71,5 +71,5 @@ services:
         # VD: https://orias-counselor.duckdns.org/api
 
       # Redis (cùng instance với backend)
-      - key: REDIS_URL
+      - key: REDIS_STORAGE_URL
         sync: false
