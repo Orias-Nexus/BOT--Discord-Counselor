@@ -20,7 +20,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=4000
-      - REDIS_URL=redis://redis:6379
+      - REDIS_STORAGE_URL=redis://redis:6379
     restart: unless-stopped
     depends_on:
       - redis
@@ -42,7 +42,7 @@ services:
     env_file:
       - ./directive/.env
     environment:
-      - REDIS_URL=redis://redis:6379
+      - REDIS_STORAGE_URL=redis://redis:6379
     restart: unless-stopped
     depends_on:
       - backend
