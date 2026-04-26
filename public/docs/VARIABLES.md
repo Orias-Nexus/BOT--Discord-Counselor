@@ -1,162 +1,168 @@
 # Discord Counselor — Variables Reference
 
-> Hệ thống biến tuỳ chỉnh (Custom Variables) dùng trong tin nhắn, embed, và phản hồi lệnh.
-> Cú pháp: `{variable_name}` hoặc `{variable_name: argument}`.
+> Custom variable system for messages, embeds, and command responses.
+> Syntax: `{variable_name}` or `{variable_name: argument}`.
 
 ---
 
 ## Placeholders (Phase 4)
 
-Biến thay thế tự động, không cần đối số. Dùng trong nội dung tin nhắn / embed.
+Automatic replacement variables that do not require arguments. Used within message content and embeds.
 
 ### User Variables
 
+| Group | Name                    | Value       | Description                               |
+| ----- | ----------------------- | ----------- | ----------------------------------------- |
+| User  | `{user}`                | `@Username` | Pings the user who triggered the command. |
+| User  | `{user_tag}`            | `User#1234` | Username + Tag.                           |
+| User  | `{user_name}`           | `Username`  | Username without tag.                     |
+| User  | `{user_avatar}`         | URL         | User's avatar image link.                 |
+| User  | `{user_discrim}`        | `1234`      | Discriminator tag.                        |
+| User  | `{user_id}`             | `123456789` | User ID.                                  |
+| User  | `{user_nick}`           | `Nickname`  | Server nickname.                          |
+| User  | `{user_joindate}`       | Date        | Server join date.                         |
+| User  | `{user_createdate}`     | Date        | Discord account creation date.            |
+| User  | `{user_displaycolor}`   | `#FF5733`   | User's display color based on roles.      |
+| User  | `{user_boostsince}`     | Date        | Server boost start date.                  |
+| User  | `{user_balance}`        | Number      | User's currency balance.                  |
+| User  | `{user_balance_locale}` | `1,000`     | Formatted currency balance.               |
+| User  | `{user_item}`           | String      | Item currently held by user.              |
+| User  | `{user_item_count}`     | Number      | Item quantity.                            |
+| User  | `{user_inventory}`      | List        | User's inventory list.                    |
+| User  | `{user_exp}`            | Number      | Global experience points.                 |
+| User  | `{user_rank}`           | Number      | Global rank.                              |
+| User  | `{member_exp}`          | Number      | Local server experience points.           |
+| User  | `{member_level}`        | Number      | Local server level.                       |
+| User  | `{member_rank}`         | Number      | Local server rank.                        |
 
-| Group | Name                    | Value       | Descript                       |
-| ----- | ----------------------- | ----------- | ------------------------------ |
-| User  | `{user}`                | `@Username` | Ping người dùng gọi lệnh       |
-| User  | `{user_tag}`            | `User#1234` | Username + Tag                 |
-| User  | `{user_name}`           | `Username`  | Tên người dùng (không có tag)  |
-| User  | `{user_avatar}`         | URL         | Link ảnh đại diện của user     |
-| User  | `{user_discrim}`        | `1234`      | Mã số tag                      |
-| User  | `{user_id}`             | `123456789` | ID của người dùng              |
-| User  | `{user_nick}`           | `Nickname`  | Biệt danh trong server         |
-| User  | `{user_joindate}`       | Date        | Ngày tham gia server           |
-| User  | `{user_createdate}`     | Date        | Ngày tạo tài khoản Discord     |
-| User  | `{user_displaycolor}`   | `#FF5733`   | Mã màu của user dựa trên role  |
-| User  | `{user_boostsince}`     | Date        | Thời gian bắt đầu boost server |
-| User  | `{user_balance}`        | Number      | Số dư tiền ảo của user         |
-| User  | `{user_balance_locale}` | `1,000`     | Số dư tiền ảo (có dấu phẩy)    |
-| User  | `{user_item}`           | String      | Vật phẩm user đang có          |
-| User  | `{user_item_count}`     | Number      | Số lượng vật phẩm              |
-| User  | `{user_inventory}`      | List        | Danh sách kho đồ của user      |
+### Assets & Icons
 
+| Group  | Name                | Value | Description                      |
+| ------ | ------------------- | ----- | -------------------------------- |
+| Banner | `{blank_banner}`    | URL   | Default banner URL for Blank.    |
+| Banner | `{imposter_banner}` | URL   | Default banner URL for Imposter. |
+| Banner | `{manycat_banner}`  | URL   | Default banner URL for Manycat.  |
+| Banner | `{nahihi_banner}`   | URL   | Default banner URL for Nahihi.   |
+| Banner | `{whitepet_banner}` | URL   | Default banner URL for Whitepet. |
+| Banner | `{goodjob_banner}`  | URL   | Default banner URL for Goodjob.  |
+| Icon   | `{paimom_icon}`     | URL   | Default icon URL for Paimom.     |
+| Icon   | `{march71_icon}`    | URL   | Default icon URL for March71.    |
+| Icon   | `{march72_icon}`    | URL   | Default icon URL for March72.    |
 
 ### Server Variables
 
-
-| Group  | Name                                     | Value       | Descript                               |
-| ------ | ---------------------------------------- | ----------- | -------------------------------------- |
-| Server | `{server_prefix}`                        | String      | Prefix hiện tại của server             |
-| Server | `{server_currency}`                      | String      | Đơn vị tiền tệ của server              |
-| Server | `{server_name}`                          | String      | Tên server                             |
-| Server | `{server_id}`                            | String      | ID của server                          |
-| Server | `{server_membercount}`                   | Number      | Tổng số thành viên                     |
-| Server | `{server_membercount_ordinal}`           | `1st`       | Số thành viên (thứ tự)                 |
-| Server | `{server_membercount_nobots}`            | Number      | Số thành viên (không tính bot)         |
-| Server | `{server_membercount_nobots_ordinal}`    | `1st`       | Thành viên không bot (thứ tự)          |
-| Server | `{server_botcount}`                      | Number      | Tổng số lượng bot                      |
-| Server | `{server_botcount_ordinal}`              | `1st`       | Số lượng bot (thứ tự)                  |
-| Server | `{server_icon}`                          | URL         | Link icon của server                   |
-| Server | `{server_banner}`                        | URL         | Link banner của server                 |
-| Server | `{server_rolecount}`                     | Number      | Tổng số role                           |
-| Server | `{server_channelcount}`                  | Number      | Tổng số kênh                           |
-| Server | `{server_randommember}`                  | `@User`     | Chọn ngẫu nhiên 1 thành viên (ping)    |
-| Server | `{server_randommember_tag}`              | `User#1234` | Tag thành viên ngẫu nhiên              |
-| Server | `{server_randommember_nobots}`           | `@User`     | Thành viên ngẫu nhiên (không phải bot) |
-| Server | `{server_owner}`                         | `@Owner`    | Ping chủ server                        |
-| Server | `{server_owner_id}`                      | String      | ID của chủ server                      |
-| Server | `{server_createdate}`                    | Date        | Ngày thành lập server                  |
-| Server | `{server_boostlevel}`                    | `1/2/3`     | Cấp độ Boost hiện tại                  |
-| Server | `{server_boostcount}`                    | Number      | Số lượng Boost hiện tại                |
-| Server | `{server_nextboostlevel}`                | `2/3`       | Cấp Boost tiếp theo                    |
-| Server | `{server_nextboostlevel_required}`       | Number      | Số Boost cần để lên cấp tiếp           |
-| Server | `{server_nextboostlevel_until_required}` | Number      | Số Boost còn thiếu                     |
-
+| Group  | Name                                     | Value       | Description                             |
+| ------ | ---------------------------------------- | ----------- | --------------------------------------- |
+| Server | `{server_prefix}`                        | String      | Current server prefix.                  |
+| Server | `{server_currency}`                      | String      | Server currency unit.                   |
+| Server | `{server_name}`                          | String      | Server name.                            |
+| Server | `{server_id}`                            | String      | Server ID.                              |
+| Server | `{server_membercount}`                   | Number      | Total member count.                     |
+| Server | `{server_membercount_ordinal}`           | `1st`       | Member count (ordinal).                 |
+| Server | `{server_membercount_nobots}`            | Number      | Member count excluding bots.            |
+| Server | `{server_membercount_nobots_ordinal}`    | `1st`       | Member count excluding bots (ordinal).  |
+| Server | `{server_botcount}`                      | Number      | Total bot count.                        |
+| Server | `{server_botcount_ordinal}`              | `1st`       | Bot count (ordinal).                    |
+| Server | `{server_icon}`                          | URL         | Server icon link.                       |
+| Server | `{server_banner}`                        | URL         | Server banner link.                     |
+| Server | `{server_rolecount}`                     | Number      | Total role count.                       |
+| Server | `{server_channelcount}`                  | Number      | Total channel count.                    |
+| Server | `{server_randommember}`                  | `@User`     | Randomly selected member (ping).        |
+| Server | `{server_randommember_tag}`              | `User#1234` | Random member's tag.                    |
+| Server | `{server_randommember_nobots}`           | `@User`     | Random member excluding bots (ping).    |
+| Server | `{server_owner}`                         | `@Owner`    | Pings the server owner.                 |
+| Server | `{server_owner_id}`                      | String      | Server owner ID.                        |
+| Server | `{server_createdate}`                    | Date        | Server creation date.                   |
+| Server | `{server_boostlevel}`                    | `1/2/3`     | Current Boost level.                    |
+| Server | `{server_boostcount}`                    | Number      | Current Boost count.                    |
+| Server | `{server_nextboostlevel}`                | `2/3`       | Next Boost level.                       |
+| Server | `{server_nextboostlevel_required}`       | Number      | Boosts required for next level.         |
+| Server | `{server_nextboostlevel_until_required}` | Number      | Remaining boosts needed for next level. |
+| Server | `{server_status}`                        | String      | Subscription status (Standard/Premium/Deluxe). |
+| Server | `{server_class}`                         | String      | Alias for `{server_status}`.            |
 
 ### Channel & Message Variables
 
-
-| Group   | Name                   | Value      | Descript                          |
-| ------- | ---------------------- | ---------- | --------------------------------- |
-| Channel | `{channel}`            | `#channel` | Ping kênh hiện tại                |
-| Channel | `{channel_name}`       | String     | Tên kênh hiện tại                 |
-| Channel | `{channel_createdate}` | Date       | Ngày tạo kênh                     |
-| Channel | `{rule_channel}`       | `#rules`   | Kênh Rules/Guidelines (Community) |
-| Message | `{message_link}`       | URL        | Link dẫn đến tin nhắn gọi lệnh    |
-| Message | `{message_id}`         | String     | ID của tin nhắn                   |
-| Message | `{message_content}`    | String     | Nội dung gốc của tin nhắn         |
-| Misc    | `{date}`               | DateTime   | Ngày giờ hiện tại                 |
-| Misc    | `{newline}`            | `\n`       | Xuống dòng                        |
-| Misc    | `{embed_name}`         | String     | Tên embed từ meta data            |
-
+| Group   | Name                   | Value      | Description                           |
+| ------- | ---------------------- | ---------- | ------------------------------------- |
+| Channel | `{channel}`            | `#channel` | Pings the current channel.            |
+| Channel | `{channel_name}`       | String     | Current channel name.                 |
+| Channel | `{channel_createdate}` | Date       | Channel creation date.                |
+| Channel | `{rule_channel}`       | `#rules`   | Rules/Guidelines channel (Community). |
+| Message | `{message_link}`       | URL        | Link to the command message.          |
+| Message | `{message_id}`         | String     | Message ID.                           |
+| Message | `{message_content}`    | String     | Original message content.             |
+| Misc    | `{date}`               | DateTime   | Current date and time.                |
+| Misc    | `{newline}`            | `\n`       | New line character.                   |
+| Misc    | `{embed_name}`         | String     | Embed name from metadata.             |
 
 ---
 
 ## Advanced Logic (Phase 4)
 
-Biến logic nâng cao, yêu cầu đối số.
+Logic variables that require arguments.
 
-
-| Group | Name                             | Value         | Descript                                  |
-| ----- | -------------------------------- | ------------- | ----------------------------------------- |
-| Logic | `{range: 1-100}`                 | Random Number | Tạo số ngẫu nhiên trong khoảng            |
-| Logic | `{choose: A; B; C}`              | Random Pick   | Chọn ngẫu nhiên 1 mục                     |
-| Logic | `{lockedchoose: A; B}`           | Locked Pick   | Chọn ngẫu nhiên, kết quả cố định cho user |
-| Logic | `{weightedchoose: A 50%; B 50%}` | Weighted Pick | Chọn ngẫu nhiên theo tỉ lệ %              |
-| Logic | `[choice]`                       | Result        | Lấy kết quả từ `choose`                   |
-| Logic | `[lockedchoice]`                 | Result        | Lấy kết quả từ `lockedchoose`             |
-| Logic | `[$1]`, `[$2]`, ...              | Argument      | Lấy đối số thứ N người dùng nhập          |
-
+| Group | Name                             | Value         | Description                            |
+| ----- | -------------------------------- | ------------- | -------------------------------------- |
+| Logic | `{range: 1-100}`                 | Random Number | Generates a random number in range.    |
+| Logic | `{choose: A; B; C}`              | Random Pick   | Randomly selects one item.             |
+| Logic | `{lockedchoose: A; B}`           | Locked Pick   | Random select, fixed result per user.  |
+| Logic | `{weightedchoose: A 50%; B 50%}` | Weighted Pick | Random selection based on percentages. |
+| Logic | `[choice]`                       | Result        | Retrieves result from `choose`.        |
+| Logic | `[lockedchoice]`                 | Result        | Retrieves result from `lockedchoose`.  |
+| Logic | `[$1]`, `[$2]`, ...              | Argument      | Retrieves the N-th user argument.      |
 
 ---
 
 ## Modifiers (Phase 2)
 
-Điều khiển cách bot gửi phản hồi.
+Controls how the bot sends responses.
 
-
-| Group    | Name                   | Value      | Descript                             |
-| -------- | ---------------------- | ---------- | ------------------------------------ |
-| Modifier | `{dm}`                 | —          | Gửi phản hồi vào tin nhắn riêng      |
-| Modifier | `{sendto: channel_id}` | Channel ID | Gửi phản hồi vào kênh cụ thể         |
-| Modifier | `{embed: embed_id}`    | Embed ID   | Gọi mẫu embed từ Database            |
-| Modifier | `{silent}`             | —          | Gửi tin nhắn silent                  |
-| Modifier | `{delete}`             | —          | Xoá tin nhắn gọi lệnh                |
-| Modifier | `{delete_reply: 5}`    | Seconds    | Xoá phản hồi bot sau X giây          |
-
+| Group    | Name                   | Value      | Description                           |
+| -------- | ---------------------- | ---------- | ------------------------------------- |
+| Modifier | `{dm}`                 | —          | Sends response via Direct Message.    |
+| Modifier | `{sendto: channel_id}` | Channel ID | Sends response to a specific channel. |
+| Modifier | `{embed: embed_id}`    | Embed ID   | Calls an embed template from DB.      |
+| Modifier | `{silent}`             | —          | Sends message silently.               |
+| Modifier | `{delete}`             | —          | Deletes the trigger message.          |
+| Modifier | `{delete_reply: 5}`    | Seconds    | Deletes bot response after X seconds. |
 
 ---
 
 ## Guards (Phase 1)
 
-Điều kiện kiểm tra trước khi thực thi lệnh. Nếu không thoả → từ chối.
+Pre-execution conditions. If not met, the command is denied.
 
-
-| Group   | Name                   | Value      | Descript                        |
-| ------- | ---------------------- | ---------- | ------------------------------- |
-| Require | `{requireuser: id}`    | User ID    | Chỉ user này mới dùng được      |
-| Require | `{requireperm: perm}`  | Permission | Cần quyền cụ thể (VD: Admin)    |
-| Require | `{requirechannel: id}` | Channel ID | Chỉ dùng trong kênh cụ thể      |
-| Require | `{requirerole: id}`    | Role ID    | Cần có Role cụ thể              |
-| Require | `{requirebal: amount}` | Number     | Cần đủ X tiền ảo                |
-| Require | `{requireitem: name}`  | Item Name  | Cần có vật phẩm cụ thể          |
-| Require | `{requirearg: text}`   | Argument   | Bắt buộc nhập đối số            |
-| Deny    | `{denyuser: id}`       | User ID    | Chặn user này dùng lệnh         |
-| Deny    | `{denyperm: perm}`     | Permission | Chặn người có quyền này         |
-| Deny    | `{denychannel: id}`    | Channel ID | Chặn dùng ở kênh này            |
-| Deny    | `{denyrole: id}`       | Role ID    | Chặn người có Role này          |
-| Deny    | `{denyitem: name}`     | Item Name  | Chặn nếu có vật phẩm            |
-| Rate    | `{cooldown: seconds}`  | Seconds    | Thời gian chờ giữa các lần dùng |
-
+| Group   | Name                   | Value      | Description                      |
+| ------- | ---------------------- | ---------- | -------------------------------- |
+| Require | `{requireuser: id}`    | User ID    | Restricts to a specific user.    |
+| Require | `{requireperm: perm}`  | Permission | Requires specific permission.    |
+| Require | `{requirechannel: id}` | Channel ID | Restricts to specific channel.   |
+| Require | `{requirerole: id}`    | Role ID    | Requires a specific Role.        |
+| Require | `{requirebal: amount}` | Number     | Requires X currency.             |
+| Require | `{requireitem: name}`  | Item Name  | Requires a specific item.        |
+| Require | `{requirearg: text}`   | Argument   | Requires user input arguments.   |
+| Deny    | `{denyuser: id}`       | User ID    | Blocks a specific user.          |
+| Deny    | `{denyperm: perm}`     | Permission | Blocks users with permission.    |
+| Deny    | `{denychannel: id}`    | Channel ID | Blocks specific channel usage.   |
+| Deny    | `{denyrole: id}`       | Role ID    | Blocks users with specific Role. |
+| Deny    | `{denyitem: name}`     | Item Name  | Blocks if user has item.         |
+| Rate    | `{cooldown: seconds}`  | Seconds    | Cooldown between command usage.  |
 
 ---
 
 ## Actions (Phase 3)
 
-Hành động phụ được thực thi cùng phản hồi.
+Secondary actions executed alongside the response.
 
-
-| Group   | Name                         | Value          | Descript                       |
+| Group   | Name                         | Value          | Description                    |
 | ------- | ---------------------------- | -------------- | ------------------------------ |
-| Economy | `{modifybal: +100}`          | ±Number        | Cộng/Trừ tiền ảo               |
-| Economy | `{modifyinv: item}`          | Item           | Thêm/Xoá vật phẩm trong kho    |
-| Role    | `{addrole: id}`              | Role ID        | Cấp Role cho user              |
-| Role    | `{removerole: id}`           | Role ID        | Thu hồi Role của user          |
-| Profile | `{setnick: name}`            | Nickname       | Đổi biệt danh của user         |
-| React   | `{react: emoji}`             | Emoji          | Bot thả emoji vào tin nhắn gốc |
-| React   | `{reactreply: emoji}`        | Emoji          | Bot thả emoji vào phản hồi     |
-| UI      | `{addbutton: label|script}`  | Label + Script | Thêm nút bấm interactif        |
-| UI      | `{addlinkbutton: label|url}` | Label + URL    | Thêm nút bấm dẫn link web      |
-
-
+| Economy | `{modifybal: +100}`          | ±Number        | Adds/Subtracts currency.       |
+| Economy | `{modifyinv: item}`          | Item           | Adds/Removes inventory item.   |
+| Role    | `{addrole: id}`              | Role ID        | Assigns role to user.          |
+| Role    | `{removerole: id}`           | Role ID        | Removes role from user.        |
+| Profile | `{setnick: name}`            | Nickname       | Changes user nickname.         |
+| React   | `{react: emoji}`             | Emoji          | Bot reacts to trigger message. |
+| React   | `{reactreply: emoji}`        | Emoji          | Bot reacts to its response.    |
+| UI      | `{addbutton: label\|script}` | Label + Script | Adds an interactive button.    |
+| UI      | `{addlinkbutton: label\|url}`| Label + URL    | Adds a web link button.        |

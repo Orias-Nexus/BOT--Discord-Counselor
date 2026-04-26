@@ -1,0 +1,378 @@
+{
+  "Discord_Bot_Architecture": {
+    "Database": {
+      "description": "Database schema managed via Prisma ORM.",
+      "Enums": {
+        "member_status_enum": ["Newbie", "Good", "Warn", "Mute", "Lock", "Kick", "Leaved"],
+        "category_type_enum": ["Creator", "Stats"],
+        "server_status_enum": ["Standard", "Premium", "Deluxe", "Leaved"],
+        "message_type_enum": ["Messages", "Greeting", "Leaving", "Boosting", "Leveling", "Logging"]
+      },
+      "Tables": [
+        {
+          "name": "servers",
+          "description": "Server configuration and state.",
+          "columns": [
+            "server_id: Primary Key - Discord Guild ID",
+            "time_warn: Int - duration for warning status (seconds)",
+            "time_mute: Int - duration for mute status (seconds)",
+            "time_lock: Int - duration for lock status (seconds)",
+            "time_new: Int - duration for newbie status (seconds)",
+            "role_warn: String - Role ID assigned on warn",
+            "role_mute: String - Role ID assigned on mute",
+            "role_lock: String - Role ID assigned on lock",
+            "role_new: String - Role ID assigned on join (newbie)",
+            "unrole_mute: String - Role ID removed on mute",
+            "unrole_lock: String - Role ID removed on lock",
+            "status: server_status_enum - subscription level",
+            "created_at: DateTime - creation timestamp",
+            "updated_at: DateTime - last update timestamp"
+          ]
+        },
+        {
+          "name": "users",
+          "description": "Global user data across all servers.",
+          "columns": [
+            "user_id: Primary Key - Discord User ID",
+            "user_exp: BigInt - global experience points",
+            "user_level: Int - global level",
+            "created_at: DateTime",
+            "updated_at: DateTime"
+          ]
+        },
+        {
+          "name": "members",
+          "description": "Local member data specific to a server.",
+          "columns": [
+            "server_id: Composite Key / Foreign Key to servers",
+            "user_id: Composite Key / Foreign Key to users",
+            "member_exp: BigInt - local experience points",
+            "member_level: Int - local level",
+            "member_status: member_status_enum - current status",
+            "member_expires: DateTime - timestamp when status expires",
+            "created_at: DateTime",
+            "updated_at: DateTime"
+          ]
+        },
+        {
+          "name": "channels",
+          "description": "Administrative categories for Voice Creator or Stats.",
+          "columns": [
+            "category_id: Primary Key - Discord Category ID",
+            "category_type: category_type_enum - Creator or Stats",
+            "server_id: Foreign Key to servers",
+            "channels_idx: Int - index or order",
+            "created_at: DateTime",
+            "updated_at: DateTime"
+          ]
+        },
+        {
+          "name": "embeds",
+          "description": "User-defined embed templates.",
+          "columns": [
+            "embed_id: Primary Key - UUID v7",
+            "embed_name: String - unique name per server",
+            "server_id: Foreign Key to servers",
+            "embed: Json - embed structure",
+            "created_at: DateTime",
+            "updated_at: DateTime"
+          ]
+        },
+        {
+          "name": "messages",
+          "description": "Configuration for automated messages (Greeting, Leaving, etc.).",
+          "columns": [
+            "messages_id: Primary Key - UUID v7",
+            "messages_type: message_type_enum",
+            "server_id: Foreign Key to servers",
+            "channel_id: String - target Discord channel ID",
+            "embed_id: Foreign Key to embeds",
+            "created_at: DateTime",
+            "updated_at: DateTime"
+          ]
+        },
+        {
+          "name": "levels",
+          "description": "Global level thresholds definition.",
+          "columns": [
+            "level_id: Primary Key - UUID v7",
+            "level: Int - unique level number",
+            "exp: BigInt - experience required for this level",
+            "created_at: DateTime",
+            "updated_at: DateTime"
+          ]
+        }
+      ]
+    },
+    "Script": {
+      "description": "Core logic modules executed by the bot. Triggered by Events, Actions, or Slash commands.",
+      "items": [
+        {
+          "name": "ServerInfo",
+          "description": "Displays comprehensive server information.",
+          "triggered_by": ["Slash: /serverinfo"]
+        },
+        {
+          "name": "StatusTimeout",
+          "description": "Configures status durations (Warn, Mute, Lock, New).",
+          "triggered_by": ["Slash: /statustimeout", "Action: Status Timeout"]
+        },
+        {
+          "name": "StatusRole",
+          "description": "Configures roles for statuses.",
+          "triggered_by": ["Slash: /statusrole", "Action: Status Role"]
+        },
+        {
+          "name": "StatusUnrole",
+          "description": "Configures roles to be removed on Mute/Lock.",
+          "triggered_by": ["Slash: /statusunrole", "Action: Status Unrole"]
+        },
+        {
+          "name": "CategoryInfo",
+          "description": "Displays category details.",
+          "triggered_by": ["Slash: /categoryinfo"]
+        },
+        {
+          "name": "CategoryClone",
+          "description": "Clones a category and all its channels.",
+          "triggered_by": ["Slash: /categoryclone", "Action: Clone"]
+        },
+        {
+          "name": "CategoryPrivate",
+          "description": "Sets a category to private.",
+          "triggered_by": ["Slash: /categoryprivate", "Action: Private"]
+        },
+        {
+          "name": "CategoryPublic",
+          "description": "Sets a category to public.",
+          "triggered_by": ["Slash: /categorypublic", "Action: Public"]
+        },
+        {
+          "name": "ChannelInfo",
+          "description": "Displays channel details.",
+          "triggered_by": ["Slash: /channelinfo"]
+        },
+        {
+          "name": "ChannelClone",
+          "description": "Clones a specific channel.",
+          "triggered_by": ["Slash: /channelclone", "Action: Clone"]
+        },
+        {
+          "name": "ChannelSync",
+          "description": "Syncs channel permissions with parent category.",
+          "triggered_by": ["Slash: /channelsync", "Action: Sync"]
+        },
+        {
+          "name": "ChannelPrivate",
+          "description": "Sets a channel to private.",
+          "triggered_by": ["Slash: /channelprivate", "Action: Private"]
+        },
+        {
+          "name": "ChannelPublic",
+          "description": "Sets a channel to public.",
+          "triggered_by": ["Slash: /channelpublic", "Action: Public"]
+        },
+        {
+          "name": "ChannelSFW",
+          "description": "Disables NSFW on a channel.",
+          "triggered_by": ["Slash: /channelsfw", "Action: SFW"]
+        },
+        {
+          "name": "ChannelNSFW",
+          "description": "Enables NSFW on a channel.",
+          "triggered_by": ["Slash: /channelnsfw", "Action: NSFW"]
+        },
+        {
+          "name": "ChannelBitrate",
+          "description": "Adjusts voice channel bitrate.",
+          "triggered_by": ["Slash: /channelbitrate"]
+        },
+        {
+          "name": "ChannelLimit",
+          "description": "Adjusts voice channel user limit.",
+          "triggered_by": ["Slash: /channellimit"]
+        },
+        {
+          "name": "ChannelSlow",
+          "description": "Enables slow mode on a channel.",
+          "triggered_by": ["Slash: /channelslow"]
+        },
+        {
+          "name": "ChannelUnslow",
+          "description": "Disables slow mode on a channel.",
+          "triggered_by": ["Slash: /channelunslow"]
+        },
+        {
+          "name": "ChannelCreate",
+          "description": "Auto-creates and manages private voice rooms.",
+          "triggered_by": ["Event: VoiceStateUpdate"]
+        },
+        {
+          "name": "SetVoiceCreator",
+          "description": "Designates a channel as a Voice Creator.",
+          "triggered_by": ["Slash: /setvoicecreator", "Action: Voice Creator"]
+        },
+        {
+          "name": "SetServerStats",
+          "description": "Creates and updates server statistics channels.",
+          "triggered_by": ["Slash: /setserverstats", "Action: Server Stats"]
+        },
+        {
+          "name": "MemberInfo",
+          "description": "Displays member profile and stats.",
+          "triggered_by": ["Slash: /memberinfo"]
+        },
+        {
+          "name": "MemberRename",
+          "description": "Changes member nickname.",
+          "triggered_by": ["Slash: /memberrename", "Action: Name"]
+        },
+        {
+          "name": "MemberSetlevel",
+          "description": "Manually sets member level.",
+          "triggered_by": ["Slash: /memberlevel", "Action: Level"]
+        },
+        {
+          "name": "MemberMove",
+          "description": "Moves members between voice channels.",
+          "triggered_by": ["Slash: /membermove", "Action: Move"]
+        },
+        {
+          "name": "MemberReset",
+          "description": "Resets member status to Good.",
+          "triggered_by": ["Slash: /memberreset", "Action: Good"]
+        },
+        {
+          "name": "MemberWarn",
+          "description": "Warns a member.",
+          "triggered_by": ["Slash: /memberwarn", "Action: Warn"]
+        },
+        {
+          "name": "MemberMute",
+          "description": "Mutes a member.",
+          "triggered_by": ["Slash: /membermute", "Action: Mute"]
+        },
+        {
+          "name": "MemberLock",
+          "description": "Locks a member's permissions.",
+          "triggered_by": ["Slash: /memberlock", "Action: Lock"]
+        },
+        {
+          "name": "MemberKick",
+          "description": "Kicks a member from the server.",
+          "triggered_by": ["Slash: /memberkick", "Action: Kick"]
+        },
+        {
+          "name": "MemberGreeting",
+          "description": "Handles member joining events.",
+          "triggered_by": ["Event: MemberJoined"]
+        },
+        {
+          "name": "MemberLeaving",
+          "description": "Handles member leaving events.",
+          "triggered_by": ["Event: MemberLeaved"]
+        },
+        {
+          "name": "MemberBoosting",
+          "description": "Handles server boost events.",
+          "triggered_by": ["Event: MemberBoosting"]
+        },
+        {
+          "name": "MemberLeveling",
+          "description": "Handles level up events.",
+          "triggered_by": ["Event: LevelUp"]
+        },
+        {
+          "name": "MemberLogging",
+          "description": "Logs administrative actions.",
+          "triggered_by": ["Event: Logging"]
+        },
+        {
+          "name": "EmbedCreate",
+          "description": "Creates a new embed template.",
+          "triggered_by": ["Slash: /embedcreate"]
+        },
+        {
+          "name": "EmbedEdit",
+          "description": "Interactive editor for embeds.",
+          "triggered_by": ["Slash: /embededit"]
+        },
+        {
+          "name": "EmbedRename",
+          "description": "Renames an embed template.",
+          "triggered_by": ["Slash: /embedrename"]
+        },
+        {
+          "name": "EmbedDelete",
+          "description": "Deletes an embed template.",
+          "triggered_by": ["Slash: /embeddelete"]
+        },
+        {
+          "name": "EmbedApply",
+          "description": "Applies an embed to a message type.",
+          "triggered_by": ["Slash: /embedapply"]
+        },
+        {
+          "name": "MessageSend",
+          "description": "Sends a custom message/embed.",
+          "triggered_by": ["Slash: /messagesend"]
+        },
+        {
+          "name": "MessageDele",
+          "description": "Batch deletes messages.",
+          "triggered_by": ["Slash: /messagedele"]
+        },
+        {
+          "name": "TopGlobal",
+          "description": "Displays global leaderboards.",
+          "triggered_by": ["Slash: /topglobal"]
+        },
+        {
+          "name": "TopLocal",
+          "description": "Displays server leaderboards.",
+          "triggered_by": ["Slash: /toplocal"]
+        }
+      ]
+    },
+    "Event": {
+      "description": "Automated triggers mapped to scripts.",
+      "items": [
+        {
+          "name": "MemberJoined",
+          "script": "MemberGreeting",
+          "logic": "GuildMemberAdd"
+        },
+        {
+          "name": "MemberLeaved",
+          "script": "MemberLeaving",
+          "logic": "GuildMemberRemove"
+        },
+        {
+          "name": "MemberBoosting",
+          "script": "MemberBoosting",
+          "logic": "GuildMemberUpdate (Boost check)"
+        },
+        {
+          "name": "VoiceStateUpdate",
+          "script": "ChannelCreate",
+          "logic": "VoiceStateUpdate"
+        }
+      ]
+    },
+    "Job": {
+      "description": "Periodic background tasks.",
+      "items": [
+        {
+          "name": "expiresCheck",
+          "interval_seconds": 60,
+          "description": "Processes status expirations and role restorations."
+        },
+        {
+          "name": "statsCheck",
+          "interval_seconds": 60,
+          "description": "Updates server statistics channels."
+        }
+      ]
+    }
+  }
+}
