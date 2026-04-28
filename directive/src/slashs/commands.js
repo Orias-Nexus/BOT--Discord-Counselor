@@ -5,7 +5,7 @@ import {
 } from '../discord.js';
 
 /**
- * Slash command definitions from Architecture.json.
+ * Slash command definitions from ARCHITECTURES.json.
  * Each entry: command name (without /), script name, options builder.
  */
 const SLASH_LIST = [
