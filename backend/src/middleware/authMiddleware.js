@@ -9,7 +9,7 @@ const permKey = (serverId, userId, actionType) => `perm:${serverId}:${userId}:${
 
 export const verifyAuth = async (req, res, next) => {
   const internalKey = req.headers['x-internal-key'];
-  if (internalKey && internalKey === env.internalSecretKey) {
+  if (internalKey && internalKey === env.internalSecret) {
     req.user = { id: 'bot', isBot: true };
     return next();
   }
@@ -22,7 +22,7 @@ export const verifyAuth = async (req, res, next) => {
   const token = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, env.jwtSecret);
+    const decoded = jwt.verify(token, env.authJwtSecret);
 
     // Backward compatibility: nếu JWT cũ còn mang discordAccessToken thì accept.
     if (decoded.sid) {
@@ -66,7 +66,7 @@ function isConnectionError(err) {
 
 async function callCheckPermission(payload) {
   return axios.post(`${env.directiveApiUrl}/internal/check-permission`, payload, {
-    headers: { 'x-internal-key': env.internalSecretKey },
+    headers: { 'x-internal-key': env.internalSecret },
     timeout: 5000,
   });
 }
