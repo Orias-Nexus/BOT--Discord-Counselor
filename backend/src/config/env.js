@@ -1,58 +1,61 @@
 import 'dotenv/config';
 
-const isProd = process.env.NODE_ENV === 'production';
-
 const env = {
-  isProd,
-  nodeEnv: process.env.NODE_ENV || 'development',
-  port: parseInt(process.env.PORT, 10) || 4000,
+  isProd: process.env.NODE_ENV,
+  nodeEnv: process.env.NODE_ENV,
 
-  discordClientId: process.env.APPLICATION_ID || '',
-  discordClientSecret: process.env.DISCORD_CLIENT_SECRET || '',
-  discordBotInviteUrl: process.env.DISCORD_BOT_INVITE_URL || '',
-  discordRedirectUri:
-    process.env.DISCORD_REDIRECT_URI ||
-    (isProd
-      ? 'https://orias-counselor.duckdns.org/api/auth/discord/callback'
-      : 'http://localhost:4000/api/auth/discord/callback'),
+  // Server port
+  port: parseInt(process.env.PORT, 10),
+  
+  // Connection Secret Keys 
+  authJwtSecret: process.env.AUTH_JWT_SECRET,
+  internalSecret: process.env.INTERNAL_SECRET,
 
-  jwtSecret: process.env.AUTH_JWT_SECRET || 'super-secret-key-123',
-  internalSecretKey: process.env.INTERNAL_SECRET_KEY || 'default-internal-secret',
-  directiveApiUrl: process.env.DIRECTIVE_API_URL || (isProd ? 'http://directive:4001' : 'http://127.0.0.1:4001'),
+  // Discord Application Connection
+  discordApplicationID: process.env.DISCORD_APPLICATION_ID,
+  discordBotInviteUrl: process.env.DISCORD_BOT_INVITE_URL,
+  discordRedirectUri: process.env.DISCORD_REDIRECT_URL,
+  discordClientSecret: process.env.DISCORD_CLIENT_SECRET,
 
-  poolerUrl: process.env.POOLER_URL || '',
-  directUrl: process.env.DIRECT_URL || '',
+  // Postgres Schema Url
+  databasePoolerUrl: process.env.DATABASE_POOLER_URL,
+  databaseDirectUrl: process.env.DATABASE_DIRECT_URL,
 
-  redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
-
-  frontendOrigin:
-    process.env.FRONTEND_ORIGIN ||
-    (isProd ? 'https://orias-counselor.duckdns.org' : 'http://localhost:3000'),
+  // Domain Urls
+  frontendHomeUrl: process.env.FRONTEND_HOME_URL,
+  directiveApiUrl: process.env.DIRECTIVE_API_URL,
+  redisStorageUrl: process.env.REDIS_STORAGE_URL,
 };
 
-// Fail-fast: production không thể khởi động thiếu biến quan trọng.
-if (isProd) {
-  const required = {
-    APPLICATION_ID: env.discordClientId,
-    DISCORD_CLIENT_SECRET: env.discordClientSecret,
-    AUTH_JWT_SECRET: env.jwtSecret === 'super-secret-key-123' ? '' : env.jwtSecret,
-    INTERNAL_SECRET_KEY:
-      env.internalSecretKey === 'default-internal-secret' ? '' : env.internalSecretKey,
-  };
-  const missing = Object.entries(required)
-    .filter(([, v]) => !v)
-    .map(([k]) => k);
-  if (missing.length > 0) {
-    console.error(`[config] Missing required env in production: ${missing.join(', ')}`);
-    process.exit(1);
-  }
+// REQUIRED
+const required = {
+  AUTH_JWT_SECRET: env.authJwtSecret,
+  INTERNAL_SECRET: env.internalSecret,
+
+  DISCORD_APPLICATION_ID: env.discordApplicationID,
+  DISCORD_BOT_INVITE_URL: env.discordBotInviteUrl,
+  DISCORD_REDIRECT_URL: env.discordRedirectUri,
+  DISCORD_CLIENT_SECRET: env.discordClientSecret,
+
+  DATABASE_POOLER_URL: env.databasePoolerUrl,
+  DATABASE_DIRECT_URL: env.databaseDirectUrl,
+
+  FRONTEND_HOME_URL: env.frontendHomeUrl,
+  DIRECTIVE_API_URL: env.directiveApiUrl,
+  REDIS_STORAGE_URL: env.redisStorageUrl,
+};
+
+const missing = Object.entries(required)
+  .filter(([, v]) => !v)
+  .map(([k]) => k);
+if (missing.length > 0) {
+  console.error(`[config] Missing required env in production: ${missing.join(', ')}`);
+  process.exit(1);
 }
 
-if (!isProd) {
-  console.log('[config] Environment:', env.nodeEnv);
-  console.log('[config] Port:', env.port);
-  console.log('[config] Redis:', env.redisUrl);
-  console.log('[config] Frontend:', env.frontendOrigin);
-}
+console.log('[config] Environment:', env.nodeEnv);
+console.log('[config] Port:', env.port);
+console.log('[config] Redis:', env.redisStorageUrl);
+console.log('[config] Frontend:', env.frontendHomeUrl);
 
 export default env;
