@@ -19,7 +19,7 @@ The Discord Counselor System is a robust, enterprise-ready infrastructure design
 |-- directive/              # Bot Client Worker (Discord.js, BullMQ Node)
 |-- frontend/               # Web Dashboard Client (React, Vite, Tailwind CSS)
 |-- docs/                   # Detailed Technical Documentation Repository
-|-- infrastructure/         # Automated Shell Scripts and Cloud Architecture Guides
+|-- infra/         	    # Automated Shell Scripts and Cloud Architecture Guides
 |-- docker-compose.yml      # Orchestration instructions for Docker environments
 |-- render.yaml             # Blueprint Configuration for Render.com Auto-deployment
 ```
@@ -31,7 +31,7 @@ To dive deeper into the technical segments of the system, please refer to the fo
 - [System Architecture](public/docs/ARCHITECTURE.md): Data workflow, Redis topology, and Queue state management.
 - [Local Development Guide](public/docs/DEVELOPMENT.md): Detailed local setup tutorials for `.env` configuration, Prisma workflows, and direct Node execution.
 - [Deployment Setup](public/docs/DEPLOYMENT.md): Blueprints for hosting on Cloud platforms (Render) or Virtual Private Servers (Docker Compose).
-- [Infrastructure Commands](infrastructure/README.md): Fast, actionable CLI commands for Server operators.
+- [Infrastructure Commands](infra/README.md): Fast, actionable CLI commands for Server operators.
 
 <h2 style="color: #607d8b;">System Requirements</h2>
 
