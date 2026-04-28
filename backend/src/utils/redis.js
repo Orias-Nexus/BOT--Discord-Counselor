@@ -10,7 +10,7 @@ function buildRedisOptions(url) {
   return opts;
 }
 
-export const redisClient = new Redis(env.redisUrl, buildRedisOptions(env.redisUrl));
+export const redisClient = new Redis(env.redisStorageUrl, buildRedisOptions(env.redisStorageUrl));
 
 redisClient.on('connect', () => {
   console.log(`[Redis] Connected (${env.isProd ? 'production' : 'local'})`);
