@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE SCHEMA IF NOT EXISTS "DiscordCounselor";
 
 -- -----------------------------------------------------------------------------
--- ENUM: Member Status (Architecture.json Database.Enum)
+-- ENUM: Member Status (ARCHITECTURES.json Database.Enum)
 -- -----------------------------------------------------------------------------
 DO $$ BEGIN
     CREATE TYPE "DiscordCounselor".member_status_enum AS ENUM (
@@ -15,8 +15,9 @@ DO $$ BEGIN
         'Kick',
         'Leaved'
     );
-EXCEPTION
-    WHEN duplicate_object THEN NULL;
+
+EXCEPTION WHEN duplicate_object THEN NULL;
+
 END $$;
 
 COMMENT ON TYPE "DiscordCounselor".member_status_enum IS 'Trạng thái thành viên trong server';
