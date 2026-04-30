@@ -31,7 +31,7 @@ const httpServer = createServer(app);
 initSocket(httpServer);
 
 app.set('trust proxy', 1);
-app.use(cors({ origin: env.frontendOrigin, credentials: true }));
+app.use(cors({ origin: env.frontendHomeUrl, credentials: true }));
 app.use(express.json({ limit: '1mb' }));
 app.use(monitoringMiddleware);
 app.use('/assets', express.static(path.join(__dirname, '../../assets')));
@@ -103,9 +103,9 @@ httpServer.listen(env.port, () => {
   console.log(`Backend API running at http://localhost:${env.port} [${env.nodeEnv}]`);
   console.log(`[startup] API base: http://localhost:${env.port}/api`);
   console.log(`[startup] Health:   http://localhost:${env.port}/health`);
-  console.log(`[startup] FRONTEND_ORIGIN: ${env.frontendOrigin}`);
-  console.log(`[startup] DISCORD_REDIRECT_URI: ${env.discordRedirectUri}`);
-  console.log(`[startup] REDIS_URL: ${env.redisUrl || '(not set)'}`);
+  console.log(`[startup] FRONTEND_HOME_URL: ${env.frontendHomeUrl}`);
+  console.log(`[startup] DISCORD_REDIRECT_URL: ${env.discordRedirectUri}`);
+  console.log(`[startup] REDIS_STORAGE_URL: ${env.redisStorageUrl || '(not set)'}`);
 });
 
 export { app, httpServer, logger };
