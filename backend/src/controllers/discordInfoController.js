@@ -11,7 +11,7 @@ async function callDirective(pathname, params = null) {
   const url = `${env.directiveApiUrl}${pathname}`;
   const { data } = await axios.get(url, {
     params,
-    headers: { 'x-internal-key': env.internalSecretKey },
+    headers: { 'x-internal-key': env.internalSecret },
     timeout: 5000,
   });
   return data;
