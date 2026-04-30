@@ -1,5 +1,5 @@
 import Redis from 'ioredis';
-import { REDIS_URL } from '../config.js';
+import { REDIS_STORAGE_URL } from '../config.js';
 
 function buildRedisOptions(url) {
   const opts = { maxRetriesPerRequest: null };
@@ -9,7 +9,7 @@ function buildRedisOptions(url) {
   return opts;
 }
 
-export const redisClient = new Redis(REDIS_URL, buildRedisOptions(REDIS_URL));
+export const redisClient = new Redis(REDIS_STORAGE_URL, buildRedisOptions(REDIS_STORAGE_URL));
 
 redisClient.on('error', (err) => {
   console.error('[Redis]', err.message);
