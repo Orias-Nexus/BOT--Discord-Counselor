@@ -4,11 +4,11 @@ import env from './config.js';
 
 /**
  * Middleware: Mọi endpoint /internal/* bắt buộc phải có header `x-internal-key`
- * trùng với INTERNAL_SECRET_KEY. Ngăn external caller bắn request.
+ * trùng với INTERNAL_SECRET. Ngăn external caller bắn request.
  */
 function requireInternalKey(req, res, next) {
   const key = req.headers['x-internal-key'];
-  if (!key || key !== env.internalSecretKey) {
+  if (!key || key !== env.internalSecret) {
     return res.status(401).json({ error: 'Unauthorized: missing or invalid internal key' });
   }
   return next();
