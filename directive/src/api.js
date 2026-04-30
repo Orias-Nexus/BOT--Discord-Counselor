@@ -14,7 +14,7 @@ async function request(path, options = {}) {
       signal: options.signal ?? controller.signal,
       headers: {
         'Content-Type': 'application/json',
-        'x-internal-key': env.internalSecretKey,
+        'x-internal-key': env.internalSecret,
         ...options.headers,
       },
     });
