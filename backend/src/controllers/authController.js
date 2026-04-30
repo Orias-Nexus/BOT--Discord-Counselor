@@ -4,10 +4,10 @@ import env from '../config/env.js';
 import { createSession, destroySession, getSession } from '../utils/sessionStore.js';
 import { cacheGet, cacheSet, cacheDel } from '../utils/cache.js';
 
-const APPLICATION_ID = env.discordClientId;
+const DISCORD_APPLICATION_ID = env.discordApplicationID;
 const DISCORD_CLIENT_SECRET = env.discordClientSecret;
-const DISCORD_REDIRECT_URI = env.discordRedirectUri;
-const AUTH_JWT_SECRET = env.jwtSecret;
+const DISCORD_REDIRECT_URL = env.discordRedirectUri;
+const AUTH_JWT_SECRET = env.authJwtSecret;
 const SESSION_TTL_SECONDS = 7 * 24 * 60 * 60;
 const JWT_EXPIRES_IN = '7d';
 
@@ -16,12 +16,12 @@ function signJwt(payload) {
 }
 
 export const getDiscordLoginUrl = (_req, res) => {
-  const url = `https://discord.com/api/oauth2/authorize?client_id=${APPLICATION_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URI)}&response_type=code&scope=identify%20guilds`;
+  const url = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_APPLICATION_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URL)}&response_type=code&scope=identify%20guilds`;
   res.redirect(url);
 };
 
 function buildBotInviteUrl(guildId = '') {
-  const fallback = `https://discord.com/oauth2/authorize?client_id=${APPLICATION_ID}&scope=bot%20applications.commands&permissions=8`;
+  const fallback = `https://discord.com/oauth2/authorize?client_id=${DISCORD_APPLICATION_ID}&scope=bot%20applications.commands&permissions=8`;
   const base = env.discordBotInviteUrl || fallback;
   try {
     const url = new URL(base);
@@ -46,11 +46,11 @@ export const handleDiscordCallback = async (req, res) => {
 
   try {
     const params = new URLSearchParams({
-      client_id: APPLICATION_ID,
+      client_id: DISCORD_APPLICATION_ID,
       client_secret: DISCORD_CLIENT_SECRET,
       grant_type: 'authorization_code',
       code,
-      redirect_uri: DISCORD_REDIRECT_URI,
+      redirect_uri: DISCORD_REDIRECT_URL,
     });
 
     const tokenResponse = await axios.post('https://discord.com/api/oauth2/token', params.toString(), {
@@ -86,7 +86,7 @@ export const handleDiscordCallback = async (req, res) => {
       avatar: userData.avatar,
     });
 
-    const FRONTEND_URL = env.frontendOrigin;
+    const FRONTEND_URL = env.frontendHomeUrl;
     // Truyền token qua hash fragment — không được lưu vào server log / Referer header.
     res.redirect(`${FRONTEND_URL}/login#token=${encodeURIComponent(jwtToken)}`);
   } catch (error) {
@@ -126,7 +126,7 @@ const guildsKey = (userId) => `guilds:${userId}`;
 async function ensureBotInGuild(guildId) {
   try {
     await axios.get(`${env.directiveApiUrl}/internal/guild/${guildId}/info`, {
-      headers: { 'x-internal-key': env.internalSecretKey },
+      headers: { 'x-internal-key': env.internalSecret },
       timeout: 3000,
     });
     return true;
