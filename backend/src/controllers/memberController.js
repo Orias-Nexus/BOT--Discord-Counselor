@@ -16,7 +16,7 @@ async function fetchDiscordMemberMap(serverId, limit = 100) {
   try {
     const { data } = await axios.get(`${env.directiveApiUrl}/internal/guild/${serverId}/members`, {
       params: { limit: Math.min(limit, 100) },
-      headers: { 'x-internal-key': env.internalSecretKey },
+      headers: { 'x-internal-key': env.internalSecret },
       timeout: 5000,
     });
     const members = Array.isArray(data?.members) ? data.members : [];
