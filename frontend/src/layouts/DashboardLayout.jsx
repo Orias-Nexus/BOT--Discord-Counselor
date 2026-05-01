@@ -10,13 +10,13 @@ import { useAuth } from "../contexts/AuthContext";
 import VariablesDrawer from "../components/VariablesDrawer";
 
 const SIDEBAR_ITEMS = [
-  { icon: "dashboard", label: "Dashboard", path: "/" },
+  { icon: "grid_view", label: "Overview", path: "/" },
   { icon: "group", label: "Members", path: "/members" },
-  { icon: "grid_view", label: "Channels", path: "/channels" },
-  { icon: "forum", label: "Messages", path: "/messages" },
-  { icon: "article", label: "Embeds", path: "/embeds" },
+  { icon: "hub", label: "Channels", path: "/channels" },
+  { icon: "receipt_long", label: "Logs", path: "/messages" },
+  { icon: "integration_instructions", label: "Embeds", path: "/embeds" },
   { icon: "emoji_events", label: "Leaderboard", path: "/leaderboard" },
-  { icon: "smart_toy", label: "Settings", path: "/settings" },
+  { icon: "settings", label: "Settings", path: "/settings" },
 ];
 
 export default function DashboardLayout() {
@@ -41,12 +41,12 @@ export default function DashboardLayout() {
 
   if (!selectedServerId && guilds.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface text-on-surface">
+      <div className="min-h-screen flex items-center justify-center bg-background text-on-surface">
         <div className="text-center">
           <span className="material-symbols-outlined animate-spin text-4xl text-primary">
             sync
           </span>
-          <p className="mt-4 text-slate-400">Loading server list...</p>
+          <p className="mt-4 text-on-surface-variant">Loading server list...</p>
         </div>
       </div>
     );
@@ -56,26 +56,34 @@ export default function DashboardLayout() {
 
   const initial = (user?.username || user?.name || "A").charAt(0).toUpperCase();
 
+  const selectedGuild = guilds.find((g) => g.id === selectedServerId);
+
   return (
-    <div className="bg-surface text-on-surface font-body selection:bg-primary/30 min-h-screen">
-      <aside className="h-screen w-64 fixed left-0 top-0 flex flex-col bg-surface-container-lowest border-r border-white/5 z-60 font-['Manrope'] font-medium">
-        <div className="p-8 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-primary to-primary-container flex items-center justify-center shadow-[0_0_20px_rgba(218,185,255,0.3)]">
-            <span className="material-symbols-outlined text-on-primary text-2xl">
-              shield_person
+    <div className="bg-background text-on-surface min-h-screen flex">
+      {/* ── Sidebar ── */}
+      <aside className="fixed left-0 top-0 h-full z-40 flex flex-col bg-sidebar w-72 border-r border-sidebar-border px-6 py-10">
+        {/* Brand */}
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary">
+            <span
+              className="material-symbols-outlined"
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
+              smart_toy
             </span>
           </div>
           <div>
-            <h1 className="text-2xl font-black font-['Space_Grotesk'] text-[#dab9ff] leading-none">
+            <h1 className="text-lg font-extrabold text-on-surface tracking-tight leading-tight">
               Orias's Pet
             </h1>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 mt-1">
-              Elite Management
+            <p className="text-label-sm text-on-surface-variant">
+              Studio Workspace
             </p>
           </div>
         </div>
 
-        <nav className="flex-1 px-4 mt-4 space-y-1 overflow-y-auto">
+        {/* Navigation */}
+        <nav className="flex-1 space-y-1 overflow-y-auto">
           {SIDEBAR_ITEMS.map((item) => {
             const isActive =
               location.pathname === item.path ||
@@ -86,85 +94,125 @@ export default function DashboardLayout() {
                 to={item.path}
                 className={
                   isActive
-                    ? "flex items-center gap-3 px-4 py-3 bg-linear-to-r from-[#dab9ff]/20 to-transparent border-l-4 border-[#dab9ff] text-[#dab9ff] duration-200"
-                    : "flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-200 hover:bg-[#32353c]/30 transition-all hover:translate-x-1 duration-200"
+                    ? "flex items-center gap-4 text-nav-active bg-nav-active-bg rounded-2xl px-5 py-3 border-l-4 border-nav-active shadow-sm transition-all duration-200 ease-in-out text-sm font-medium"
+                    : "flex items-center gap-4 text-nav-inactive px-5 py-3 hover:text-nav-active hover:bg-nav-active-bg/50 rounded-2xl transition-all duration-200 ease-in-out cursor-pointer active:scale-95 text-sm font-medium"
                 }
               >
                 <span
                   className="material-symbols-outlined"
-                  style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}
+                  style={
+                    isActive
+                      ? { fontVariationSettings: "'FILL' 1" }
+                      : {}
+                  }
                 >
                   {item.icon}
                 </span>
-                <span>{item.label}</span>
+                {item.label}
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t border-white/5 space-y-1">
+        {/* Footer */}
+        <div className="mt-auto space-y-1 pt-8 border-t border-outline-variant/30">
+          <Link
+            to="/landing"
+            className="flex items-center gap-4 text-nav-inactive px-5 py-3 hover:text-nav-active hover:bg-nav-active-bg/50 rounded-2xl transition-all duration-200 ease-in-out text-sm font-medium"
+          >
+            <span className="material-symbols-outlined">contact_support</span>
+            Support
+          </Link>
           <button
             type="button"
             onClick={() => logout({ reason: "manual" })}
-            className="w-full flex items-center gap-3 px-4 py-3 mt-2 text-error/80 hover:text-error hover:bg-error/10 rounded-lg transition-all"
+            className="w-full flex items-center gap-4 text-nav-inactive px-5 py-3 hover:text-error hover:bg-error-container/30 rounded-2xl transition-all duration-200 ease-in-out text-sm font-medium"
           >
             <span className="material-symbols-outlined">logout</span>
-            <span>Log Out</span>
+            Logout
           </button>
         </div>
       </aside>
 
-      <header className="fixed top-0 left-64 right-0 z-50 flex items-center justify-between px-8 py-4 bg-[#10131a]/40 backdrop-blur-xl shadow-[0_24px_48px_rgba(0,0,0,0.5)]">
-        <div className="flex items-center gap-4">
-          <h2 className="text-xl font-bold bg-linear-to-r from-[#dab9ff] to-primary-container bg-clip-text text-transparent font-['Space_Grotesk'] tracking-tight">
-            Discord Counselor — Admin
-          </h2>
-        </div>
-        <div className="flex items-center gap-6">
-          {guilds && guilds.length > 0 && (
-            <div className="relative group hidden md:block">
-              <select
-                value={selectedServerId || ""}
-                onChange={(e) => setSelectedServerId(e.target.value)}
-                className="appearance-none bg-surface-container-lowest border border-white/10 rounded-xl px-4 py-2 pr-10 text-sm focus:ring-1 focus:ring-primary transition-all text-white outline-none cursor-pointer hover:border-primary/30"
-              >
-                <option value="" disabled>
-                  Select a Server
-                </option>
-                {guilds.map((g) => (
-                  <option key={g.id} value={g.id}>
-                    {g.name}
-                  </option>
-                ))}
-              </select>
-              <span className="material-symbols-outlined absolute right-3 top-2.5 text-slate-500 text-sm pointer-events-none">
-                expand_more
+      {/* ── Main Content Area ── */}
+      <div className="flex-1 ml-72 flex flex-col h-screen overflow-hidden">
+        {/* Top Header Bar */}
+        <header className="bg-background border-b border-sidebar-border ambient-shadow flex justify-between items-center w-full px-8 h-20 flex-shrink-0 sticky top-0 z-30">
+          <div className="flex items-center">
+            {/* Search Bar */}
+            <div className="relative ml-4">
+              <span className="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-outline-variant">
+                search
               </span>
-            </div>
-          )}
-
-          <div className="flex items-center gap-3 text-slate-400">
-            <span className="hidden md:inline text-sm text-slate-300">
-              {user?.username || user?.name || "Admin"}
-            </span>
-            <div className="h-10 w-10 flex items-center justify-center rounded-full border border-primary/20 overflow-hidden bg-surface-container-highest">
-              {user?.avatar && user?.id ? (
-                <img
-                  src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=64`}
-                  alt={user.username || "avatar"}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <span className="text-white text-sm font-bold">{initial}</span>
-              )}
+              <input
+                className="pl-10 pr-4 py-2 bg-on-surface/5 border border-transparent focus:border-primary-container focus:ring-0 rounded-full text-sm w-64 transition-colors placeholder:text-on-surface-variant/50 text-on-surface"
+                placeholder="Search workspace..."
+                type="text"
+              />
             </div>
           </div>
-        </div>
-      </header>
 
-      <main className="ml-64 pt-24 p-8 min-h-screen">
-        <Outlet />
-      </main>
+          <div className="flex items-center gap-4">
+            {/* Server Selector */}
+            {guilds && guilds.length > 0 && (
+              <div className="relative hidden md:block">
+                <select
+                  value={selectedServerId || ""}
+                  onChange={(e) => setSelectedServerId(e.target.value)}
+                  className="appearance-none bg-surface-container-low border border-sidebar-border rounded-xl px-4 py-2 pr-10 text-sm focus:ring-1 focus:ring-primary transition-all text-on-surface outline-none cursor-pointer hover:border-primary/30"
+                >
+                  <option value="" disabled>
+                    Select a Server
+                  </option>
+                  {guilds.map((g) => (
+                    <option key={g.id} value={g.id}>
+                      {g.name}
+                    </option>
+                  ))}
+                </select>
+                <span className="material-symbols-outlined absolute right-3 top-2.5 text-on-surface-variant text-sm pointer-events-none">
+                  expand_more
+                </span>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <button title="Notifications — coming soon" className="p-2 text-on-surface-variant hover:bg-sidebar hover:text-nav-active transition-colors duration-300 rounded-full cursor-pointer active:scale-95 opacity-50">
+              <span className="material-symbols-outlined">notifications</span>
+            </button>
+            <Link to="/settings" title="Settings" className="p-2 text-on-surface-variant hover:bg-sidebar hover:text-nav-active transition-colors duration-300 rounded-full active:scale-95">
+              <span className="material-symbols-outlined">help_outline</span>
+            </Link>
+
+            {/* User Info */}
+            <div className="flex items-center gap-3">
+              <span className="hidden md:inline text-sm text-on-surface-variant font-medium">
+                {user?.username || user?.name || "Admin"}
+              </span>
+              <div className="h-9 w-9 rounded-full overflow-hidden border border-sidebar-border">
+                {user?.avatar && user?.id ? (
+                  <img
+                    src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=64`}
+                    alt={user.username || "avatar"}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed text-sm font-bold">
+                    {initial}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Scrollable Content */}
+        <main className="flex-1 overflow-y-auto p-10">
+          <div className="max-w-7xl mx-auto">
+            <Outlet />
+          </div>
+        </main>
+      </div>
 
       <VariablesDrawer />
     </div>
