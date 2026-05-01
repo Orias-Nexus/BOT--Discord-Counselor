@@ -22,19 +22,21 @@ export default class ErrorBoundary extends Component {
   render() {
     if (this.state.error) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-surface text-on-surface p-6">
-          <div className="max-w-md w-full glass-card p-8 rounded-2xl border border-error/30">
+        <div className="min-h-screen flex items-center justify-center bg-background text-on-surface p-6">
+          <div className="max-w-md w-full bg-surface-container-lowest p-8 rounded-3xl ambient-shadow border border-error/20">
             <div className="flex items-center gap-3 mb-4">
-              <span className="material-symbols-outlined text-error text-3xl">error</span>
-              <h1 className="text-xl font-bold text-white">Something went wrong</h1>
+              <div className="p-3 bg-error-container rounded-xl">
+                <span className="material-symbols-outlined text-error">error</span>
+              </div>
+              <h1 className="text-xl font-bold text-on-surface">Something went wrong</h1>
             </div>
-            <p className="text-slate-400 text-sm mb-6 break-words">
+            <p className="text-on-surface-variant text-sm mb-6 break-words">
               {this.state.error?.message || 'Unknown error'}
             </p>
             <button
               type="button"
               onClick={this.handleReload}
-              className="w-full px-4 py-2 bg-primary text-on-primary rounded-lg font-medium hover:opacity-90 transition"
+              className="w-full px-4 py-3 bg-primary text-on-primary rounded-xl font-medium hover:opacity-90 transition-opacity"
             >
               Reload app
             </button>
