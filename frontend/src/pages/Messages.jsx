@@ -1,11 +1,32 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Send, TestTube2 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
 import useJobUpdates from '../hooks/useJobUpdates';
+import { getChannelTypeLabel, CHANNEL_TYPE } from '../utils/channelTypes';
+
+/** Prefix channel name with a type symbol like Discord does */
+function channelPrefix(ch) {
+  switch (ch.type) {
+    case CHANNEL_TYPE.GUILD_VOICE:       return '🔊 ';
+    case CHANNEL_TYPE.GUILD_STAGE_VOICE: return '🎙️ ';
+    case CHANNEL_TYPE.GUILD_ANNOUNCEMENT:return '📢 ';
+    case CHANNEL_TYPE.GUILD_FORUM:       return '💬 ';
+    case CHANNEL_TYPE.GUILD_MEDIA:       return '🖼️ ';
+    case CHANNEL_TYPE.GUILD_CATEGORY:    return '📁 ';
+    default:                             return '# ';
+  }
+}
 
 const TYPES = ['Greeting', 'Leaving', 'Boosting', 'Leveling', 'Logging'];
+
+const TYPE_META = {
+  Greeting: { icon: 'waving_hand', color: 'bg-primary-fixed text-primary' },
+  Leaving: { icon: 'directions_walk', color: 'bg-secondary-fixed text-secondary' },
+  Boosting: { icon: 'rocket_launch', color: 'bg-tertiary-fixed text-tertiary' },
+  Leveling: { icon: 'trending_up', color: 'bg-primary-fixed text-primary-container' },
+  Logging: { icon: 'receipt_long', color: 'bg-surface-variant text-on-surface-variant' },
+};
 
 export default function Messages() {
   const { selectedServerId } = useAuth();
@@ -74,53 +95,68 @@ export default function Messages() {
 
   const textChannels = (discordInfo?.channels ?? []).filter((c) => c.isText);
 
-  if (isLoading) return <p className="text-zinc-500">Đang tải...</p>;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <span className="material-symbols-outlined animate-spin text-4xl text-primary">sync</span>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold text-white mb-1">System Messages</h1>
-        <p className="text-zinc-400">Gắn channel + embed cho từng event (Greeting, Leaving, ...).</p>
+        <h2 className="text-display-lg text-on-surface mb-2">System Messages</h2>
+        <p className="text-body-lg text-on-surface-variant">
+          Configure channels and embeds for each event type (Greeting, Leaving, ...).
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      {/* Message Type Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {TYPES.map((type) => {
           const row = findRow(type);
+          const meta = TYPE_META[type] || TYPE_META.Logging;
           return (
-            <div key={type} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-4">
+            <div key={type} className="bg-surface-container-lowest rounded-3xl ambient-shadow-lg p-8 space-y-5">
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-white">{type}</h3>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => sendTest(type)}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-300 text-xs hover:bg-amber-500/20"
-                  >
-                    <TestTube2 className="w-4 h-4" /> Test
-                  </button>
+                <div className="flex items-center gap-3">
+                  <div className={`p-3 rounded-xl ${meta.color}`}>
+                    <span className="material-symbols-outlined">{meta.icon}</span>
+                  </div>
+                  <h3 className="text-headline-md text-on-surface">{type}</h3>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => sendTest(type)}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-secondary-fixed text-secondary text-label-sm hover:bg-secondary-fixed-dim transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[16px]">science</span>
+                  Test
+                </button>
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs text-zinc-400">Channel</label>
+                <label className="text-label-sm text-on-surface-variant">Channel</label>
                 <select
                   value={row.channel_id || ''}
                   onChange={(e) => setChannel(type, e.target.value)}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm"
+                  className="w-full bg-surface-container-low border border-outline-variant rounded-xl px-4 py-2.5 text-sm text-on-surface"
                 >
                   <option value="">— Disabled —</option>
                   {textChannels.map((ch) => (
-                    <option key={ch.id} value={ch.id}>#{ch.name}</option>
+                    <option key={ch.id} value={ch.id}>{channelPrefix(ch)}{ch.name}</option>
                   ))}
                 </select>
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs text-zinc-400">Embed</label>
+                <label className="text-label-sm text-on-surface-variant">Embed Template</label>
                 <select
                   value={row.embed_id || ''}
                   onChange={(e) => setEmbed(type, e.target.value)}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm"
+                  className="w-full bg-surface-container-low border border-outline-variant rounded-xl px-4 py-2.5 text-sm text-on-surface"
                 >
                   <option value="">— Plain text —</option>
                   {embeds.map((e) => (
@@ -133,6 +169,7 @@ export default function Messages() {
         })}
       </div>
 
+      {/* Manual Sender */}
       <ManualSender textChannels={textChannels} embeds={embeds} serverId={selectedServerId} />
     </div>
   );
@@ -167,24 +204,27 @@ function ManualSender({ textChannels, embeds, serverId }) {
   };
 
   return (
-    <form onSubmit={handleSend} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-4">
-      <div className="flex items-center gap-2">
-        <Send className="w-4 h-4 text-indigo-300" />
-        <h3 className="font-semibold text-white">Manual Send</h3>
+    <form onSubmit={handleSend} className="bg-surface-container-lowest rounded-3xl ambient-shadow-lg p-8 space-y-5">
+      <div className="flex items-center gap-3">
+        <div className="p-3 rounded-xl bg-primary-fixed">
+          <span className="material-symbols-outlined text-primary">send</span>
+        </div>
+        <h3 className="text-headline-md text-on-surface">Manual Send</h3>
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="text-xs text-zinc-400">Channel</label>
-          <select name="channelId" className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm">
+        <div className="space-y-2">
+          <label className="text-label-sm text-on-surface-variant">Channel</label>
+          <select name="channelId" className="w-full bg-surface-container-low border border-outline-variant rounded-xl px-4 py-2.5 text-sm text-on-surface">
             <option value="">Select channel</option>
             {textChannels.map((ch) => (
-              <option key={ch.id} value={ch.id}>#{ch.name}</option>
+              <option key={ch.id} value={ch.id}>{channelPrefix(ch)}{ch.name}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label className="text-xs text-zinc-400">Embed</label>
-          <select name="embedId" className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm">
+        <div className="space-y-2">
+          <label className="text-label-sm text-on-surface-variant">Embed</label>
+          <select name="embedId" className="w-full bg-surface-container-low border border-outline-variant rounded-xl px-4 py-2.5 text-sm text-on-surface">
             <option value="">— None —</option>
             {embeds.map((e) => (
               <option key={e.embed_id} value={e.embed_id}>{e.embed_name}</option>
@@ -192,20 +232,25 @@ function ManualSender({ textChannels, embeds, serverId }) {
           </select>
         </div>
       </div>
-      <div>
-        <label className="text-xs text-zinc-400">Message content <span className="text-zinc-600">(tuỳ chọn)</span></label>
+
+      <div className="space-y-2">
+        <label className="text-label-sm text-on-surface-variant">
+          Message content <span className="text-outline-variant">(optional)</span>
+        </label>
         <textarea
           name="content"
-          placeholder="Nội dung văn bản hoặc placeholders — có thể để trống nếu đã chọn embed"
+          placeholder="Text content or placeholders — leave blank if using an embed"
           rows={3}
-          className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm mt-1"
+          className="w-full bg-surface-container-low border border-outline-variant rounded-xl px-4 py-2.5 text-sm text-on-surface"
         />
       </div>
+
       <button
         type="submit"
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-sm font-medium"
+        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-on-primary text-label-sm hover:opacity-90 transition-opacity shadow-sm"
       >
-        <Send className="w-4 h-4" /> Queue message
+        <span className="material-symbols-outlined text-sm">send</span>
+        Queue Message
       </button>
     </form>
   );
