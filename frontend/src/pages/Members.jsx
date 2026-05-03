@@ -1,27 +1,26 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { AlertTriangle, Lock, ShieldOff, UserCheck, X, Search } from 'lucide-react';
 import api from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
 import useJobUpdates from '../hooks/useJobUpdates';
 
 const STATUS_META = {
-  Good:   { label: 'Good', icon: UserCheck, className: 'bg-emerald-500/10 text-emerald-400' },
-  Newbie: { label: 'Newbie', icon: UserCheck, className: 'bg-indigo-500/10 text-indigo-400' },
-  Warn:   { label: 'Warn', icon: AlertTriangle, className: 'bg-amber-500/10 text-amber-400' },
-  Mute:   { label: 'Mute', icon: ShieldOff, className: 'bg-rose-500/10 text-rose-400' },
-  Lock:   { label: 'Lock', icon: Lock, className: 'bg-zinc-500/10 text-zinc-400' },
-  Kick:   { label: 'Kick', icon: X, className: 'bg-red-500/10 text-red-500' },
-  Leaved: { label: 'Leaved', icon: X, className: 'bg-red-500/10 text-red-400' },
+  Good:   { label: 'Active', icon: 'check_circle', color: 'bg-primary-fixed text-primary' },
+  Newbie: { label: 'Newbie', icon: 'person_add', color: 'bg-tertiary-fixed text-tertiary' },
+  Warn:   { label: 'Warned', icon: 'warning', color: 'bg-secondary-fixed text-secondary' },
+  Mute:   { label: 'Muted', icon: 'volume_off', color: 'bg-error-container text-error' },
+  Lock:   { label: 'Locked', icon: 'lock', color: 'bg-surface-variant text-on-surface-variant' },
+  Kick:   { label: 'Kicked', icon: 'block', color: 'bg-error-container text-error' },
+  Leaved: { label: 'Left', icon: 'logout', color: 'bg-surface-variant text-on-surface-variant' },
 };
 
 const ACTIONS = [
-  { key: 'warn', label: 'Warn', tone: 'bg-amber-500/10 text-amber-300 hover:bg-amber-500/20' },
-  { key: 'mute', label: 'Mute', tone: 'bg-rose-500/10 text-rose-300 hover:bg-rose-500/20' },
-  { key: 'lock', label: 'Lock', tone: 'bg-zinc-500/10 text-zinc-200 hover:bg-zinc-500/20' },
-  { key: 'reset', label: 'Reset', tone: 'bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20' },
-  { key: 'kick', label: 'Kick', tone: 'bg-red-500/10 text-red-300 hover:bg-red-500/20' },
+  { key: 'warn', label: 'Warn', icon: 'warning', color: 'text-secondary bg-secondary-fixed hover:bg-secondary-fixed-dim' },
+  { key: 'mute', label: 'Mute', icon: 'volume_off', color: 'text-error bg-error-container hover:bg-error-container/80' },
+  { key: 'lock', label: 'Lock', icon: 'lock', color: 'text-on-surface-variant bg-surface-variant hover:bg-surface-container-high' },
+  { key: 'reset', label: 'Reset', icon: 'restart_alt', color: 'text-primary bg-primary-fixed hover:bg-primary-fixed-dim' },
+  { key: 'kick', label: 'Kick', icon: 'person_remove', color: 'text-error bg-error-container hover:bg-error-container/80' },
 ];
 
 export default function Members() {
@@ -46,92 +45,135 @@ export default function Members() {
     const q = search.trim().toLowerCase();
     if (!q) return members;
     return members.filter((m) =>
+      (m.display_name || m.username || '').toLowerCase().includes(q) ||
       (m.username || '').toLowerCase().includes(q) ||
-      (m.user_id || '').includes(q) ||
       (m.member_status || '').toLowerCase().includes(q)
     );
   }, [members, search]);
 
-  const runAction = async (userId, action) => {
+  const runAction = async (userId, action, displayName) => {
     try {
       await api.post(`/members/${selectedServerId}/${userId}/action`, { action });
-      toast.success(`${action} queued for ${userId.slice(-4)}`);
+      toast.success(`${action.charAt(0).toUpperCase() + action.slice(1)} queued for ${displayName}`);
     } catch (err) {
       toast.error(err.response?.data?.error || 'Action failed');
     }
   };
 
+  /** Resolve the best display name for a member */
+  const getName = (m) => m.display_name || m.username || 'Unknown';
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Page Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-1">Member Directory</h1>
-          <p className="text-zinc-400">Quản lý status + moderation thông qua BullMQ.</p>
+          <h2 className="text-display-lg text-on-surface mb-2">Members</h2>
+          <p className="text-body-lg text-on-surface-variant">
+            Manage member statuses and moderation actions.
+            {members.length > 0 && (
+              <span className="ml-2 text-label-sm text-outline bg-surface-variant px-2 py-0.5 rounded-full">
+                {members.length} total
+              </span>
+            )}
+          </p>
         </div>
-        <div className="relative w-full sm:w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by username / ID..."
-            className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500"
-          />
+        <div className="flex items-center gap-3">
+          {/* Search */}
+          <div className="relative">
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant">
+              search
+            </span>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by name..."
+              className="pl-10 pr-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-sm focus:border-primary outline-none text-on-surface w-64"
+            />
+          </div>
         </div>
       </div>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+      {/* Members Table */}
+      <div className="bg-surface-container-lowest rounded-3xl ambient-shadow-lg overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-zinc-900/70 text-xs uppercase tracking-wider text-zinc-500">
-            <tr>
-              <th className="px-6 py-3 text-left">User</th>
-              <th className="px-6 py-3 text-right">Level</th>
-              <th className="px-6 py-3 text-left">Status</th>
-              <th className="px-6 py-3 text-right">Moderation</th>
+          <thead>
+            <tr className="border-b border-surface-variant">
+              <th className="px-6 py-4 text-left text-label-sm text-on-surface-variant uppercase tracking-wider">Member</th>
+              <th className="px-6 py-4 text-left text-label-sm text-on-surface-variant uppercase tracking-wider">Status</th>
+              <th className="px-6 py-4 text-right text-label-sm text-on-surface-variant uppercase tracking-wider">Level / XP</th>
+              <th className="px-6 py-4 text-right text-label-sm text-on-surface-variant uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-800">
+          <tbody>
             {isLoading && (
-              <tr><td colSpan={4} className="px-6 py-10 text-center text-zinc-500">Đang tải...</td></tr>
+              <tr>
+                <td colSpan={4} className="px-6 py-16 text-center text-on-surface-variant">
+                  <span className="material-symbols-outlined animate-spin text-2xl text-primary">sync</span>
+                  <p className="mt-2">Loading members...</p>
+                </td>
+              </tr>
             )}
             {!isLoading && filtered.length === 0 && (
-              <tr><td colSpan={4} className="px-6 py-10 text-center text-zinc-500">Không có member nào.</td></tr>
+              <tr>
+                <td colSpan={4} className="px-6 py-16 text-center text-on-surface-variant">
+                  <span className="material-symbols-outlined text-3xl text-outline-variant">group_off</span>
+                  <p className="mt-2">No members found.</p>
+                </td>
+              </tr>
             )}
             {filtered.map((m) => {
-              const meta = STATUS_META[m.member_status] || { label: m.member_status || 'Newbie', icon: UserCheck, className: 'bg-indigo-500/10 text-indigo-400' };
-              const Icon = meta.icon;
+              const meta = STATUS_META[m.member_status] || {
+                label: m.member_status || 'Newbie',
+                icon: 'person_add',
+                color: 'bg-tertiary-fixed text-tertiary',
+              };
+              const displayName = getName(m);
               return (
-                <tr key={m.user_id} className="hover:bg-white/5">
-                  <td className="px-6 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center overflow-hidden">
+                <tr key={m.user_id} className="border-b border-surface-variant/50 hover:bg-surface-container-low transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-primary-fixed flex items-center justify-center">
                         {m.avatar ? (
                           <img src={`https://cdn.discordapp.com/avatars/${m.user_id}/${m.avatar}.png?size=64`} alt="" className="w-full h-full object-cover" />
                         ) : (
-                          <span className="text-xs text-indigo-300">{String(m.username || 'U').charAt(0).toUpperCase()}</span>
+                          <span className="text-primary text-sm font-bold">
+                            {displayName.charAt(0).toUpperCase()}
+                          </span>
                         )}
                       </div>
                       <div>
-                        <p className="text-white">{m.username || 'Unknown'}</p>
-                        <p className="text-xs text-zinc-500 font-mono">{m.user_id}</p>
+                        <p className="text-on-surface font-semibold">{displayName}</p>
+                        {m.username && m.display_name && m.username !== m.display_name && (
+                          <p className="text-xs text-outline">@{m.username}</p>
+                        )}
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-3 text-right font-mono text-zinc-300">Lv {m.member_level || 0}</td>
-                  <td className="px-6 py-3">
-                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${meta.className}`}>
-                      <Icon className="w-3.5 h-3.5" /> {meta.label}
+                  <td className="px-6 py-4">
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${meta.color}`}>
+                      <span className="material-symbols-outlined text-[14px]">{meta.icon}</span>
+                      {meta.label}
                     </span>
                   </td>
-                  <td className="px-6 py-3 text-right">
-                    <div className="inline-flex flex-wrap gap-1 justify-end">
+                  <td className="px-6 py-4 text-right">
+                    <div>
+                      <p className="text-on-surface font-semibold">Level {m.member_level || 0}</p>
+                      <p className="text-xs text-outline">{(m.member_exp || 0).toLocaleString()} XP</p>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="inline-flex flex-wrap gap-1.5 justify-end">
                       {ACTIONS.map((a) => (
                         <button
                           key={a.key}
                           type="button"
-                          onClick={() => runAction(m.user_id, a.key)}
-                          className={`px-2 py-1 rounded text-[11px] font-medium ${a.tone}`}
+                          onClick={() => runAction(m.user_id, a.key, displayName)}
+                          title={a.label}
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors ${a.color}`}
                         >
-                          {a.label}
+                          <span className="material-symbols-outlined text-[14px]">{a.icon}</span>
+                          <span className="hidden xl:inline">{a.label}</span>
                         </button>
                       ))}
                     </div>
