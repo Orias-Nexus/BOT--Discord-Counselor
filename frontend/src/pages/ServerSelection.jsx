@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Server, LogOut, Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "../contexts/AuthContext";
 import api from "../utils/api";
@@ -61,117 +60,130 @@ export default function ServerSelection() {
   };
 
   return (
-    <div className="min-h-screen relative flex flex-col items-center justify-center bg-zinc-950 overflow-hidden font-body selection:bg-indigo-500/30 py-12">
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full mix-blend-screen filter blur-[100px] animate-pulse-slow" />
-        <div className="absolute bottom-1/4 right-1/4 w-[30rem] h-[30rem] bg-purple-500/10 rounded-full mix-blend-screen filter blur-[120px] animate-pulse-slow delay-1000" />
-      </div>
-
-      <div className="relative z-10 w-full max-w-5xl px-6 mb-12 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-[0_0_20px_rgba(99,102,241,0.4)]">
-            <Server className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold font-['Space_Grotesk'] text-white leading-none tracking-tight">
-              Orias's Pet
-            </h1>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 mt-1">
-              Select Instance
-            </p>
+    <div className="bg-background text-on-background min-h-screen flex flex-col">
+      {/* Top App Bar */}
+      <header className="w-full h-16 sticky top-0 z-40 bg-surface-bright/80 backdrop-blur-md flex items-center justify-between px-8 border-b border-surface-variant">
+        <div className="flex items-center gap-4">
+          <div className="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
+            <span
+              className="material-symbols-outlined text-sm"
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
+              eco
+            </span>
           </div>
         </div>
-
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={refreshGuilds}
-            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-zinc-400 hover:text-white bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-xl transition-all"
+            className="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:text-primary transition-colors"
           >
-            <RefreshCw
-              className={`w-4 h-4 ${isLoadingGuilds ? "animate-spin" : ""}`}
-            />
-            <span className="hidden sm:inline">Refresh</span>
+            <span
+              className={`material-symbols-outlined ${isLoadingGuilds ? "animate-spin" : ""}`}
+            >
+              sync
+            </span>
           </button>
           <button
             type="button"
             onClick={() => logout({ reason: "manual" })}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-xl transition-all"
+            className="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:text-error transition-colors"
           >
-            <LogOut className="w-4 h-4" />
-            <span className="hidden sm:inline">Disconnect</span>
+            <span className="material-symbols-outlined">logout</span>
           </button>
         </div>
-      </div>
+      </header>
 
-      <div className="relative z-10 w-full max-w-5xl px-6 flex flex-col items-center">
-        <div className="text-center mb-10">
-          <h2 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-white via-indigo-200 to-zinc-400 mb-4 tracking-tight">
-            Select an Environment
-          </h2>
-          <p className="text-zinc-400 max-w-lg mx-auto">
-            Choose a Discord server to load into the dashboard. You must have
-            Administrator or Manage Server permissions.
+      {/* Main Content */}
+      <main className="flex-grow flex flex-col items-center justify-start pt-16 pb-16 px-10">
+        {/* Header Section */}
+        <div className="text-center mb-16 max-w-2xl">
+          <h1 className="text-display-lg text-on-surface mb-4">
+            Select a Workspace
+          </h1>
+          <p className="text-body-lg text-on-surface-variant">
+            Choose a server to manage its settings, members, and analytics.
           </p>
         </div>
 
+        {/* Server Cards Grid */}
         {isLoadingGuilds ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <Loader2 className="w-10 h-10 text-indigo-500 animate-spin" />
-            <p className="text-zinc-400 animate-pulse">
+            <span className="material-symbols-outlined text-4xl text-primary animate-spin">
+              sync
+            </span>
+            <p className="text-on-surface-variant animate-pulse">
               Syncing permissions with Discord...
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
             {guilds && guilds.length > 0 ? (
               guilds.map((g, index) => (
                 <button
                   type="button"
                   key={g.id}
                   onClick={() => handleSelect(g.id)}
-                  style={{ animationDelay: `${index * 50}ms` }}
+                  style={{ animationDelay: `${index * 60}ms` }}
                   disabled={Boolean(selectingServerId)}
-                  className="group relative text-left bg-zinc-900/40 backdrop-blur-md border border-zinc-800 rounded-2xl p-6 transition-all duration-300 hover:bg-zinc-800/60 hover:border-indigo-500/50 hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_rgba(99,102,241,0.2)] overflow-hidden animate-fade-in-up disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="bg-surface-container-lowest rounded-3xl p-8 ambient-shadow-lg flex flex-col items-center text-center transition-transform hover:-translate-y-1 duration-300 disabled:opacity-60 disabled:cursor-not-allowed animate-fade-in-up cursor-pointer group"
                 >
-                  <div className="relative flex items-center gap-4">
+                  {/* Server Avatar */}
+                  <div className="w-24 h-24 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center mb-6 overflow-hidden border-2 border-surface-container-low group-hover:border-primary/30 transition-colors">
                     {g.icon ? (
                       <img
                         src={`https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png`}
                         alt=""
-                        className="w-14 h-14 rounded-full border-2 border-zinc-700 group-hover:border-indigo-400 object-cover transition-colors"
+                        className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-14 h-14 rounded-full bg-zinc-800 border-2 border-zinc-700 group-hover:border-indigo-400 flex items-center justify-center text-xl font-bold text-white transition-colors">
+                      <span className="text-2xl font-bold">
                         {g.name?.charAt(0)?.toUpperCase() || "?"}
-                      </div>
+                      </span>
                     )}
-                    <div className="flex-1 overflow-hidden">
-                      <h3 className="text-lg font-bold text-zinc-100 group-hover:text-white truncate">
-                        {g.name}
-                      </h3>
-                      <p className="text-xs text-zinc-500 font-mono mt-1 group-hover:text-indigo-300/70 truncate">
-                        {g.owner ? "Owner" : "Admin"} • {g.id}
-                      </p>
-                      {selectingServerId === g.id && (
-                        <p className="text-xs text-indigo-300 mt-2 flex items-center gap-1">
-                          <Loader2 className="w-3 h-3 animate-spin" />
-                          Checking bot in server...
-                        </p>
-                      )}
-                    </div>
                   </div>
+
+                  {/* Server Info */}
+                  <h2 className="text-headline-md text-on-surface mb-2 truncate max-w-full">
+                    {g.name}
+                  </h2>
+                  <div className="flex items-center gap-2 text-outline mb-6">
+                    <span className="material-symbols-outlined text-sm">
+                      {g.owner ? "shield" : "admin_panel_settings"}
+                    </span>
+                    <span className="text-label-sm">
+                      {g.owner ? "Owner" : "Admin"}
+                    </span>
+                  </div>
+
+                  {/* Loading indicator */}
+                  {selectingServerId === g.id ? (
+                    <div className="flex items-center gap-2 text-primary text-sm">
+                      <span className="material-symbols-outlined text-sm animate-spin">
+                        sync
+                      </span>
+                      Checking bot in server...
+                    </div>
+                  ) : (
+                    <div className="mt-auto w-full py-3 px-6 bg-primary text-on-primary rounded-full text-label-sm hover:bg-surface-tint transition-colors">
+                      Go to Dashboard
+                    </div>
+                  )}
                 </button>
               ))
             ) : (
-              <div className="col-span-full flex flex-col items-center justify-center py-16 bg-zinc-900/30 border border-zinc-800/50 rounded-2xl backdrop-blur-sm">
-                <div className="w-16 h-16 mb-4 rounded-full bg-zinc-800/50 flex items-center justify-center text-zinc-500">
-                  <Server className="w-8 h-8 opacity-50" />
+              /* No servers found */
+              <div className="col-span-full bg-surface-container-low border-2 border-dashed border-outline-variant rounded-3xl p-8 flex flex-col items-center justify-center text-center min-h-[320px]">
+                <div className="w-16 h-16 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center mb-4">
+                  <span className="material-symbols-outlined text-[32px]">
+                    dns
+                  </span>
                 </div>
-                <h3 className="text-xl font-bold text-zinc-300 mb-2">
+                <h2 className="text-headline-md text-on-surface mb-2">
                   No Servers Found
-                </h3>
-                <p className="text-zinc-500 text-center max-w-md">
+                </h2>
+                <p className="text-body-md text-on-surface-variant max-w-md">
                   We couldn't find any Discord servers where you have
                   administrative access. Make sure the bot is invited to your
                   server.
@@ -180,7 +192,7 @@ export default function ServerSelection() {
             )}
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }
